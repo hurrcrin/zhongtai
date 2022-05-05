@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.oa.zhongtian.mapper.PoReceiptMapper">
+    <resultMap id="poReceiptResult" type="com.tianyi.project.oa.zhongtian.domain.PoReceipt">
+        <id column="id" property="id"/>
+        <result property="purchaseNumber" column="purchase_number"/>
+        <result property="supplier" column="supplier"/>
+        <result property="employee" column="employee"/>
+        <result property="tranDate" column="tranDate"/>
+        <result property="currency" column="currency"/>
+        <result property="salesId" column="sales_id"/>
+        <result property="subsidiary" column="subsidiary"/>
+        <collection property="lines" ofType="com.tianyi.project.oa.zhongtian.domain.PoReceiptLine">
+            <result property="lineId" column="line_id"/>
+            <result property="mainId" column="main_id"/>
+            <result property="sku" column="sku"/>
+            <result property="taxRate" column="tax_rate"/>
+            <result property="quantity" column="quantity"/>
+            <result property="receiptQuantity" column="receipt_quantity"/>
+            <result property="unitPrice" column="unit_price"/>
+            <result property="unitPriceWithoutTax" column="unit_price_without_tax"/>
+            <result property="totalPrice" column="total_price"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectPoReceipt" parameterType="java.lang.Integer" resultMap="poReceiptResult">
+        SELECT
+        a.id,
+        b.cgddbh AS purchase_number,
+        a.gys AS supplier,
+        d.workcode AS employee,
+        a.thedate AS tranDate,
+        a.hb AS currency,
+        CASE
+        WHEN b.hcid= '' THEN
+        NULL ELSE b.hcid
+        END AS sales_id,
+        c.id AS line_id,
+        c.mainid AS main_id,
+        c.hp AS sku,
+        e.selectname AS tax_rate,
+        c.count AS quantity,
+        c.yjsl AS receipt_quantity,
+        c.hsdj AS unit_price,
+        c.wsdj AS unit_price_without_tax,
+        c.hszj AS total_price
+        FROM
+        formtable_main_551 a
+        LEFT JOIN formtable_main_138 b ON a.buyorder = b.cgddbh
+        LEFT JOIN formtable_main_551_dt1 c ON a.id = c.mainid
+        LEFT JOIN HrmResource d ON a.yg= d.id
+        LEFT JOIN Workflow_Selectitem e ON e.fieldid = '11752'
+        AND e.selectvalue = c.shuima
+        <where>
+            <if test="id != null">and a.id = #{id}</if>
+        </where>
+    </select>
+
+    <update id="updatePoReceipt" parameterType="com.tianyi.project.oa.zhongtian.domain.PoReceipt">
+        update formtable_main_551 set erpno = #{poNum},erporderid = #{poId} where id = #{id}
+    </update>
+
+    <resultMap id="poReceiptLineResult" type="com.tianyi.project.oa.zhongtian.domain.PoReceiptLine">
+        <result property="purchaseNumber" column="purchase_number"/>
+        <result property="sku" column="sku"/>
+        <result property="quantity" column="quantity"/>
+    </resultMap>
+
+    <select id="selectPoReceiptQuantity" parameterType="com.tianyi.project.oa.zhongtian.domain.PoReceipt"
+            resultMap="poReceiptLineResult">
+        SELECT
+        b.buyorder AS purchase_number,
+        a.hp AS sku,
+        SUM ( a.count ) AS quantity
+        FROM
+        formtable_main_551_dt1 a
+        LEFT JOIN formtable_main_551 b ON a.mainid= b.id
+        <where>
+            <if test="purchaseNumber != null and purchaseNumber != ''">and b.buyorder = #{purchaseNumber}</if>
+            <if test="id != null">and b.id != #{id}</if>
+        </where>
+        GROUP BY
+        b.buyorder,
+        a.hp
+    </select>
+
+    <select id="selectPoQuantity" parameterType="java.lang.String" resultMap="poReceiptLineResult">
+        SELECT
+        b.cgddbh AS purchase_number,
+        a.hp AS sku,
+        SUM ( a.sl ) AS quantity
+        FROM
+        formtable_main_138_dt1 a
+        LEFT JOIN formtable_main_138 b ON a.mainid= b.id
+        <where>
+            <if test="purchaseNumber != null and purchaseNumber != ''">and b.cgddbh = #{purchaseNumber}</if>
+        </where>
+        GROUP BY
+        b.cgddbh,
+        a.hp
+    </select>
+</mapper>

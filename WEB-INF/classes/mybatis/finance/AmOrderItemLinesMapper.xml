@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.finance.manualSingle.mapper.AmOrderItemLinesMapper">
+
+    <resultMap type="com.tianyi.project.finance.manualSingle.domain.AmOrderItemLines" id="AmOrderItemLinesResult">
+        <result property="interid" column="interid"/>
+        <result property="createDate" column="create_date"/>
+        <result property="marketplace3" column="marketplace3"/>
+        <result property="seller1" column="seller1"/>
+        <result property="fulfillmentchannel" column="fulfillmentchannel"/>
+        <result property="saleschannel" column="saleschannel"/>
+        <result property="purchaseDate1" column="purchase_date1"/>
+        <result property="amzOrderId1" column="amz_order_id1"/>
+        <result property="sellerSku1" column="seller_sku1"/>
+        <result property="itemName" column="item_name"/>
+        <result property="description1" column="description1"/>
+        <result property="quantity1" column="quantity1"/>
+        <result property="Amount1" column="_amount1"/>
+        <result property="isCombined" column="is_combined"/>
+        <result property="combineDuration" column="combine_duration"/>
+        <result property="soNumber" column="so_number"/>
+        <result property="orderHead" column="order_head"/>
+        <result property="OrderItemId" column="_order_item_id"/>
+        <result property="financialEventType" column="financial_event_type"/>
+        <result property="postDate" column="post_date"/>
+        <result property="isactive" column="isactive"/>
+        <result property="merchantOrderId" column="merchant_order_id"/>
+        <result property="updateMerchantOrderId" column="update_merchant_order_id"/>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.finance.manualSingle.domain.ChannelPlatform" id="ChannelPlatformResult">
+        <result property="id" column="内部标识"/>
+        <result property="channelPlatform" column="platform"/>
+    </resultMap>
+
+    <sql id="selectAmOrderItemLinesVo">
+        select a.interid,
+        a.create_date,
+        a.marketplace3,
+        a.seller1,
+        a.fulfillmentchannel,
+        a.saleschannel,
+        a.purchase_date1,
+        a.amz_order_id1,
+        a.seller_sku1,
+        a.item_name,
+        a.description1,
+        a.quantity1,
+        a._amount1,
+        a.is_combined,
+        a.combine_duration,
+        a.so_number,
+        a.order_head,
+        a._order_item_id,
+        a.financial_event_type,
+        a.post_date,
+        a.isactive,
+        a.merchant_order_id,
+        a.update_merchant_order_id
+        from am_order_item_lines a,
+        amazon_channal_platform b
+    </sql>
+
+    <select id="selectAmOrderItemLinesList"
+            parameterType="com.tianyi.project.finance.manualSingle.domain.AmOrderItemLines"
+            resultMap="AmOrderItemLinesResult">
+        <include refid="selectAmOrderItemLinesVo"/>
+        <where>
+            <if test="channel != null  and channel != ''">and b.内部标识=#{channel}</if>
+            and a.amz_order_id1 like 'S%'
+            and (
+            (a.merchant_order_id not like '%REPLACEMENT%'
+            and a.merchant_order_id not like '%BS%'
+            and a.merchant_order_id not like '%TEST%'
+            and a.merchant_order_id not like '%BRANDPR%'
+            and a.update_merchant_order_id is null)
+            or
+            (a.update_merchant_order_id not like '%REPLACEMENT%'
+            and a.update_merchant_order_id not like '%BS%'
+            and a.update_merchant_order_id not like '%TEST%'
+            and a.update_merchant_order_id not like '%BRANDPR%'
+            and a.update_merchant_order_id is not null)
+            )
+            and a.marketplace3=b.MarketplaceId
+            and a.seller1=b.seller
+        </where>
+    </select>
+
+    <select id="selectAmOrderItemLinesById" parameterType="String" resultMap="AmOrderItemLinesResult">
+        select a.interid,
+        a.create_date,
+        a.marketplace3,
+        a.seller1,
+        a.fulfillmentchannel,
+        a.saleschannel,
+        a.purchase_date1,
+        a.amz_order_id1,
+        a.seller_sku1,
+        a.item_name,
+        a.description1,
+        a.quantity1,
+        a._amount1,
+        a.is_combined,
+        a.combine_duration,
+        a.so_number,
+        a.order_head,
+        a._order_item_id,
+        a.financial_event_type,
+        a.post_date,
+        a.isactive,
+        a.merchant_order_id,
+        a.update_merchant_order_id
+        from am_order_item_lines a
+        where a.interid = #{interid}
+    </select>
+
+    <select id="selectCostTransferList" parameterType="com.tianyi.project.finance.manualSingle.domain.AmOrderItemLines"
+            resultMap="AmOrderItemLinesResult">
+        select seller_sku1,
+        sum(quantity1) as quantity1,
+        round(sum(_amount1),2) as _amount1
+        from am_order_item_lines
+        <where>
+            <if test="seller1 != null  and seller1 != ''">and seller1=#{seller1}</if>
+            <if test="marketplace3 != null  and marketplace3 != ''">and marketplace3=#{marketplace3}</if>
+            <if test="purchaseDate1 != null  and purchaseDate1 != ''">and purchase_date1 like concat('%',
+                #{purchaseDate1}, '%')
+            </if>
+            <if test="merchantOrderId != null  and merchantOrderId != ''">
+                and (merchant_order_id like concat('%',#{merchantOrderId}, '%')
+                or update_merchant_order_id like concat('%',#{merchantOrderId}, '%'))
+            </if>
+            and amz_order_id1 like 'S%'
+            and isactive=0
+        </where>
+        group by seller_sku1
+    </select>
+
+    <select id="selectChannelPlatformList" resultMap="ChannelPlatformResult">
+        select 内部标识,platform from amazon_channal_platform
+    </select>
+
+    <insert id="insertAmOrderItemLines" parameterType="com.tianyi.project.finance.manualSingle.domain.AmOrderItemLines">
+        insert into am_order_item_lines
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="interid != null  and interid != ''">interid,</if>
+            <if test="createDate != null  and createDate != ''">create_date,</if>
+            <if test="marketplace3 != null  and marketplace3 != ''">marketplace3,</if>
+            <if test="seller1 != null  and seller1 != ''">seller1,</if>
+            <if test="fulfillmentchannel != null  and fulfillmentchannel != ''">fulfillmentchannel,</if>
+            <if test="saleschannel != null  and saleschannel != ''">saleschannel,</if>
+            <if test="purchaseDate1 != null  and purchaseDate1 != ''">purchase_date1,</if>
+            <if test="amzOrderId1 != null  and amzOrderId1 != ''">amz_order_id1,</if>
+            <if test="sellerSku1 != null  and sellerSku1 != ''">seller_sku1,</if>
+            <if test="itemName != null  and itemName != ''">item_name,</if>
+            <if test="description1 != null  and description1 != ''">description1,</if>
+            <if test="quantity1 != null ">quantity1,</if>
+            <if test="Amount1 != null ">_amount1,</if>
+            <if test="isCombined != null  and isCombined != ''">is_combined,</if>
+            <if test="combineDuration != null  and combineDuration != ''">combine_duration,</if>
+            <if test="soNumber != null  and soNumber != ''">so_number,</if>
+            <if test="orderHead != null  and orderHead != ''">order_head,</if>
+            <if test="OrderItemId != null  and OrderItemId != ''">_order_item_id,</if>
+            <if test="financialEventType != null  and financialEventType != ''">financial_event_type,</if>
+            <if test="postDate != null  and postDate != ''">post_date,</if>
+            <if test="isactive != null ">isactive,</if>
+            <if test="merchantOrderId != null  and merchantOrderId != ''">merchant_order_id,</if>
+            <if test="updateMerchantOrderId != null  and updateMerchantOrderId != ''">update_merchant_order_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="interid != null  and interid != ''">#{interid},</if>
+            <if test="createDate != null  and createDate != ''">#{createDate},</if>
+            <if test="marketplace3 != null  and marketplace3 != ''">#{marketplace3},</if>
+            <if test="seller1 != null  and seller1 != ''">#{seller1},</if>
+            <if test="fulfillmentchannel != null  and fulfillmentchannel != ''">#{fulfillmentchannel},</if>
+            <if test="saleschannel != null  and saleschannel != ''">#{saleschannel},</if>
+            <if test="purchaseDate1 != null  and purchaseDate1 != ''">#{purchaseDate1},</if>
+            <if test="amzOrderId1 != null  and amzOrderId1 != ''">#{amzOrderId1},</if>
+            <if test="sellerSku1 != null  and sellerSku1 != ''">#{sellerSku1},</if>
+            <if test="itemName != null  and itemName != ''">#{itemName},</if>
+            <if test="description1 != null  and description1 != ''">#{description1},</if>
+            <if test="quantity1 != null ">#{quantity1},</if>
+            <if test="Amount1 != null ">#{Amount1},</if>
+            <if test="isCombined != null  and isCombined != ''">#{isCombined},</if>
+            <if test="combineDuration != null  and combineDuration != ''">#{combineDuration},</if>
+            <if test="soNumber != null  and soNumber != ''">#{soNumber},</if>
+            <if test="orderHead != null  and orderHead != ''">#{orderHead},</if>
+            <if test="OrderItemId != null  and OrderItemId != ''">#{OrderItemId},</if>
+            <if test="financialEventType != null  and financialEventType != ''">#{financialEventType},</if>
+            <if test="postDate != null  and postDate != ''">#{postDate},</if>
+            <if test="isactive != null ">#{isactive},</if>
+            <if test="merchantOrderId != null  and merchantOrderId != ''">#{merchantOrderId},</if>
+            <if test="updateMerchantOrderId != null  and updateMerchantOrderId != ''">#{updateMerchantOrderId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateStatus" parameterType="com.tianyi.project.finance.manualSingle.domain.AmOrderItemLines">
+        update am_order_item_lines
+        set isactive=1
+        <where>
+            <if test="seller1 != null  and seller1 != ''">and seller1=#{seller1}</if>
+            <if test="marketplace3 != null  and marketplace3 != ''">and marketplace3=#{marketplace3}</if>
+            <if test="purchaseDate1 != null  and purchaseDate1 != ''">and purchase_date1 like concat('%',
+                #{purchaseDate1}, '%')
+            </if>
+            <if test="merchantOrderId != null  and merchantOrderId != ''">
+                and (merchant_order_id like concat('%',#{merchantOrderId}, '%')
+                or update_merchant_order_id like concat('%',#{merchantOrderId}, '%'))
+            </if>
+            and amz_order_id1 like 'S%'
+        </where>
+    </update>
+
+    <update id="updateAmOrderItemLines" parameterType="com.tianyi.project.finance.manualSingle.domain.AmOrderItemLines">
+        update am_order_item_lines
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createDate != null  and createDate != ''">create_date = #{createDate},</if>
+            <if test="marketplace3 != null  and marketplace3 != ''">marketplace3 = #{marketplace3},</if>
+            <if test="seller1 != null  and seller1 != ''">seller1 = #{seller1},</if>
+            <if test="fulfillmentchannel != null  and fulfillmentchannel != ''">fulfillmentchannel =
+                #{fulfillmentchannel},
+            </if>
+            <if test="saleschannel != null  and saleschannel != ''">saleschannel = #{saleschannel},</if>
+            <if test="purchaseDate1 != null  and purchaseDate1 != ''">purchase_date1 = #{purchaseDate1},</if>
+            <if test="amzOrderId1 != null  and amzOrderId1 != ''">amz_order_id1 = #{amzOrderId1},</if>
+            <if test="sellerSku1 != null  and sellerSku1 != ''">seller_sku1 = #{sellerSku1},</if>
+            <if test="itemName != null  and itemName != ''">item_name = #{itemName},</if>
+            <if test="description1 != null  and description1 != ''">description1 = #{description1},</if>
+            <if test="quantity1 != null ">quantity1 = #{quantity1},</if>
+            <if test="Amount1 != null ">_amount1 = #{Amount1},</if>
+            <if test="isCombined != null  and isCombined != ''">is_combined = #{isCombined},</if>
+            <if test="combineDuration != null  and combineDuration != ''">combine_duration = #{combineDuration},</if>
+            <if test="soNumber != null  and soNumber != ''">so_number = #{soNumber},</if>
+            <if test="orderHead != null  and orderHead != ''">order_head = #{orderHead},</if>
+            <if test="OrderItemId != null  and OrderItemId != ''">_order_item_id = #{OrderItemId},</if>
+            <if test="financialEventType != null  and financialEventType != ''">financial_event_type =
+                #{financialEventType},
+            </if>
+            <if test="postDate != null  and postDate != ''">post_date = #{postDate},</if>
+            <if test="isactive != null ">isactive = #{isactive},</if>
+            <if test="merchantOrderId != null  and merchantOrderId != ''">merchant_order_id = #{merchantOrderId},</if>
+            <if test="updateMerchantOrderId != null  and updateMerchantOrderId != ''">update_merchant_order_id =
+                #{updateMerchantOrderId},
+            </if>
+        </trim>
+        where interid = #{interid}
+    </update>
+
+    <delete id="deleteAmOrderItemLinesById" parameterType="String">
+        delete from am_order_item_lines where interid = #{interid}
+    </delete>
+
+    <delete id="deleteAmOrderItemLinesByIds" parameterType="String">
+        delete from am_order_item_lines where interid in
+        <foreach item="interid" collection="array" open="(" separator="," close=")">
+            #{interid}
+        </foreach>
+    </delete>
+
+</mapper>

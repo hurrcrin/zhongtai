@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: bootstrap-select-css"/>
+    <th:block th:include="include :: header('海运关税结转列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>费用类型：</p>
+                            <select name="costType" th:with="type=${@dict.getType('sys_shippingTariff_costType')}"
+                                    id="costType">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>会计期间：</p>
+                            <input type="text" name="fiscalPeriod" id="fiscalPeriod"/>
+                        </li>
+                        <li>
+                            <p>明细单据类型：</p>
+                            <select name="detailDocumentType"
+                                    th:with="type=${@dict.getType('sys_shippingTariff_detailDocumentType')}"
+                                    id="detailDocumentType" class="form-control select2-multiple" ><!--multiple-->
+                                <!--<option value="">所有</option>-->
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>子公司：</p>
+                            <select name="subsidiary" th:with="type=${@dict.getType('sys_shippingTariff_subsidiary')}"
+                                    id="subsidiary">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-warning" onclick="$.table.exportExcel()"
+               shiro:hasPermission="finance:shipping:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+            <a class="btn btn-danger" onclick="delivery()" id="delivery"
+               shiro:hasPermission="finance:shipping:delivery">
+                <i class="fa fa-refresh"></i> 发送
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "finance/shipping";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            exportUrl: prefix + "/export",
+            modalName: "海运关税结转",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: 'id',
+                    visible: false
+                },
+                {
+                    field: 'costType',
+                    title: '费用类型'
+                },
+                {
+                    field: 'fiscalPeriod',
+                    title: '会计期间'
+                },
+                {
+                    field: 'detailDocumentType',
+                    title: '明细单据类型'
+                },
+                {
+                    field: 'subsidiaryName',
+                    title: '子公司'
+                },
+                {
+                    field: 'channelState',
+                    title: '渠道国家'
+                },
+                {
+                    field: 'fullname',
+                    title: 'fullName'
+                },
+                {
+                    field: 'sellersku',
+                    title: 'sellersku'
+                },
+                {
+                    field: 'carriedForwardNum',
+                    title: '结转数量'
+                },
+                {
+                    field: 'unitCost',
+                    title: '成本单价'
+                },
+                {
+                    field: 'amountCost',
+                    title: '成本金额'
+                },
+                {
+                    field: 'oceanFreight',
+                    title: '海运费_结转金额'
+                },
+                {
+                    field: 'tariff',
+                    title: '关税_结转金额'
+                },
+                {
+                    field: 'gst',
+                    title: 'GST'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function delivery() {
+        var costType = $("#costType").val();
+        var fiscalPeriod = $("#fiscalPeriod").val();
+        var detailDocumentType = $("#detailDocumentType").val();
+        var subsidiary = $("#subsidiary").val();
+        console.log("costType:" + costType);
+        console.log("fiscalPeriod:" + fiscalPeriod);
+        console.log("detailDocumentType:" + detailDocumentType);
+        console.log("subsidiary:" + subsidiary);
+        var flag = true;
+        if (costType == "" || costType == null) {
+            alert("请填写费用类型!");
+            flag = false;
+        }
+        if (fiscalPeriod == "" || fiscalPeriod == null) {
+            alert("请填写会计期间!");
+            flag = false;
+        }
+        if (detailDocumentType == "" || detailDocumentType == null) {
+            alert("请填写明细单据类型!");
+            flag = false;
+        }
+        if (subsidiary == "" || subsidiary == null) {
+            alert("请填写子公司!");
+            flag = false;
+        }
+        if (flag = true) {
+            $.ajax({
+                url: "/ZhongTai/finance/shipping/delivery",
+                type: "post",
+                data: {
+                    costType: costType,
+                    fiscalPeriod: fiscalPeriod,
+                    detailDocumentType: detailDocumentType,
+                    subsidiary: subsidiary
+                },
+                dataType: "json",
+                async: true,
+                success: function () {
+                    alert("发送成功,等待ERP生成,请勿重复发送!");
+                    $("#delivery").removeAttr('onclick');
+                    $("#delivery").removeClass('btn btn-danger');
+                    $("#delivery").addClass('btn btn-default');
+                }, error: function () {
+                    alert("发送失败,请联系管理员!");
+                }
+            })
+        }
+    }
+</script>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+</body>
+</html>

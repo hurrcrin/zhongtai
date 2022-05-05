@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.crawler.review.mapper.ZhongtaiCrawlerReviewMapper">
+    
+    <resultMap type="ZhongtaiCrawlerReview" id="ZhongtaiCrawlerReviewResult">
+        <result property="id"    column="id"    />
+        <result property="user"    column="user"    />
+        <result property="rating"    column="rating"    />
+        <result property="reviewTitle"    column="review_title"    />
+        <result property="reviewDate"    column="review_date"    />
+        <result property="reviewContent"    column="review_content"    />
+        <result property="asinLink"    column="asin_link"    />
+        <result property="weburl"    column="weburl"    />
+        <result property="reviewInfos"    column="review_infos"    />
+        <result property="currentAsin"    column="current_asin"    />
+        <result property="asin"    column="asin"    />
+        <result property="reviewId"    column="review_id"    />
+        <result property="reviewStatus"    column="review_status"    />
+    </resultMap>
+
+    <select id="selectAsinByAsin" parameterType="String" resultType="String">
+        select distinct asin from zt_crawler_review
+        where current_asin = #{asin}
+    </select>
+
+    <sql id="selectZhongtaiCrawlerReviewVo">
+        select id, user, rating, review_title, review_date, review_content, asin_link, weburl, review_infos, current_asin, asin, review_id, review_status from zt_crawler_review
+    </sql>
+
+    <select id="selectZhongtaiCrawlerReviewListByAsin" parameterType="String" resultMap="ZhongtaiCrawlerReviewResult">
+        <include refid="selectZhongtaiCrawlerReviewVo"/>
+         where asin = #{asin}
+    </select>
+
+    <select id="selectZhongtaiCrawlerReviewList" parameterType="ZhongtaiCrawlerReview" resultMap="ZhongtaiCrawlerReviewResult">
+        <include refid="selectZhongtaiCrawlerReviewVo"/>
+        <where>  
+            <if test="user != null  and user != ''"> and user = #{user}</if>
+            <if test="rating != null  and rating != ''"> and rating = #{rating}</if>
+            <if test="reviewTitle != null  and reviewTitle != ''"> and review_title = #{reviewTitle}</if>
+            <if test="params.beginReviewDate != null and params.beginReviewDate != '' and params.endReviewDate != null and params.endReviewDate != ''"> and review_date between #{params.beginReviewDate} and #{params.endReviewDate}</if>
+            <if test="reviewContent != null  and reviewContent != ''"> and review_content = #{reviewContent}</if>
+            <if test="asinLink != null  and asinLink != ''"> and asin_link = #{asinLink}</if>
+            <if test="weburl != null  and weburl != ''"> and weburl = #{weburl}</if>
+            <if test="reviewInfos != null  and reviewInfos != ''"> and review_infos = #{reviewInfos}</if>
+            <if test="currentAsin != null  and currentAsin != ''"> and current_asin = #{currentAsin}</if>
+            <if test="asin != null  and asin != ''"> and asin = #{asin}</if>
+            <if test="reviewId != null  and reviewId != ''"> and review_id = #{reviewId}</if>
+            <if test="reviewStatus != null  and reviewStatus != ''"> and review_status = #{reviewStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectZhongtaiCrawlerReviewById" parameterType="Long" resultMap="ZhongtaiCrawlerReviewResult">
+        <include refid="selectZhongtaiCrawlerReviewVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertZhongtaiCrawlerReview" parameterType="ZhongtaiCrawlerReview" useGeneratedKeys="true" keyProperty="id">
+        insert into zt_crawler_review
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="user != null  and user != ''">user,</if>
+            <if test="rating != null  and rating != ''">rating,</if>
+            <if test="reviewTitle != null  and reviewTitle != ''">review_title,</if>
+            <if test="reviewDate != null ">review_date,</if>
+            <if test="reviewContent != null  and reviewContent != ''">review_content,</if>
+            <if test="asinLink != null  and asinLink != ''">asin_link,</if>
+            <if test="weburl != null  and weburl != ''">weburl,</if>
+            <if test="reviewInfos != null  and reviewInfos != ''">review_infos,</if>
+            <if test="currentAsin != null  and currentAsin != ''">current_asin,</if>
+            <if test="asin != null  and asin != ''">asin,</if>
+            <if test="reviewId != null  and reviewId != ''">review_id,</if>
+            <if test="reviewStatus != null  and reviewStatus != ''">review_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="user != null  and user != ''">#{user},</if>
+            <if test="rating != null  and rating != ''">#{rating},</if>
+            <if test="reviewTitle != null  and reviewTitle != ''">#{reviewTitle},</if>
+            <if test="reviewDate != null ">#{reviewDate},</if>
+            <if test="reviewContent != null  and reviewContent != ''">#{reviewContent},</if>
+            <if test="asinLink != null  and asinLink != ''">#{asinLink},</if>
+            <if test="weburl != null  and weburl != ''">#{weburl},</if>
+            <if test="reviewInfos != null  and reviewInfos != ''">#{reviewInfos},</if>
+            <if test="currentAsin != null  and currentAsin != ''">#{currentAsin},</if>
+            <if test="asin != null  and asin != ''">#{asin},</if>
+            <if test="reviewId != null  and reviewId != ''">#{reviewId},</if>
+            <if test="reviewStatus != null  and reviewStatus != ''">#{reviewStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateZhongtaiCrawlerReview" parameterType="ZhongtaiCrawlerReview">
+        update zt_crawler_review
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="user != null  and user != ''">user = #{user},</if>
+            <if test="rating != null  and rating != ''">rating = #{rating},</if>
+            <if test="reviewTitle != null  and reviewTitle != ''">review_title = #{reviewTitle},</if>
+            <if test="reviewDate != null ">review_date = #{reviewDate},</if>
+            <if test="reviewContent != null  and reviewContent != ''">review_content = #{reviewContent},</if>
+            <if test="asinLink != null  and asinLink != ''">asin_link = #{asinLink},</if>
+            <if test="weburl != null  and weburl != ''">weburl = #{weburl},</if>
+            <if test="reviewInfos != null  and reviewInfos != ''">review_infos = #{reviewInfos},</if>
+            <if test="currentAsin != null  and currentAsin != ''">current_asin = #{currentAsin},</if>
+            <if test="asin != null  and asin != ''">asin = #{asin},</if>
+            <if test="reviewId != null  and reviewId != ''">review_id = #{reviewId},</if>
+            <if test="reviewStatus != null  and reviewStatus != ''">review_status = #{reviewStatus},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteZhongtaiCrawlerReviewById" parameterType="Long">
+        delete from zt_crawler_review where id = #{id}
+    </delete>
+
+    <delete id="deleteZhongtaiCrawlerReviewByIds" parameterType="String">
+        delete from zt_crawler_review where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

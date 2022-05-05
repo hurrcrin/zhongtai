@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.task.moka.mapper.PersonNeedMapper">
+    <resultMap type="com.tianyi.project.monitor.job.task.moka.domain.PersonNeed"
+               id="PersonNeedResult">
+        <result property="id"    column="id"    />
+        <result property="requestid"    column="requestId"    />
+        <result property="sqrq"    column="sqrq"    />
+        <result property="sqbm"    column="sqbm"    />
+        <result property="zjhbsj"    column="zjhbsj"    />
+        <result property="zwcj"    column="zwcj"    />
+        <result property="bzn"    column="bzn"    />
+        <result property="bzw"    column="bzw"    />
+        <result property="lz"    column="lz"    />
+        <result property="tg"    column="tg"    />
+        <result property="js"    column="js"    />
+        <result property="xz"    column="xz"    />
+        <result property="td"    column="td"    />
+        <result property="btdzxm"    column="btdzxm"    />
+        <result property="ndgrq"    column="ndgrq"    />
+        <result property="gwzzms"    column="gwzzms"    />
+        <result property="gwrzyq"    column="gwrzyq"    />
+        <result property="sqgw2"    column="sqgw2"    />
+        <result property="xqrs"    column="xqrs"    />
+        <result property="xqyysm"    column="xqyysm"    />
+        <result property="emergency"    column="emergency"    />
+        <result property="peoplecategory"    column="peoplecategory"    />
+        <result property="workplace"    column="workplace"    />
+        <result property="maxsalary"    column="maxsalary"    />
+        <result property="minsalary"    column="minsalary"    />
+    </resultMap>
+
+    <sql id="selectPersonNeed">
+        SELECT
+            id,
+            requestId,
+            sqrq,
+            sqbm,
+            sqgw2,
+            zjhbsj,
+            zwcj,
+            bzn,
+            bzw,
+            lz,
+            tg,
+            js,
+            xz,
+            td,
+            btdzxm,
+            ndgrq,
+            gwzzms,
+            gwrzyq,
+            xqrs,
+            xqyysm,
+            emergency,
+            peoplecategory,
+            workplace,
+            maxsalary,
+            minsalary
+        FROM
+            formtable_main_18
+    </sql>
+
+    <select id="selectPersonNeed" resultType="com.tianyi.project.monitor.job.task.moka.domain.PersonNeed">
+        <include refid="selectPersonNeed"/>
+    </select>
+
+    <select id="selectEmailById" resultType="java.lang.String">
+        SELECT
+            email
+        FROM
+            HrmResource
+        WHERE
+            id = #{id}
+    </select>
+
+    <select id="selectNameById" resultType="java.lang.String">
+        SELECT
+            lastname
+        FROM
+            HrmResource
+        WHERE
+            id = #{id}
+    </select>
+
+    <select id="selectStaffMap" resultType="com.tianyi.project.monitor.job.task.moka.domain.StaffMap">
+        SELECT
+            id,
+            email,
+            lastname
+        FROM
+            HrmResource
+    </select>
+
+
+</mapper>

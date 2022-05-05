@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('开票计划列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>供应商：</p>
+                            <input type="text" name="vendor" id="vendor"/>
+                        </li>
+                        <li>
+                            <p>柜号：</p>
+                            <input type="text" name="receiptnum" id="receiptnum"/>
+                        </li>
+                        <li class="select-time">
+                            <p>接收日期：</p>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间"
+                                   name="params[beginReceiptdate]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间"
+                                   name="params[endReceiptdate]"/>
+                        </li>
+                        <li>
+                            <p>HSCODE：</p>
+                            <input type="text" name="hscode" id="hscode"/>
+                        </li>
+                        <li>
+                            <p>状态：</p>
+                            <select name="status" th:with="type=${@dict.getType('sys_invoice_status')}" id="status">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-warning" onclick="$.table.exportExcel()"
+               shiro:hasPermission="supplychain:invoiceplan:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+            <a class="btn btn-warning" onclick="exportDetail()" id="exportDetail">
+                <i class="fa fa-download"></i> 导出明细
+            </a>
+            <a class="btn btn-danger" onclick="ensure()" id="ensure">确定</a>
+            <!--<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()"-->
+               <!--shiro:hasPermission="supplychain:invoiceplan:remove">-->
+                <!--<i class="fa fa-remove"></i> 删除-->
+            <!--</a>-->
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('supplychain:invoiceplan:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('supplychain:invoiceplan:remove')}]];
+    var statusDatas = [[${@dict.getType('sys_invoice_status')}]];
+    var prefix = ctx + "supplychain/invoiceplan";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "开票计划",
+            rememberSelected: true,
+            columns: [{
+                field: 'state',
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false
+                },
+                {
+                    field: 'vendor',
+                    title: '供应商'
+                },
+                {
+                    field: 'receiptnum',
+                    title: '柜号'
+                },
+                {
+                    field: 'receiptdate',
+                    title: '接收日期'
+                },
+                {
+                    field: 'accountdate',
+                    title: '到账日期'
+                },
+                {
+                    field: 'receiptname',
+                    title: '报关名称'
+                },
+                {
+                    field: 'hscode',
+                    title: 'HSCODE'
+                },
+                {
+                    field: 'unit',
+                    title: '单位'
+                },
+                {
+                    field: 'quantity',
+                    title: '数量'
+                },
+                {
+                    field: 'crossamount',
+                    title: '含税总额'
+                },
+                {
+                    field: 'amount',
+                    title: '无税总额'
+                },
+                {
+                    field: 'status',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(statusDatas, value);
+                    }
+                },
+                {
+                    field: 'billedquantity',
+                    title: '已开单数量'
+                },
+                {
+                    field: 'margin',
+                    title: '余量'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-warning btn-xs " href="#" onclick="$.operate.skip(\'' + row.id + '\',\'' + row.status + '\')"><i class="fa fa-remove"></i>明细数据</a>');
+                        console.log("row.id:" + row.id);
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 选中数据
+    function ensure() {
+        var id = $.table.selectColumns("id");
+        var ids = "";
+        for (var i = 0; i < id.length; i++) {
+            ids = ids + id[i] + ",";
+        }
+        ids = ids.substring(0, ids.length - 1);
+        console.log("ids:" + ids);
+        $("#ensure").removeAttr('onclick');
+        $("#ensure").removeClass('btn btn-danger');
+        $("#ensure").addClass('btn btn-default');
+        $.ajax({
+            url: "/ZhongTai/supplychain/invoiceplanDataFlow",
+            type: "post",
+            data: {
+                ids: ids
+            },
+            dataType: "json",
+            success: function (str) {
+                var strfy = JSON.stringify(str);
+                var json = eval('(' + strfy + ')');
+                console.log("strfy:" + strfy);
+                console.log("json:" + json);
+                var result = json.result;
+                console.log("result:" + result);
+                if (result == 0) {
+                    alert("数据已流转!");
+                } else {
+                    alert("数据流转失败,请联系管理员!");
+                }
+            }
+        })
+    };
+
+    //SonKi 开票计划导出明细
+    function exportDetail() {
+        table.set();
+        var vendor = $("#vendor").val();
+        var receiptnum = $("#receiptnum").val();
+        var startTime = $("#startTime").val();
+        var endTime = $("#endTime").val();
+        var hscode = $("#hscode").val();
+        var status = $("#status").val();
+        console.log("vendor:" + vendor);
+        console.log("receiptnum:" + receiptnum);
+        console.log("startTime:" + startTime);
+        console.log("endTime:" + endTime);
+        console.log("hscode:" + hscode);
+        console.log("status:" + status);
+        $.modal.confirm("确定导出所有开票计划明细数据吗？", function () {
+            $.modal.loading("正在导出数据，请稍后...");
+            $.ajax({
+                url: "/ZhongTai/supplychain/invoiceplan/exportDetail",
+                type: "post",
+                data: {
+                    vendor: vendor,
+                    receiptnum: receiptnum,
+                    startTime: startTime,
+                    endTime: endTime,
+                    hscode: hscode,
+                    status: status,
+                },
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == web_status.SUCCESS) {
+                        window.location.href = ctx + "common/download?fileName=" + encodeURI(result.msg) + "&delete=" + true;
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                    $.modal.closeLoading();
+                }
+            })
+        });
+    }
+</script>
+</body>
+</html>

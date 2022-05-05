@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.task.oa.attendance.mapper.LatestTimeMapper">
+    <select id="listLatest" resultType="com.tianyi.project.monitor.job.task.oa.attendance.domain.Qjts">
+        select
+        id,
+        requestId,
+        formmodeid,
+        modedatacreater,
+        modedatacreatertype,
+        modedatacreatedate,
+        modedatacreatetime,
+        fb,
+        bm,
+        xm,
+        gh,
+        sjlx,
+        sc,
+        ysy,
+        sy,
+        yxks,
+        yxjs,
+        jblc,
+        qjlc,
+        MODEUUID
+        from uf_qjts
+        where yxjs=(select max(yxjs) from uf_qjts where sjlx=4)
+    </select>
+
+    <select id="listSurplus" parameterType="Integer" resultType="BigDecimal">
+         select sy from uf_qjts
+         where
+         yxjs=(select max(yxjs) from uf_qjts where sjlx=4) and xm=#{xm}
+    </select>
+</mapper>
+

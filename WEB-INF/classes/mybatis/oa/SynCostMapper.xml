@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.task.oa.cost.mapper.SynCostMapper">
+
+    <select id="getTravellingCostHead" resultType="com.tianyi.project.monitor.job.task.oa.cost.domain.FormTableMain">
+        SELECT
+            id,
+            requestId,
+            zgs_new AS zgs,
+            payDate,
+            bzsm,
+            currency AS bz,
+            lsh,
+            sjdkje,
+            cjkje,
+            paymentSubject,
+            loantSubject
+        FROM
+            formtable_main_416
+        WHERE requestId = #{id}
+    </select>
+
+    <select id="getTravellingCostDetail"
+            resultType="com.tianyi.project.monitor.job.task.oa.cost.domain.FormTableMainDt">
+        SELECT
+            id,
+            mainid,
+            costSubject,
+            je,
+            sm,
+            round(
+                (
+                CASE
+                        WHEN sm = '0' THEN
+                        0
+                        WHEN sm = '1' THEN
+                        je / 1.13 * 0.13
+                        WHEN sm = '2' THEN
+                        je / 1.03 * 0.03
+                        WHEN sm = '3' THEN
+                        je / 1.06 * 0.06
+                        WHEN sm = '4' THEN
+                        je / 1.01 * 0.01
+                        WHEN sm = '5' THEN
+                        je / 1.09 * 0.09
+                    END
+                    ),
+                    2
+                ) AS tax,
+                bm2
+        FROM
+            formtable_main_416_dt2
+        WHERE mainid = #{id}
+    </select>
+
+    <select id="getPaymentCostHead" resultType="com.tianyi.project.monitor.job.task.oa.cost.domain.FormTableMain">
+        SELECT
+            id,
+            requestId,
+            zgs,
+            fkrq AS payDate,
+            bzsm,
+            fkbz AS bz,
+            lcbh AS lsh,
+            sjdkje,
+            cjkje,
+            paymentsubjects AS paymentSubject,
+            loantSubject,
+            rjzstmc
+        FROM
+            formtable_main_47
+        WHERE requestId = #{id}
+    </select>
+
+    <select id="getPaymentCostDetail" resultType="com.tianyi.project.monitor.job.task.oa.cost.domain.FormTableMainDt">
+        SELECT
+            id,
+            mainid,
+            km AS costSubject,
+            sjfkje AS je,
+            se AS tax,
+            sbbm AS bm2,
+            linecomment AS lineComment,
+            CASE
+                WHEN brand = '' THEN
+                NULL ELSE brand
+            END AS brand
+        FROM
+            formtable_main_47_dt1
+        WHERE
+            mainid = #{id}
+    </select>
+
+    <select id="getBrandList" resultType="com.tianyi.project.monitor.job.task.oa.cost.domain.ErpBrand">
+        SELECT
+            LIST_ID as id,
+            LIST_ITEM_NAME as brand
+        FROM
+            品牌_尚佰
+    </select>
+</mapper>

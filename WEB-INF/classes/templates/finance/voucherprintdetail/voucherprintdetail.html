@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('凭证打印明细列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+            <input type="hidden" name="mainid" id="mainid" th:value="*{mainid}">
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('finance:voucherprintdetail:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('finance:voucherprintdetail:remove')}]];
+    var prefix = ctx + "finance/voucherprintdetail";
+    var mainid = $('#mainid').val();
+    $(function () {
+        console.log("mainid:" + mainid);
+        var options = {
+            url: prefix + "/list?mainid=" + mainid,
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "凭证打印明细",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '事务处理编号+事务处理行编号',
+                    visible: false
+                },
+                {
+                    field: 'transcationId',
+                    title: '事务处理编号'
+                },
+                {
+                    field: 'fileNum',
+                    title: '文件号码'
+                },
+                {
+                    field: 'accountPeriod',
+                    title: '会计期间'
+                },
+                {
+                    field: 'type',
+                    title: '单据类型'
+                },
+                {
+                    field: 'subject',
+                    title: '科目名称'
+                },
+                {
+                    field: 'auxiliaryItem',
+                    title: '辅助项'
+                },
+                {
+                    field: 'lineMemo',
+                    title: '行备注'
+                },
+                {
+                    field: 'titleMemo',
+                    title: '头备注'
+                },
+                {
+                    field: 'debit',
+                    title: '借记'
+                },
+                {
+                    field: 'credit',
+                    title: '贷记'
+                },
+                {
+                    field: 'amountForeign',
+                    title: '金额外币'
+                },
+                {
+                    field: 'rate',
+                    title: '汇率'
+                },
+                {
+                    field: 'currency',
+                    title: '货币'
+                },
+                {
+                    field: 'voucherNumber',
+                    title: '凭证号'
+                },
+                {
+                    field: 'documentMaker',
+                    title: '制单人'
+                },
+                {
+                    field: 'bookkeeper',
+                    title: '记账人'
+                },
+                {
+                    field: 'verifier',
+                    title: '审核人'
+                },
+                {
+                    field: 'isactive',
+                    title: '标签',
+                    formatter: function (value, row, index) {
+                        if (row['isactive'] == 1) {
+                            return '正常';
+                        }
+                        if (row['isactive'] == 0) {
+                            return '作废';
+                        }
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

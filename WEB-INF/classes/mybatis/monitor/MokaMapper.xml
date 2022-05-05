@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.mapper.MokaMapper">
+    <resultMap type="com.tianyi.project.monitor.job.domain.moka.MokaOrganization"
+               id="mokaOrganizationResult">
+        <result property="name" column="name"/>
+        <result property="department_code" column="department_code"/>
+        <result property="parent_code" column="parent_code"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <select id="selectOrganizationList" resultMap="mokaOrganizationResult">
+        SELECT
+            companydesc AS name,
+            id AS department_code,
+            NULL AS parent_code,
+            2 AS type
+        FROM
+            HrmCompany UNION ALL
+        SELECT
+            subcompanyname AS name,
+            id AS department_code,
+            1 AS parent_code,
+            2 AS type
+        FROM
+            HrmSubCompany
+        WHERE
+            id IN ( 7, 8, 9, 26, 42 ) UNION ALL
+        SELECT
+            departmentname AS name,
+            id AS department_code,
+        CASE
+                supdepid
+                WHEN 0 THEN
+                subcompanyid1 ELSE supdepid
+            END AS parent_code,
+            1 AS type
+        FROM
+            HrmDepartment
+        WHERE
+            subcompanyid1 IN ( 7, 8, 9, 26, 42 )
+            AND ( canceled != 1 OR canceled IS NULL )
+    </select>
+</mapper>

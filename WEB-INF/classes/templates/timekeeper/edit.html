@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('考勤员新增')"/>
+    <th:block th:include="include :: ztree-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-dept-edit">
+        <input id="userId" name="userId" type="hidden"/>
+        <div class="form-group">
+            <label class="col-sm-3 control-label ">选择员工：</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="staff" th:value="${userId}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">部门权限：</label>
+            <div class="col-sm-8">
+                <div id="deptTrees" class="ztree"></div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: ztree-js"/>
+<th:block th:include="include :: bootstrap-suggest-js"/>
+<th:block th:include="include :: bootstrap-typeahead-js"/>
+<script type="text/javascript">
+    var prefix = ctx + "attendance/timekeeper";
+    $(function () {
+        $(function () {
+            var userId = $("#staff").val();
+            var workcode = userId.split(" ")[0];
+            var url = ctx + "attendance/timekeeper/treeData/"+workcode;
+            var options = {
+                id: "deptTrees",
+                url: url,
+                check: {enable: true},
+                expandLevel: 2
+            };
+            $.tree.init(options);
+        });
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            edit();
+        }
+    }
+
+    function edit() {
+        var workcode = $("#staff").val().split(" ")[0];
+        var deptIds = $.tree.getCheckedNodes();
+        if (deptIds.length == 0) {
+            alert("请选择部门！");
+        } else {
+            console.log("workcode:" + workcode);
+            console.log("deptIds:" + deptIds);
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: ctx + "attendance/timekeeper/edit",
+                data: {
+                    "workCode": workcode,
+                    "deptIds": deptIds
+                },
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    $.operate.successCallback(data);
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

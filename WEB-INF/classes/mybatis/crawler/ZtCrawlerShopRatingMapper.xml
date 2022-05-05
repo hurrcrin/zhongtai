@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.crawler.shoprating.mapper.ZtCrawlerShopRatingMapper">
+    
+    <resultMap type="ZtCrawlerShopRating" id="ZtCrawlerShopRatingResult">
+        <result property="brand"    column="brand"    />
+        <result property="channel"    column="channel"    />
+        <result property="shoplink"    column="shoplink"    />
+        <result property="asin"    column="asin"    />
+        <result property="rating"    column="rating"    />
+        <result property="productSequence"    column="product_sequence"    />
+        <result property="link"    column="link"    />
+    </resultMap>
+
+    <sql id="selectZtCrawlerShopRatingVo">
+        select brand, channel, shoplink, asin, rating, product_sequence, link from zt_crawler_shop_rating
+    </sql>
+
+    <select id="selectZtCrawlerShopRatingList" parameterType="ZtCrawlerShopRating" resultMap="ZtCrawlerShopRatingResult">
+        <include refid="selectZtCrawlerShopRatingVo"/>
+        <where>  
+            <if test="brand != null  and brand != ''"> and brand = #{brand}</if>
+            <if test="channel != null  and channel != ''"> and channel = #{channel}</if>
+            <if test="shoplink != null  and shoplink != ''"> and shoplink = #{shoplink}</if>
+            <if test="asin != null  and asin != ''"> and asin like concat('%', #{asin}, '%')</if>
+            <if test="rating != null "> and rating = #{rating}</if>
+            <if test="productSequence != null "> and product_sequence = #{productSequence}</if>
+            <if test="link != null  and link != ''"> and link = #{link}</if>
+        </where>
+    </select>
+    
+    <select id="selectZtCrawlerShopRatingById" parameterType="String" resultMap="ZtCrawlerShopRatingResult">
+        <include refid="selectZtCrawlerShopRatingVo"/>
+        where brand = #{brand}
+    </select>
+        
+    <insert id="insertZtCrawlerShopRating" parameterType="ZtCrawlerShopRating">
+        insert into zt_crawler_shop_rating
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="brand != null  and brand != ''">brand,</if>
+            <if test="channel != null  and channel != ''">channel,</if>
+            <if test="shoplink != null  and shoplink != ''">shoplink,</if>
+            <if test="asin != null  and asin != ''">asin,</if>
+            <if test="rating != null ">rating,</if>
+            <if test="productSequence != null ">product_sequence,</if>
+            <if test="link != null  and link != ''">link,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="brand != null  and brand != ''">#{brand},</if>
+            <if test="channel != null  and channel != ''">#{channel},</if>
+            <if test="shoplink != null  and shoplink != ''">#{shoplink},</if>
+            <if test="asin != null  and asin != ''">#{asin},</if>
+            <if test="rating != null ">#{rating},</if>
+            <if test="productSequence != null ">#{productSequence},</if>
+            <if test="link != null  and link != ''">#{link},</if>
+         </trim>
+    </insert>
+
+    <update id="updateZtCrawlerShopRating" parameterType="ZtCrawlerShopRating">
+        update zt_crawler_shop_rating
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="channel != null  and channel != ''">channel = #{channel},</if>
+            <if test="shoplink != null  and shoplink != ''">shoplink = #{shoplink},</if>
+            <if test="asin != null  and asin != ''">asin = #{asin},</if>
+            <if test="rating != null ">rating = #{rating},</if>
+            <if test="productSequence != null ">product_sequence = #{productSequence},</if>
+            <if test="link != null  and link != ''">link = #{link},</if>
+        </trim>
+        where brand = #{brand}
+    </update>
+
+    <delete id="deleteZtCrawlerShopRatingById" parameterType="String">
+        delete from zt_crawler_shop_rating where brand = #{brand}
+    </delete>
+
+    <delete id="deleteZtCrawlerShopRatingByIds" parameterType="String">
+        delete from zt_crawler_shop_rating where brand in 
+        <foreach item="brand" collection="array" open="(" separator="," close=")">
+            #{brand}
+        </foreach>
+    </delete>
+    
+</mapper>

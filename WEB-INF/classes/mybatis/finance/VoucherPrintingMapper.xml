@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.finance.voucherprinting.mapper.VoucherPrintingMapper">
+
+    <resultMap type="VoucherPrinting" id="VoucherPrintingResult">
+        <result property="id" column="id"/>
+        <result property="fileNum" column="file_num"/>
+        <result property="accountPeriod" column="account_period"/>
+        <result property="transcationId" column="transcation_id"/>
+        <result property="type" column="type"/>
+        <result property="auxiliaryItem" column="auxiliary_item"/>
+        <result property="titleMemo" column="title_memo"/>
+        <result property="amount" column="amount"/>
+        <result property="amountForeign" column="amount_foreign"/>
+        <result property="rate" column="exchange_rate"/>
+        <result property="currency" column="currency"/>
+        <result property="subsdiary" column="subsdiary"/>
+        <result property="voucherNumber" column="voucher_number"/>
+        <result property="documentMaker" column="document_maker"/>
+        <result property="documentMakerSign" column="document_maker_sign"/>
+        <result property="bookkeeper" column="bookkeeper"/>
+        <result property="verifier" column="verifier"/>
+        <result property="status" column="status"/>
+        <result property="isactive" column="isactive"/>
+    </resultMap>
+
+    <sql id="selectVoucherPrintingVo">
+        select id, file_num, account_period, transcation_id, type, auxiliary_item, title_memo, amount, currency, subsdiary, voucher_number, document_maker, document_maker_sign, bookkeeper, verifier, status, isactive,amount_foreign,exchange_rate from tran_data_summary
+    </sql>
+
+    <select id="selectVoucherPrintingList" parameterType="VoucherPrinting" resultMap="VoucherPrintingResult">
+        <include refid="selectVoucherPrintingVo"/>
+        <where>
+            <if test="accountPeriod != null  and accountPeriod != ''">and account_period = #{accountPeriod}</if>
+            <if test="type != null  and type != ''">and type = #{type}</if>
+            <if test="subsdiary != null  and subsdiary != ''">and subsdiary = #{subsdiary}</if>
+            <if test="params.beginVoucherNumber != null and params.beginVoucherNumber != '' and params.endVoucherNumber != null and params.endVoucherNumber != ''">
+                and voucher_number between #{params.beginVoucherNumber} and #{params.endVoucherNumber}
+            </if>
+            and status=1 order by voucher_number
+        </where>
+    </select>
+
+    <select id="selectVoucherPrintingById" parameterType="Long" resultMap="VoucherPrintingResult">
+        <include refid="selectVoucherPrintingVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertVoucherPrinting" parameterType="VoucherPrinting" useGeneratedKeys="true" keyProperty="id">
+        insert into tran_data_summary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileNum != null  and fileNum != ''">file_num,</if>
+            <if test="accountPeriod != null  and accountPeriod != ''">account_period,</if>
+            <if test="transcationId != null  and transcationId != ''">transcation_id,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="auxiliaryItem != null  and auxiliaryItem != ''">auxiliary_item,</if>
+            <if test="titleMemo != null  and titleMemo != ''">title_memo,</if>
+            <if test="amount != null ">amount,</if>
+            <if test="amountForeign != null ">amount_foreign,</if>
+            <if test="rate != null ">exchange_rate,</if>
+            <if test="currency != null  and currency != ''">currency,</if>
+            <if test="subsdiary != null  and subsdiary != ''">subsdiary,</if>
+            <if test="voucherNumber != null ">voucher_number,</if>
+            <if test="documentMaker != null  and documentMaker != ''">document_maker,</if>
+            <if test="documentMakerSign != null ">document_maker_sign,</if>
+            <if test="bookkeeper != null  and bookkeeper != ''">bookkeeper,</if>
+            <if test="verifier != null  and verifier != ''">verifier,</if>
+            <if test="status != null ">status,</if>
+            <if test="isactive != null ">isactive,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileNum != null  and fileNum != ''">#{fileNum},</if>
+            <if test="accountPeriod != null  and accountPeriod != ''">#{accountPeriod},</if>
+            <if test="transcationId != null  and transcationId != ''">#{transcationId},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="auxiliaryItem != null  and auxiliaryItem != ''">#{auxiliaryItem},</if>
+            <if test="titleMemo != null  and titleMemo != ''">#{titleMemo},</if>
+            <if test="amount != null ">#{amount},</if>
+            <if test="amountForeign != null ">#{amountForeign},</if>
+            <if test="rate != null ">#{rate},</if>
+            <if test="currency != null  and currency != ''">#{currency},</if>
+            <if test="subsdiary != null  and subsdiary != ''">#{subsdiary},</if>
+            <if test="voucherNumber != null ">#{voucherNumber},</if>
+            <if test="documentMaker != null  and documentMaker != ''">#{documentMaker},</if>
+            <if test="documentMakerSign != null ">#{documentMakerSign},</if>
+            <if test="bookkeeper != null  and bookkeeper != ''">#{bookkeeper},</if>
+            <if test="verifier != null  and verifier != ''">#{verifier},</if>
+            <if test="status != null ">#{status},</if>
+            <if test="isactive != null ">#{isactive},</if>
+        </trim>
+    </insert>
+
+    <update id="updateVoucherPrinting" parameterType="VoucherPrinting">
+        update tran_data_summary
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileNum != null  and fileNum != ''">file_num = #{fileNum},</if>
+            <if test="accountPeriod != null  and accountPeriod != ''">account_period = #{accountPeriod},</if>
+            <if test="transcationId != null  and transcationId != ''">transcation_id = #{transcationId},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="auxiliaryItem != null  and auxiliaryItem != ''">auxiliary_item = #{auxiliaryItem},</if>
+            <if test="titleMemo != null  and titleMemo != ''">title_memo = #{titleMemo},</if>
+            <if test="amount != null ">amount = #{amount},</if>
+            <if test="amountForeign != null ">amount_foreign = #{amountForeign},</if>
+            <if test="rate != null ">exchange_rate = #{rate},</if>
+            <if test="currency != null  and currency != ''">currency = #{currency},</if>
+            <if test="subsdiary != null  and subsdiary != ''">subsdiary = #{subsdiary},</if>
+            <if test="voucherNumber != null ">voucher_number = #{voucherNumber},</if>
+            <if test="documentMaker != null  and documentMaker != ''">document_maker = #{documentMaker},</if>
+            <if test="documentMakerSign != null ">document_maker_sign = #{documentMakerSign},</if>
+            <if test="bookkeeper != null  and bookkeeper != ''">bookkeeper = #{bookkeeper},</if>
+            <if test="verifier != null  and verifier != ''">verifier = #{verifier},</if>
+            <if test="status != null ">status = #{status},</if>
+            <if test="isactive != null ">isactive = #{isactive},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteVoucherPrintingById" parameterType="Long">
+        delete from tran_data_summary where id = #{id}
+    </delete>
+
+    <delete id="deleteVoucherPrintingByIds" parameterType="String">
+        delete from tran_data_summary where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

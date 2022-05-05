@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.mapper.UpdateBaseTable.ErpCategoryMapper">
+    <!-- 通用字段映射-->
+    <resultMap type="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpCategory" id="erpCategoryResult">
+        <result property="id" column="id"/>
+        <result property="erpCategoryId" column="erp_category_id"/>
+        <result property="erpCategoryName" column="erp_category_name"/>
+        <result property="flag" column="flag"/>
+        <result property="erpCategoryCode" column="erp_category_code"/>
+        <result property="erpCategoryBigName" column="erp_category_big_name"/>
+        <result property="erpCategoryMidName" column="erp_category_mid_name"/>
+        <result property="erpCategorySmlName" column="erp_category_sml_name"/>
+        <result property="erpCategoryParentId" column="erp_category_parent_id"/>
+        <result property="erpCompanyId" column="erp_company_id"/>
+    </resultMap>
+    <!--  查询erp系统公司信息-->
+    <select id="selectErpCategoryList" resultMap="erpCategoryResult">
+        SELECT
+            class_id as erp_category_id
+            ,full_name as erp_category_name
+            ,REGEXP_SUBSTR(full_name,'[^ : ]+',1,1,'i') as erp_category_big_name
+            ,REGEXP_SUBSTR(full_name,'[^ : ]+',1,2,'i') as erp_category_mid_name
+            ,REGEXP_SUBSTR(full_name,'[^ : ]+',1,3,'i') as erp_category_sml_name
+            ,custrecord126_id as erp_company_id
+            ,parent_id as erp_category_parent_id
+            ,CASE ISINACTIVE
+                WHEN 'No' THEN 1
+                ELSE 2
+            END
+            as flag
+            ,custrecord1406 as erp_category_code
+        from
+            classes
+    </select>
+    <!--  根据erpCategoryId查询boss系统品类信息-->
+    <select id="selectByErpCategoryId" resultMap="erpCategoryResult">
+        SELECT
+        *
+        FROM
+        erp_category
+        <where>
+            erp_category_id = #{erpCategoryId}
+        </where>
+
+    </select>
+
+    <!-- 插入boss系统 公司信息-->
+    <insert id="insertErpCategory" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpCategory"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO erp_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="erpCategoryId != null and erpCategoryId != ''">
+                erp_category_id,
+            </if>
+            <if test="erpCategoryName != null and erpCategoryName != ''">
+                erp_category_name,
+            </if>
+            <if test="flag != null and flag != '' or flag == 0 ">
+                flag,
+            </if>
+            <if test="erpCategoryCode != null and erpCategoryCode != ''">
+                erp_category_code,
+            </if>
+            <if test="erpCategoryBigName != null and erpCategoryBigName != ''">
+                erp_category_big_name,
+            </if>
+            <if test="erpCategoryMidName != null and erpCategoryMidName != ''">
+                erp_category_mid_name,
+            </if>
+            <if test="erpCategorySmlName != null and erpCategorySmlName != ''">
+                erp_category_sml_name,
+            </if>
+            <if test="erpCategoryParentId != null and erpCategoryParentId != ''">
+                erp_category_parent_id,
+            </if>
+            <if test="erpCompanyId != null and erpCompanyId != ''">
+                erp_company_id,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="erpCategoryId != null and erpCategoryId != ''">
+                #{erpCategoryId},
+            </if>
+            <if test="erpCategoryName != null and erpCategoryName != ''">
+                #{erpCategoryName},
+            </if>
+            <if test="flag != null and flag != ''  or flag == 0 ">
+                #{flag},
+            </if>
+            <if test="erpCategoryCode != null and erpCategoryCode != ''">
+                #{erpCategoryCode},
+            </if>
+            <if test="erpCategoryBigName != null and erpCategoryBigName != ''">
+                #{erpCategoryBigName},
+            </if>
+            <if test="erpCategoryMidName != null and erpCategoryMidName != ''">
+                #{erpCategoryMidName},
+            </if>
+            <if test="erpCategorySmlName != null and erpCategorySmlName != ''">
+                #{erpCategorySmlName},
+            </if>
+            <if test="erpCategoryParentId != null and erpCategoryParentId != ''">
+                #{erpCategoryParentId},
+            </if>
+            <if test="erpCompanyId != null and erpCompanyId != ''">
+                #{erpCompanyId},
+            </if>
+        </trim>
+    </insert>
+    <!-- 更新boss系统中公司信息-->
+    <update id="updateErpCategory" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpCategory">
+        update erp_category
+        <set>
+            <if test="erpCategoryName != null and erpCategoryName != ''">
+                erp_category_name = #{erpCategoryName},
+            </if>
+            <if test="flag != null and flag != ''  or flag == 0 ">
+                flag = #{flag},
+            </if>
+            <if test="erpCategoryCode != null and erpCategoryCode != ''">
+                erp_category_code = #{erpCategoryCode},
+            </if>
+            <if test="erpCategoryBigName != null and erpCategoryBigName != ''">
+                erp_category_big_name = #{erpCategoryBigName},
+            </if>
+            <if test="erpCategoryMidName != null and erpCategoryMidName != ''">
+                erp_category_mid_name = #{erpCategoryMidName},
+            </if>
+            <if test="erpCategorySmlName != null and erpCategorySmlName != ''">
+                erp_category_sml_name = #{erpCategorySmlName},
+            </if>
+            <if test="erpCategoryParentId != null and erpCategoryParentId != ''">
+                erp_category_parent_id = #{erpCategoryParentId},
+            </if>
+            <if test="erpCompanyId != null and erpCompanyId != ''">
+                erp_company_id = #{erpCompanyId}
+            </if>
+        </set>
+        where erp_category_id = #{erpCategoryId}
+    </update>
+</mapper>

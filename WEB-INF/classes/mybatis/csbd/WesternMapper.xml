@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.csbd.mapper.WesternMapper">
+
+  <insert id="insertProductInventory" parameterType="com.tianyi.project.csbd.entity.dao.WesternProductInventoryDAO">
+    insert into western_product_inventory
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="dataTime != null">
+        data_time,
+      </if>
+      <if test="productSku != null">
+        product_sku,
+      </if>
+      <if test="productBarcode != null">
+        product_barcode,
+      </if>
+      <if test="shipped != null">
+        shipped,
+      </if>
+      <if test="reserved != null">
+        reserved,
+      </if>
+      <if test="warehouseCode != null">
+        warehouse_code,
+      </if>
+      <if test="warehouseId != null">
+        warehouse_id,
+      </if>
+      <if test="pending != null">
+        pending,
+      </if>
+      <if test="unsellable != null">
+        unsellable,
+      </if>
+      <if test="sellable != null">
+        sellable,
+      </if>
+      <if test="returnQuantity != null">
+        return_quantity,
+      </if>
+      <if test="onway != null">
+        onway,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+        create_time,
+      <if test="updateBy != null">
+        update_by,
+      </if>
+        update_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="dataTime != null">
+        #{dataTime,jdbcType=VARCHAR},
+      </if>
+      <if test="productSku != null">
+        #{productSku,jdbcType=VARCHAR},
+      </if>
+      <if test="productBarcode != null">
+        #{productBarcode,jdbcType=VARCHAR},
+      </if>
+      <if test="shipped != null">
+        #{shipped,jdbcType=INTEGER},
+      </if>
+      <if test="reserved != null">
+        #{reserved,jdbcType=INTEGER},
+      </if>
+      <if test="warehouseCode != null">
+        #{warehouseCode,jdbcType=VARCHAR},
+      </if>
+      <if test="warehouseId != null">
+        #{warehouseId},
+      </if>
+      <if test="pending != null">
+        #{pending,jdbcType=INTEGER},
+      </if>
+      <if test="unsellable != null">
+        #{unsellable,jdbcType=INTEGER},
+      </if>
+      <if test="sellable != null">
+        #{sellable,jdbcType=INTEGER},
+      </if>
+      <if test="returnQuantity != null">
+        #{returnQuantity,jdbcType=INTEGER},
+      </if>
+      <if test="onway != null">
+        #{onway,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      now(),
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=VARCHAR},
+      </if>
+      now()
+    </trim>
+  </insert>
+
+</mapper>

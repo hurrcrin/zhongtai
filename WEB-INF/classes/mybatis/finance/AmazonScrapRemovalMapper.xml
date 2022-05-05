@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.finance.removal.mapper.AmazonScrapRemovalMapper">
+
+    <resultMap type="AmazonScrapRemoval" id="AmazonScrapRemovalResult">
+        <id property="id" column="id"/>
+        <result property="requestDate" column="request_date"/>
+        <result property="accountPeriod" column="account_period"/>
+        <result property="orderId" column="order_id"/>
+        <result property="orderIdUpdate" column="order_id_update"/>
+        <result property="sellerId" column="seller_id"/>
+        <result property="orderType" column="order_type"/>
+        <result property="orderStatus" column="order_status"/>
+        <result property="lastUpdatedDate" column="last_updated_date"/>
+        <result property="sku" column="sku"/>
+        <result property="fnsku" column="fnsku"/>
+        <result property="disposition" column="disposition"/>
+        <result property="requestedQuantity" column="requested_quantity"/>
+        <result property="cancelledQuantity" column="cancelled_quantity"/>
+        <result property="disposedQuantity" column="disposed_quantity"/>
+        <result property="shippedQuantity" column="shipped_quantity"/>
+        <result property="inProcessQuantity" column="in_process_quantity"/>
+        <result property="removalFee" column="removal_fee"/>
+        <result property="currency" column="currency"/>
+        <result property="returnId" column="return_id"/>
+        <result property="examine" column="examine"/>
+    </resultMap>
+
+    <sql id="selectAmazonScrapRemovalVo">
+        select id, account_period, request_date, order_id, order_id_update, seller_id, order_type, order_status, last_updated_date, sku, fnsku, disposition, requested_quantity, cancelled_quantity, disposed_quantity, shipped_quantity, in_process_quantity, removal_fee, currency, return_id from amazon_scrap_removal
+    </sql>
+
+    <select id="selectAmazonScrapRemovalList" parameterType="AmazonScrapRemoval" resultMap="AmazonScrapRemovalResult">
+        <include refid="selectAmazonScrapRemovalVo"/>
+        <where>
+            <if test="requestDate != null and requestDate != ''">and request_date like concat('%', #{requestDate},
+                '%')
+            </if>
+            <if test="sellerId != null and sellerId != ''">and seller_id = #{sellerId}</if>
+            <if test="currency != null and currency != ''">and currency = #{currency}</if>
+            <if test="examine == 1">and order_status='Completed'</if>
+
+            <if test="accountPeriod != null and accountPeriod != ''">and account_period = #{accountPeriod}</if>
+            <if test="orderId != null and orderId != ''">and order_id = #{orderId}</if>
+            <if test="fnsku != null and fnsku != ''">and fnsku = #{fnsku}</if>
+            <if test="disposition != null and disposition != ''">and disposition = #{disposition}</if>
+        </where>
+    </select>
+
+    <select id="selectAmazonScrapRemovalById" parameterType="String" resultMap="AmazonScrapRemovalResult">
+        <include refid="selectAmazonScrapRemovalVo"/>
+        where request_date = #{requestDate}
+    </select>
+
+    <insert id="insertAmazonScrapRemoval" parameterType="AmazonScrapRemoval">
+        insert into amazon_scrap_removal
+        <trim prefix="(" suffix=") values" suffixOverrides=",">
+            <if test="accountPeriod != null  and accountPeriod != ''">account_period,</if>
+            <if test="requestDate != null  and requestDate != ''">request_date,</if>
+            <if test="orderId != null  and orderId != ''">order_id,</if>
+            <if test="orderIdUpdate != null  and orderIdUpdate != ''">order_id_update,</if>
+            <if test="sellerId != null  and sellerId != ''">seller_id,</if>
+            <if test="orderType != null  and orderType != ''">order_type,</if>
+            <if test="orderStatus != null  and orderStatus != ''">order_status,</if>
+            <if test="lastUpdatedDate != null  and lastUpdatedDate != ''">last_updated_date,</if>
+            <if test="sku != null  and sku != ''">sku,</if>
+            <if test="fnsku != null  and fnsku != ''">fnsku,</if>
+            <if test="disposition != null  and disposition != ''">disposition,</if>
+            <if test="requestedQuantity != null ">requested_quantity,</if>
+            <if test="cancelledQuantity != null ">cancelled_quantity,</if>
+            <if test="disposedQuantity != null ">disposed_quantity,</if>
+            <if test="shippedQuantity != null ">shipped_quantity,</if>
+            <if test="inProcessQuantity != null  and inProcessQuantity != ''">in_process_quantity,</if>
+            <if test="removalFee != null  and removalFee != ''">removal_fee,</if>
+            <if test="currency != null  and currency != ''">currency,</if>
+            <if test="returnId != null  and returnId != ''">return_id,</if>
+        </trim>
+        <trim prefix=" (" suffix=")" suffixOverrides=",">
+            <if test="accountPeriod != null  and accountPeriod != ''">#{accountPeriod},</if>
+            <if test="requestDate != null  and requestDate != ''">#{requestDate},</if>
+            <if test="orderId != null  and orderId != ''">#{orderId},</if>
+            <if test="orderIdUpdate != null  and orderIdUpdate != ''">#{orderIdUpdate},</if>
+            <if test="sellerId != null  and sellerId != ''">#{sellerId},</if>
+            <if test="orderType != null  and orderType != ''">#{orderType},</if>
+            <if test="orderStatus != null  and orderStatus != ''">#{orderStatus},</if>
+            <if test="lastUpdatedDate != null  and lastUpdatedDate != ''">#{lastUpdatedDate},</if>
+            <if test="sku != null  and sku != ''">#{sku},</if>
+            <if test="fnsku != null  and fnsku != ''">#{fnsku},</if>
+            <if test="disposition != null  and disposition != ''">#{disposition},</if>
+            <if test="requestedQuantity != null ">#{requestedQuantity},</if>
+            <if test="cancelledQuantity != null ">#{cancelledQuantity},</if>
+            <if test="disposedQuantity != null ">#{disposedQuantity},</if>
+            <if test="shippedQuantity != null ">#{shippedQuantity},</if>
+            <if test="inProcessQuantity != null  and inProcessQuantity != ''">#{inProcessQuantity},</if>
+            <if test="removalFee != null  and removalFee != ''">#{removalFee},</if>
+            <if test="currency != null  and currency != ''">#{currency},</if>
+            <if test="returnId != null  and returnId != ''">#{returnId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAmazonScrapRemoval" parameterType="AmazonScrapRemoval">
+        update amazon_scrap_removal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderIdUpdate != null  and orderIdUpdate != ''">order_id_update = #{orderIdUpdate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAmazonScrapRemovalById" parameterType="String">
+        delete from amazon_scrap_removal where request_date = #{requestDate}
+    </delete>
+
+    <delete id="deleteAmazonScrapRemovalByIds" parameterType="String">
+        delete from amazon_scrap_removal where request_date in
+        <foreach item="requestDate" collection="array" open="(" separator="," close=")">
+            #{requestDate}
+        </foreach>
+    </delete>
+
+    <select id="selectLocationIdList" parameterType="String" resultType="String">
+        select id from amazon_scrap_removal_location
+    </select>
+
+    <update id="updateAmazonScrapRemovalByExcel" parameterType="AmazonScrapRemoval">
+        update amazon_scrap_removal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="requestDate != null  and requestDate != ''">request_date=#{requestDate},</if>
+            <if test="sellerId != null  and sellerId != ''">seller_id=#{sellerId},</if>
+            <if test="orderType != null  and orderType != ''">order_type=#{orderType},</if>
+            <if test="orderStatus != null  and orderStatus != ''">order_status=#{orderStatus},</if>
+            <if test="lastUpdatedDate != null  and lastUpdatedDate != ''">last_updated_date=#{lastUpdatedDate},</if>
+            <if test="sku != null  and sku != ''">sku=#{sku},</if>
+            <if test="requestedQuantity != null ">requested_quantity=#{requestedQuantity},</if>
+            <if test="cancelledQuantity != null ">cancelled_quantity=#{cancelledQuantity},</if>
+            <if test="disposedQuantity != null ">disposed_quantity=#{disposedQuantity},</if>
+            <if test="shippedQuantity != null ">shipped_quantity=#{shippedQuantity},</if>
+            <if test="inProcessQuantity != null  and inProcessQuantity != ''">
+                in_process_quantity=#{inProcessQuantity},
+            </if>
+            <if test="removalFee != null  and removalFee != ''">removal_fee=#{removalFee},</if>
+        </trim>
+        where account_period =#{accountPeriod}
+        and order_id = #{orderId}
+        and fnsku = #{fnsku}
+        and disposition = #{disposition}
+        and currency=#{currency}
+    </update>
+
+    <select id="selectD" parameterType="com.tianyi.project.finance.removal.domain.AmazonScrapRemoval"
+            resultMap="AmazonScrapRemovalResult">
+        select group_concat(id) as id
+        ,order_type
+        ,sku
+        ,sum(disposed_quantity) as disposed_quantity
+        from amazon_scrap_removal
+        <where>
+            and (order_id like 'D_%' or order_id_update like 'D_%')
+            and seller_id=#{sellerId}
+            and order_type='Disposal'
+            and order_status='Completed'
+            and currency=#{currency}
+            and return_id is null
+        </where>
+        group by sku
+    </select>
+
+    <select id="selectSU" parameterType="com.tianyi.project.finance.removal.domain.AmazonScrapRemoval"
+            resultMap="AmazonScrapRemovalResult">
+        select group_concat(id) as id
+        ,order_type
+        ,sku
+        ,sum(shipped_quantity) as shipped_quantity
+        from amazon_scrap_removal
+        <where>
+            and (order_id like 'SU_%' or order_id_update like 'SU_%')
+            and seller_id=#{sellerId}
+            and order_type='Return'
+            and order_status='Completed'
+            and currency=#{currency}
+            and return_id is null
+        </where>
+        group by sku
+    </select>
+
+    <select id="selectSSLocationCode" parameterType="com.tianyi.project.finance.removal.domain.AmazonScrapRemoval"
+            resultType="String">
+        select substring(order_id,1,6) as order_id
+        from amazon_scrap_removal
+        <where>
+            and (order_id like 'SS_%' or order_id_update like 'SS_%')
+            and seller_id=#{sellerId}
+            and order_type='Return'
+            and order_status='Completed'
+            and currency=#{currency}
+            and return_id is null
+        </where>
+    </select>
+
+    <select id="selectSS" parameterType="com.tianyi.project.finance.removal.domain.AmazonScrapRemoval"
+            resultMap="AmazonScrapRemovalResult">
+        select group_concat(id) as id
+        ,order_type
+        ,sku
+        ,sum(shipped_quantity) as shipped_quantity
+        from amazon_scrap_removal
+        <where>
+            and (order_id like concat(#{orderId},'%') or order_id_update like concat(#{orderId},'%'))
+            and seller_id=#{sellerId}
+            and order_type='Return'
+            and order_status='Completed'
+            and currency=#{currency}
+            and return_id is null
+        </where>
+        group by sku
+    </select>
+
+    <update id="updateReturnId" parameterType="UpdateReturnId">
+        update amazon_scrap_removal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="returnId != null  and returnId != ''">return_id=#{returnId},</if>
+        </trim>
+        <where>
+            <if test="ids != null  and ids != ''">
+                and id in (${ids})
+            </if>
+        </where>
+    </update>
+</mapper>

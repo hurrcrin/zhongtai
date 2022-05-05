@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('开票计划明细列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="supplychain:invoiceplandetail:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="supplychain:invoiceplandetail:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+            <input type="hidden" name="mainid" id="mainid" th:value="*{mainid}">
+            <input type="hidden" name="status" id="status" th:value="*{status}">
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('supplychain:invoiceplandetail:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('supplychain:invoiceplandetail:remove')}]];
+        var prefix = ctx + "supplychain/invoiceplandetail";
+        var mainid = $('#mainid').val();
+        var status=$('#status').val();
+        $(function() {
+            console.log("mainid:" + mainid);
+            console.log("status:"+status);
+            var options = {
+                url: prefix + "/list?mainid=" + mainid,
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "开票计划明细",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'id', 
+                    title : 'ID',
+                    visible: false
+                },
+                {
+                    field : 'vendor', 
+                    title : '供应商'
+                },
+                {
+                    field : 'receiptnum', 
+                    title : '柜号'
+                },
+                {
+                    field : 'receiptdate', 
+                    title : '接收日期'
+                },
+                {
+                    field : 'accountdate', 
+                    title : '到账日期'
+                },
+                {
+                    field : 'tranid', 
+                    title : '接收单号'
+                },
+                {
+                    field : 'sku', 
+                    title : 'SKU'
+                },
+                {
+                    field : 'receiptname', 
+                    title : '报关名称'
+                },
+                {
+                    field : 'hscode',
+                    title : 'HSCODE'
+                },
+                {
+                    field : 'unit', 
+                    title : '单位'
+                },
+                {
+                    field : 'orderquantity', 
+                    title : '接收数量'
+                },
+                {
+                    field : 'billedquantity',
+                    title : '已开数量'
+                },
+                {
+                    field : 'margin',
+                    title : '余量'
+                },
+                {
+                    field : 'billquantity', 
+                    title : '开单数量'
+                },
+                {
+                    field : 'rate', 
+                    title : '含税单价'
+                },
+                {
+                    field : 'price', 
+                    title : '无税单价'
+                },
+                {
+                    field : 'crossamount', 
+                    title : '含税总额'
+                },
+                {
+                    field : 'amount', 
+                    title : '无税总额'
+                },
+                {
+                    field : 'po', 
+                    title : '采购订单号'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        if(status=='尚佰仓开票') {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                            return actions.join('');
+                        }
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

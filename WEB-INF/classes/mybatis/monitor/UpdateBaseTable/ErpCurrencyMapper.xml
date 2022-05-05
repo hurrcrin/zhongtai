@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.mapper.UpdateBaseTable.ErpCurrencyMapper">
+    <!-- 通用字段映射-->
+    <resultMap type="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpCurrency" id="erpCurrencyResult">
+        <result property="id" column="id"/>
+        <result property="erpCurrencyId" column="erp_currency_id"/>
+        <result property="erpCurrencyName" column="erp_currency_name"/>
+        <result property="erpCurrencyCode" column="erp_currency_code"/>
+        <result property="erpCurrencyStatus" column="erp_currency_status"/>
+    </resultMap>
+    <!--  查询erp系统币种信息-->
+    <select id="selectErpCurrencyList" resultMap="erpCurrencyResult" >
+        SELECT
+            CURRENCY_ID AS erp_currency_id,
+            NAME AS erp_currency_name,
+            SYMBOL AS erp_currency_code,
+            CASE IS_INACTIVE
+                WHEN 'No' THEN 1
+                ELSE 0 END
+            AS erp_currency_status
+        FROM
+            currencies
+    </select>
+    <!--  根据erpCurrencyId查询boss系统币种信息-->
+    <select id="selectByErpCurrencyId" resultMap="erpCurrencyResult">
+        SELECT
+            *
+         FROM
+            erp_currency
+        <where>
+            erp_currency_id = #{erpCurrencyId}
+        </where>
+
+    </select>
+    <!-- 插入boss系统 币种信息-->
+    <insert id="insertErpCurrency" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpCurrency" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO erp_currency
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="erpCurrencyId != null and erpCurrencyId != ''">
+                erp_currency_id,
+            </if>
+            <if test="erpCurrencyName != null and erpCurrencyName != ''">
+                erp_currency_name,
+            </if>
+            <if test="erpCurrencyCode != null and erpCurrencyCode != ''">
+                erp_currency_code,
+            </if>
+            <if test="erpCurrencyStatus != null and erpCurrencyStatus != '' or erpCurrencyStatus == 0 ">
+                erp_currency_status,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="erpCurrencyId != null and erpCurrencyId != ''">
+                #{erpCurrencyId},
+            </if>
+            <if test="erpCurrencyName != null and erpCurrencyName != ''">
+                #{erpCurrencyName},
+            </if>
+            <if test="erpCurrencyCode != null and erpCurrencyCode != ''">
+                #{erpCurrencyCode},
+            </if>
+            <if test="erpCurrencyStatus != null and erpCurrencyStatus != ''  or erpCurrencyStatus == 0 ">
+                #{erpCurrencyStatus},
+            </if>
+        </trim>
+    </insert>
+    <!-- 更新boss系统中币种信息-->
+    <update id="updateErpCurrency" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpCurrency">
+        update erp_currency
+        <set>
+            <if test="erpCurrencyName != null and erpCurrencyName != ''">
+                erp_currency_name = #{erpCurrencyName},
+            </if>
+            <if test="erpCurrencyCode != null and erpCurrencyCode != ''">
+                erp_currency_code = #{erpCurrencyCode},
+            </if>
+            <if test="erpCurrencyStatus != null and erpCurrencyStatus != '' or erpCurrencyStatus == 0 ">
+                erp_currency_status = #{erpCurrencyStatus}
+            </if>
+        </set>
+        where erp_currency_id = #{erpCurrencyId}
+    </update>
+</mapper>

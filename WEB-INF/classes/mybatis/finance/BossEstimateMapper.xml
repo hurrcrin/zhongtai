@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.finance.bossestimate.mapper.BossEstimateMapper">
+
+    <resultMap type="BossEstimate" id="BossEstimateResult">
+        <result property="id" column="id"/>
+        <result property="currencyid" column="currencyId"/>
+        <result property="currency" column="currency"/>
+        <result property="planNo" column="plan_no"/>
+        <result property="channelid" column="channelId"/>
+        <result property="channel" column="channel"/>
+        <result property="sku" column="sku"/>
+        <result property="period" column="period"/>
+        <result property="customFreight" column="custom_freight"/>
+        <result property="customTax" column="custom_tax"/>
+        <result property="subsidiaryid" column="subsidiaryId"/>
+        <result property="produceName" column="produce_name"/>
+        <result property="productCount" column="product_count"/>
+        <result property="productMoney" column="product_money"/>
+        <result property="volume" column="volume"/>
+        <result property="customMoney" column="custom_money"/>
+        <result property="customRate" column="custom_rate"/>
+        <result property="channelCountry" column="渠道国家"/>
+    </resultMap>
+
+    <resultMap type="Platform" id="PlatformResult">
+        <result property="id" column="id"/>
+        <result property="platformName" column="fullName"/>
+    </resultMap>
+
+    <sql id="selectBossEstimateVo">
+        select a.id
+        , a.currencyId
+        , a.currency
+        , a.plan_no
+        , a.channelId
+        , a.channel
+        , a.sku
+        , a.period
+        , case when  subsidiaryId='30' then ROUND(a.custom_freight/e.rate) else round(a.custom_freight/d.rate,2) end as custom_freight
+        , case when subsidiaryId='30' then  ROUND(a.custom_tax) else round(a.custom_tax/c.rate,2) end as custom_tax
+        , a.subsidiaryId
+        , a.produce_name
+        , a.product_count
+        , a.product_money
+        , a.volume
+        , a.custom_money
+        , a.custom_rate
+        ,b.渠道国家
+        from boss_estimate a
+        left join erp_rate c  on c.period=a.period and c.origin_currency='USD' and c.base_currency=a.currency
+        left join erp_rate d  on d.period=a.period and d.origin_currency='USD' and d.base_currency='CNY'
+        left join erp_rate e  on  e.period=a.period and  e.origin_currency='JPY' and e.base_currency='CNY'
+        left join erp_platform b on a.channelid=b.id
+    </sql>
+
+    <select id="selectBossEstimateList" parameterType="BossEstimate" resultMap="BossEstimateResult">
+        <include refid="selectBossEstimateVo"/>
+        <where>
+            <if test="channelid != null  and channelid != ''">and a.channelid in (${channelid})</if>
+            <if test="period != null  and period != ''">and a.period = #{period}</if>
+            <if test="subsidiaryid != null ">and a.subsidiaryId = #{subsidiaryid}</if>
+        </where>
+    </select>
+
+    <select id="selectBossEstimateListGroupByContainer" parameterType="BossEstimate" resultMap="BossEstimateResult">
+        select plan_no
+        ,sum(custom_freight) as custom_freight
+        from boss_estimate
+        <where>
+            <if test="channelid != null  and channelid != ''">and channelid in (${channelid})</if>
+            <if test="period != null  and period != ''">and period = #{period}</if>
+            <if test="subsidiaryid != null ">and subsidiaryId = #{subsidiaryid}</if>
+        </where>
+        group by plan_no
+    </select>
+
+    <select id="selectBossEstimateById" parameterType="Long" resultMap="BossEstimateResult">
+        <include refid="selectBossEstimateVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBossEstimate" parameterType="BossEstimate" useGeneratedKeys="true" keyProperty="id">
+        insert into boss_estimate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="currencyid != null ">currencyId,</if>
+            <if test="currency != null  and currency != ''">currency,</if>
+            <if test="planNo != null  and planNo != ''">plan_no,</if>
+            <if test="channelid != null ">channelId,</if>
+            <if test="channel != null  and channel != ''">channel,</if>
+            <if test="sku != null  and sku != ''">sku,</if>
+            <if test="period != null  and period != ''">period,</if>
+            <if test="customFreight != null ">custom_freight,</if>
+            <if test="customTax != null ">custom_tax,</if>
+            <if test="subsidiaryid != null ">subsidiaryId,</if>
+            <if test="produceName != null  and produceName != ''">produce_name,</if>
+            <if test="productCount != null  and productCount != ''">product_count,</if>
+            <if test="productMoney != null  and productMoney != ''">product_money,</if>
+            <if test="volume != null  and volume != ''">volume,</if>
+            <if test="customMoney != null ">custom_money,</if>
+            <if test="customRate != null ">custom_rate,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="currencyid != null ">#{currencyid},</if>
+            <if test="currency != null  and currency != ''">#{currency},</if>
+            <if test="planNo != null  and planNo != ''">#{planNo},</if>
+            <if test="channelid != null ">#{channelid},</if>
+            <if test="channel != null  and channel != ''">#{channel},</if>
+            <if test="sku != null  and sku != ''">#{sku},</if>
+            <if test="period != null  and period != ''">#{period},</if>
+            <if test="customFreight != null ">#{customFreight},</if>
+            <if test="customTax != null ">#{customTax},</if>
+            <if test="subsidiaryid != null ">#{subsidiaryid},</if>
+            <if test="produceName != null  and produceName != ''">#{produceName},</if>
+            <if test="productCount != null  and productCount != ''">#{productCount},</if>
+            <if test="productMoney != null  and productMoney != ''">#{productMoney},</if>
+            <if test="volume != null  and volume != ''">#{volume},</if>
+            <if test="customMoney != null ">#{customMoney},</if>
+            <if test="customRate != null ">#{customRate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBossEstimate" parameterType="BossEstimate">
+        update boss_estimate
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="currencyid != null ">currencyId = #{currencyid},</if>
+            <if test="currency != null  and currency != ''">currency = #{currency},</if>
+            <if test="planNo != null  and planNo != ''">plan_no = #{planNo},</if>
+            <if test="channelid != null ">channelId = #{channelid},</if>
+            <if test="channel != null  and channel != ''">channel = #{channel},</if>
+            <if test="sku != null  and sku != ''">sku = #{sku},</if>
+            <if test="period != null  and period != ''">period = #{period},</if>
+            <if test="customFreight != null ">custom_freight = #{customFreight},</if>
+            <if test="customTax != null ">custom_tax = #{customTax},</if>
+            <if test="subsidiaryid != null ">subsidiaryId = #{subsidiaryid},</if>
+            <if test="produceName != null  and produceName != ''">produce_name = #{produceName},</if>
+            <if test="productCount != null  and productCount != ''">product_count = #{productCount},</if>
+            <if test="productMoney != null  and productMoney != ''">product_money = #{productMoney},</if>
+            <if test="volume != null  and volume != ''">volume = #{volume},</if>
+            <if test="customMoney != null ">custom_money = #{customMoney},</if>
+            <if test="customRate != null ">custom_rate = #{customRate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBossEstimateById" parameterType="Long">
+        delete from boss_estimate where id = #{id}
+    </delete>
+
+    <delete id="deleteBossEstimateByIds" parameterType="String">
+        delete from boss_estimate where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!--渠道平台-->
+    <select id="selectDataDictionary" resultMap="PlatformResult" parameterType="java.lang.String"
+            statementType="STATEMENT">
+        select ${columns} from ${tableName}
+    </select>
+</mapper>

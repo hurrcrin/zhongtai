@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.crawler.ownerasin.mapper.ZhongtaiCrawlerDailyAsinMapper">
+
+    <resultMap type="ZhongtaiCrawlerDailyAsin" id="ZhongtaiCrawlerDailyAsinResult">
+        <result property="id"    column="id"    />
+        <result property="asin"    column="asin"    />
+        <result property="listing"    column="listing"    />
+        <result property="parentasin"    column="parentasin"    />
+        <result property="property"    column="property"    />
+        <result property="weburl"    column="weburl"    />
+        <result property="addDate"    column="add_date"    />
+        <result property="modifyDate"    column="modify_date"    />
+        <result property="flag"    column="flag"    />
+    </resultMap>
+
+    <sql id="selectZhongtaiCrawlerDailyAsinVo">
+        select id, asin, listing, parentasin, property, weburl, add_date, modify_date, flag  from zt_crawler_daily_asin
+    </sql>
+
+    <select id="selectZhongtaiCrawlerDailyAsinList" parameterType="ZhongtaiCrawlerDailyAsin" resultMap="ZhongtaiCrawlerDailyAsinResult">
+        <include refid="selectZhongtaiCrawlerDailyAsinVo"/>
+        <where>  
+            <if test="asin != null  and asin != ''"> and asin like concat('%', #{asin}, '%')</if>
+            <if test="listing != null  and listing != ''"> and listing like concat('%', #{listing}, '%')</if>
+            <if test="parentasin != null  and parentasin != ''"> and parentasin like concat('%', #{parentasin}, '%')</if>
+            <if test="weburl != null  and weburl != ''"> and weburl = #{weburl}</if>
+            <if test="property != null  and property != ''"> and property = #{property}</if>
+            <if test="params.beginAddDate != null and params.beginAddDate != '' and params.endAddDate != null and params.endAddDate != ''"> and add_date between #{params.beginAddDate} and #{params.endAddDate}</if>
+            <if test="params.beginModifyDate != null and params.beginModifyDate != '' and params.endModifyDate != null and params.endModifyDate != ''"> and modify_date between #{params.beginModifyDate} and #{params.endModifyDate}</if>
+            <if test="flag != null  and flag != ''"> and flag = #{flag}</if>
+        </where>
+    </select>
+    
+    <select id="selectZhongtaiCrawlerDailyAsinById" parameterType="Long" resultMap="ZhongtaiCrawlerDailyAsinResult">
+        <include refid="selectZhongtaiCrawlerDailyAsinVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectZhongtaiCrawlerDailyAsinByAsin" parameterType="String" resultMap="ZhongtaiCrawlerDailyAsinResult">
+        <include refid="selectZhongtaiCrawlerDailyAsinVo"/>
+        where asin = #{asin}
+    </select>
+
+    <insert id="insertZhongtaiCrawlerDailyAsin" parameterType="ZhongtaiCrawlerDailyAsin" useGeneratedKeys="true" keyProperty="id">
+        insert into zt_crawler_daily_asin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="asin != null  and asin != ''">asin,</if>
+            <if test="listing != null  and listing != ''">listing,</if>
+            <if test="parentasin != null  and parentasin != ''">parentasin,</if>
+            <if test="property != null  and property != ''">property,</if>
+            <if test="weburl != null  and weburl != ''">weburl,</if>
+            <if test="addDate != null ">add_date,</if>
+            <if test="modifyDate != null ">modify_date,</if>
+            <if test="flag != null  and flag != ''">flag,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="asin != null  and asin != ''">#{asin},</if>
+            <if test="listing != null  and listing != ''">#{listing},</if>
+            <if test="parentasin != null  and parentasin != ''">#{parentasin},</if>
+            <if test="property != null  and property != ''">#{property},</if>
+            <if test="weburl != null  and weburl != ''">#{weburl},</if>
+            <if test="addDate != null ">#{addDate},</if>
+            <if test="modifyDate != null ">#{modifyDate},</if>
+            <if test="flag != null  and flag != ''">#{flag},</if>
+         </trim>
+    </insert>
+
+    <update id="updateZhongtaiCrawlerDailyAsin" parameterType="ZhongtaiCrawlerDailyAsin">
+        update zt_crawler_daily_asin
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="asin != null  and asin != ''">asin = #{asin},</if>
+            <if test="listing != null  and listing != ''">listing = #{listing},</if>
+            <if test="parentasin != null  and parentasin != ''">parentasin = #{parentasin},</if>
+            <if test="property != null  and property != ''">property = #{property},</if>
+            <if test="weburl != null  and weburl != ''">weburl = #{weburl},</if>
+            <if test="addDate != null ">add_date = #{addDate},</if>
+            <if test="modifyDate != null ">modify_date = #{modifyDate},</if>
+            <if test="flag != null  and flag != ''">flag = #{flag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteZhongtaiCrawlerDailyAsinById" parameterType="Long">
+        delete from zt_crawler_daily_asin where id = #{id}
+    </delete>
+
+    <delete id="deleteZhongtaiCrawlerDailyAsinByIds" parameterType="String">
+        delete from zt_crawler_daily_asin where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

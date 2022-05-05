@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.mapper.UpdateBaseTable.ErpChannelMapper">
+    <!-- 通用字段映射-->
+    <resultMap type="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpChannel" id="ErpChannelResult">
+        <result property="id" column="id"/>
+        <result property="erpChannelId" column="erp_channel_id"/>
+        <result property="erpChannelName" column="erp_channel_name"/>
+        <result property="erpChannelStatus" column="erp_channel_status"/>
+        <result property="erpChannelCode" column="erp_channel_code"/>
+        <result property="erpChannelBigName" column="erp_channel_big_name"/>
+        <result property="erpChannelMidName" column="erp_channel_mid_name"/>
+        <result property="erpChannelSmlName" column="erp_channel_sml_name"/>
+    </resultMap>
+    <!--  查询erp系统公司信息-->
+    <sql id="selectErpChannelVo">
+        select ID_0 as erp_channel_id,
+        V2_name as erp_channel_name,
+        1 as erp_channel_status,
+        code as erp_channel_code,
+        custrecord1435 as erp_channel_big_name,
+        custrecord1436 as erp_channel_mid_name,
+        custrecord1437 as erp_channel_sml_name
+        from 渠道V2
+    </sql>
+
+    <sql id="selectBossChannelVo">
+        select id,
+        erp_channel_id,
+        erp_channel_name,
+        erp_channel_status,
+        erp_channel_code,
+        erp_channel_big_name,
+        erp_channel_mid_name,
+        erp_channel_sml_name
+        from erp_channel
+    </sql>
+
+    <select id="selectErpChannelAll" resultMap="ErpChannelResult">
+        <include refid="selectErpChannelVo"/>
+    </select>
+
+    <select id="selectBossChannelByChannelId" resultMap="ErpChannelResult" parameterType="Integer">
+        <include refid="selectBossChannelVo"/>
+        <where>
+            <if test="erpChannelId!=null">
+                and erp_channel_id=#{erpChannelId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBossChannel" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpChannel"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into erp_channel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="erpChannelId != null">erp_channel_id,</if>
+            <if test="erpChannelName != null and erpChannelName != ''">erp_channel_name,</if>
+            <if test="erpChannelStatus != null">erp_channel_status,</if>
+            <if test="erpChannelCode != null">erp_channel_code,</if>
+            <if test="erpChannelBigName != null and erpChannelBigName != ''">erp_channel_big_name,</if>
+            <if test="erpChannelMidName != null and erpChannelMidName!=''">erp_channel_mid_name,</if>
+            <if test="erpChannelSmlName != null and erpChannelSmlName!=''">erp_channel_sml_name,</if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="erpChannelId != null">#{erpChannelId},</if>
+            <if test="erpChannelName != null and erpChannelName != ''">#{erpChannelName},</if>
+            <if test="erpChannelStatus != null">#{erpChannelStatus},</if>
+            <if test="erpChannelCode != null">#{erpChannelCode},</if>
+            <if test="erpChannelBigName != null and erpChannelBigName != ''">#{erpChannelBigName},</if>
+            <if test="erpChannelMidName != null and erpChannelMidName!=''">#{erpChannelMidName},</if>
+            <if test="erpChannelSmlName != null and erpChannelSmlName!=''">#{erpChannelSmlName},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBossChannel" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpChannel">
+        update erp_channel
+        <set>
+            <if test="erpChannelId != null">erp_channel_id=#{erpChannelId},</if>
+            <if test="erpChannelName != null and erpChannelName != ''">erp_channel_name=#{erpChannelName},</if>
+            <if test="erpChannelStatus != null">erp_channel_status=#{erpChannelStatus},</if>
+            <if test="erpChannelCode != null">erp_channel_code=#{erpChannelCode},</if>
+            <if test="erpChannelBigName != null and erpChannelBigName != ''">
+                erp_channel_big_name=#{erpChannelBigName},
+            </if>
+            <if test="erpChannelMidName != null and erpChannelMidName!=''">erp_channel_mid_name=#{erpChannelMidName},
+            </if>
+            <if test="erpChannelSmlName != null and erpChannelSmlName!=''">erp_channel_sml_name=#{erpChannelSmlName},
+            </if>
+        </set>
+        where erp_channel_id = #{erpChannelId}
+    </update>
+</mapper>

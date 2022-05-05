@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('索赔报告列表')"/>
+    <th:block th:include="include :: bootstrap-editable-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>过账期间：</p>
+                            <input type="text" name="accountPeriod" id="accountPeriod"/>
+                        </li>
+                        <li>
+                            <p>品牌：</p>
+                            <select id="sellerId" name="sellerId"
+                                    th:with="type=${@dict.getType('scrap_removal_account')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>币种：</p>
+                            <select id="currency" name="currency"
+                                    th:with="type=${@dict.getType('scrap_removal_currency')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                            <a class="btn btn-danger btn-rounded btn-sm" onclick="send()"><i
+                                    class="fa fa-send"></i>&nbsp;发送</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-warning" onclick="$.table.exportExcel()"
+               shiro:hasPermission="finance:claimreport:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportDetailExcel()"
+               shiro:hasPermission="finance:claimreport:export">
+                <i class="fa fa-download"></i> 导出明细
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-table-editable-js"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('supplychain:billingplan:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('supplychain:billingplan:remove')}]];
+    var prefix = ctx + "finance/claimreport";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            exportDetailUrl: prefix + "/exportdetail",
+            modalName: "索赔报告",
+            rememberSelected: true,
+            detailView: true,
+            onExpandRow: function (index, row, $detail) {
+                initChildTable(index, row, $detail);
+            },
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'account_period',
+                    title: 'account_period'
+                },
+                {
+                    field: 'seller_id',
+                    title: 'seller_id'
+                },
+                {
+                    field: 'currency',
+                    title: 'currency_unit'
+                },
+                {
+                    field: 'amount_total',
+                    title: 'amount_total'
+                },
+                {
+                    field: 'other',
+                    title: 'tran_other'
+                },
+                {
+                    field: 'discrepancy',
+                    title: '差异'
+                },
+                {
+                    field: 'sku',
+                    title: 'sku',
+                    visible: false
+                }/*,
+                {
+                    field: 'status',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(sys_invoice_status, value);
+                    }
+                }*/]
+        };
+        $.table.init(options);
+    });
+
+    initChildTable = function (index, row, $detail) {
+        var childTable = $detail.html('<table style="table-layout:fixed"></table>').find('table');
+        $(childTable).bootstrapTable({
+            url: prefix + "/detail?account_period=" + row.account_period
+                + "&seller_id=" + row.seller_id
+                + "&currency=" + row.currency
+                + "&sku=" + row.sku,
+            method: 'post',
+            sidePagination: "server",
+            contentType: "application/x-www-form-urlencoded",
+            columns: [{
+                field: 'id',
+                visible: false
+            },
+                {
+                    field: 'account_period',
+                    title: 'account_period'
+                },
+                {
+                    field: 'seller_id',
+                    title: 'seller_id'
+                },
+                {
+                    field: 'order_id',
+                    title: 'order_id'
+                },
+                {
+                    field: 'sku',
+                    title: 'sku'
+                },
+                {
+                    field: 'currency',
+                    title: 'currency_unit'
+                },
+                {
+                    field: 'amount_total',
+                    title: 'amount_total'
+                },
+                {
+                    field: 'other',
+                    title: 'other'
+                },
+                {
+                    field: 'discrepancy',
+                    title: '差异'
+                }]
+        });
+    };
+
+    function send() {
+        var accountPeriod = $("#accountPeriod").val();
+        var sellerId = $("#sellerId").val();
+        var currency = $("#currency").val();
+        console.log("sellerId:" + sellerId + ",currency:" + currency + ",accountPeriod:" + accountPeriod);
+        if (accountPeriod == null || accountPeriod == "" || sellerId == null || sellerId == "") {
+            alert("请填写过账期间和品牌！");
+        } else {
+            $.ajax({
+                type: "post",
+                url: prefix + "/send",
+                dataType: 'json',
+                traditional: true,
+                data: {
+                    sellerId: sellerId,
+                    currency: currency,
+                    accountPeriod: accountPeriod
+                },
+                beforeSend: function () {
+                    $.modal.loading("正在发送中，请稍后...");
+                    $.modal.disable();
+                },
+                success: function (result) {
+                    if (result.code == web_status.SUCCESS) {
+                        var parent = window.parent;
+                        if (parent.table.options.type == table_type.bootstrapTable) {
+                            $.modal.close();
+                            parent.$.modal.msgSuccess(result.msg);
+                            parent.$.table.refresh();
+                        } else if (parent.table.options.type == table_type.bootstrapTreeTable) {
+                            $.modal.close();
+                            parent.$.modal.msgSuccess(result.msg);
+                            parent.$.treeTable.refresh();
+                        } else {
+                            $.modal.msgReload("发送成功,正在刷新数据请稍后……", modal_status.SUCCESS);
+                        }
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                    $.modal.closeLoading();
+                    $.modal.enable();
+                }
+            })
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.attendance.grjl.mapper.AttendanceGrjlMapper">
+
+    <resultMap type="com.tianyi.project.attendance.grjl.domain.AttendanceGrjl" id="AttendanceGrjlResult">
+        <result property="id" column="id"/>
+        <result property="n3" column="n3"/>
+        <result property="n10" column="n10"/>
+        <result property="n11" column="n11"/>
+        <result property="n12" column="n12"/>
+        <result property="n13" column="n13"/>
+        <result property="n14" column="n14"/>
+        <result property="n15" column="n15"/>
+        <result property="n16" column="n16"/>
+        <result property="n17" column="n17"/>
+        <result property="n18" column="n18"/>
+        <result property="n19" column="n19"/>
+        <result property="n20" column="n20"/>
+        <result property="n21" column="n21"/>
+        <result property="n22" column="n22"/>
+        <result property="n23" column="n23"/>
+        <result property="n24" column="n24"/>
+        <result property="n25" column="n25"/>
+        <result property="n26" column="n26"/>
+        <result property="n27" column="n27"/>
+        <result property="n28" column="n28"/>
+        <result property="n29" column="n29"/>
+        <result property="n30" column="n30"/>
+        <result property="n31" column="n31"/>
+        <result property="n7" column="n7"/>
+        <result property="n" column="n"/>
+        <result property="n8" column="n8"/>
+        <result property="n9" column="n9"/>
+        <result property="bm" column="bm"/>
+        <result property="bumen" column="bumen"/>
+        <result property="ycq" column="ycq"/>
+        <result property="zccq" column="zccq"/>
+        <result property="cc" column="cc"/>
+        <result property="jbtx" column="jbtx"/>
+        <result property="bmtx" column="bmtx"/>
+        <result property="shj" column="shj"/>
+        <result property="bj" column="bj"/>
+        <result property="hj" column="hj"/>
+        <result property="saj" column="saj"/>
+        <result property="cjj" column="cjj"/>
+        <result property="cj" column="cj"/>
+        <result property="lcj" column="lcj"/>
+        <result property="pcj" column="pcj"/>
+        <result property="gsj" column="gsj"/>
+        <result property="lsk" column="lsk"/>
+        <result property="cd" column="cd"/>
+        <result property="zt" column="zt"/>
+        <result property="byjb" column="byjb"/>
+        <result property="syjb" column="syjb"/>
+        <result property="year" column="year"/>
+        <result property="month" column="month"/>
+        <result property="xm" column="xm"/>
+        <result property="name" column="name"/>
+        <result property="gh" column="gh"/>
+        <result property="n1" column="n1"/>
+        <result property="n2" column="n2"/>
+        <result property="n4" column="n4"/>
+        <result property="n5" column="n5"/>
+        <result property="n6" column="n6"/>
+        <result property="gs" column="gs"/>
+        <result property="kqqr" column="kqqr"/>
+        <result property="rzqq" column="rzqq"/>
+        <result property="lzqq" column="lzqq"/>
+        <result property="nj" column="nj"/>
+    </resultMap>
+
+    <sql id="selectAttendanceGrjlVo">
+select g.id,
+case when n1 is null then '' else n1 end as n1,
+case when n2 is null then '' else n2 end as n2,
+case when n3 is null then '' else n3 end as n3,
+case when n4 is null then '' else n4 end as n4,
+case when n5 is null then '' else n5 end as n5,
+case when n6 is null then '' else n6 end as n6,
+case when n7 is null then '' else n7 end as n7,
+case when n8 is null then '' else n8 end as n8,
+case when n9 is null then '' else n9 end as n9,
+case when n10 is null then '' else n10 end as n10,
+case when n11 is null then '' else n11 end as n11,
+case when n12 is null then '' else n12 end as n12,
+case when n13 is null then '' else n13 end as n13,
+case when n14 is null then '' else n14 end as n14,
+case when n15 is null then '' else n15 end as n15,
+case when n16 is null then '' else n16 end as n16,
+case when n17 is null then '' else n17 end as n17,
+case when n18 is null then '' else n18 end as n18,
+case when n19 is null then '' else n19 end as n19,
+case when n20 is null then '' else n20 end as n20,
+case when n21 is null then '' else n21 end as n21,
+case when n22 is null then '' else n22 end as n22,
+case when n23 is null then '' else n23 end as n23,
+case when n24 is null then '' else n24 end as n24,
+case when n25 is null then '' else n25 end as n25,
+case when n26 is null then '' else n26 end as n26,
+case when n27 is null then '' else n27 end as n27,
+case when n28 is null then '' else n28 end as n28,
+case when n29 is null then '' else n29 end as n29,
+case when n30 is null then '' else n30 end as n30,
+case when n31 is null then '' else n31 end as n31,
+ d.departmentmark as bumen, ycq, zccq, cc, jbtx, bmtx, shj, bj, hj, saj, cjj, cj, lcj, pcj, gsj, lsk, cd, zt, byjb, syjb, year, (month+1) as month,
+ xm,h.lastname as name, gh, gs, (case when kqqr=1 then 1 else 0 end) as kqqr, rzqq, lzqq from uf_grjl g left join HrmResource h on g.gh = h.workcode left join HrmDepartment d on g.bm = d.id
+ </sql>
+
+    <select id="selectAttendanceGrjlList" parameterType="AttendanceGrjl" resultMap="AttendanceGrjlResult">
+        <include refid="selectAttendanceGrjlVo"/>
+        <where>
+            1=1
+            <if test="bumen != null and bumen != ''">and d.departmentmark = #{bumen}</if>
+            <if test="year != null ">and g.year = #{year}</if>
+            <if test="month != null ">and g.month = #{month} - 1</if>
+            <if test="n != null and n !=''">and h.lastname = #{n}</if>
+            <if test="name != null ">
+                and g.bm in (select department_id from timeKeeper_config where user_id =#{name})
+            </if>
+            <if test="gh != null  and gh != ''">and g.gh = #{gh}</if>
+            <if test="gs != null ">and gs = #{gs}</if>
+            <if test="kqqr != null ">and g.kqqr = #{kqqr}</if>
+            and year > 2019 and month >6
+        </where>
+        order by month desc
+    </select>
+
+    <select id="selectAttendanceGrjlById" parameterType="Long" resultMap="AttendanceGrjlResult">
+        <include refid="selectAttendanceGrjlVo"/>
+        where id = #{id} and year > 2019 and month >6
+    </select>
+
+    <select id="selectAttendanceGrjlByXm" parameterType="AttendanceGrjl" resultMap="AttendanceGrjlResult">
+        select g.id,
+        case when n1 is null then '' else n1 end as n1,
+        case when n2 is null then '' else n2 end as n2,
+        case when n3 is null then '' else n3 end as n3,
+        case when n4 is null then '' else n4 end as n4,
+        case when n5 is null then '' else n5 end as n5,
+        case when n6 is null then '' else n6 end as n6,
+        case when n7 is null then '' else n7 end as n7,
+        case when n8 is null then '' else n8 end as n8,
+        case when n9 is null then '' else n9 end as n9,
+        case when n10 is null then '' else n10 end as n10,
+        case when n11 is null then '' else n11 end as n11,
+        case when n12 is null then '' else n12 end as n12,
+        case when n13 is null then '' else n13 end as n13,
+        case when n14 is null then '' else n14 end as n14,
+        case when n15 is null then '' else n15 end as n15,
+        case when n16 is null then '' else n16 end as n16,
+        case when n17 is null then '' else n17 end as n17,
+        case when n18 is null then '' else n18 end as n18,
+        case when n19 is null then '' else n19 end as n19,
+        case when n20 is null then '' else n20 end as n20,
+        case when n21 is null then '' else n21 end as n21,
+        case when n22 is null then '' else n22 end as n22,
+        case when n23 is null then '' else n23 end as n23,
+        case when n24 is null then '' else n24 end as n24,
+        case when n25 is null then '' else n25 end as n25,
+        case when n26 is null then '' else n26 end as n26,
+        case when n27 is null then '' else n27 end as n27,
+        case when n28 is null then '' else n28 end as n28,
+        case when n29 is null then '' else n29 end as n29,
+        case when n30 is null then '' else n30 end as n30,
+        case when n31 is null then '' else n31 end as n31,
+        d.departmentmark as bumen, ycq, zccq, cc, jbtx, bmtx, shj, bj, hj, saj, cjj, cj, lcj, pcj, gsj, lsk, cd, zt, byjb, syjb,
+        h.lastname as name, gh, kqqr, rzqq, lzqq, nj
+        from uf_grjl g
+        left join HrmResource h on g.gh = h.workcode
+        left join HrmDepartment d on g.bm = d.id
+        where g.gh = #{gh} and  g.year = #{year} and g.month =#{month} -1
+    </select>
+
+    <insert id="insertAttendanceGrjl" parameterType="AttendanceGrjl">
+        insert into uf_grjl
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="n3 != null  and n3 != ''">n3,</if>
+            <if test="n10 != null  and n10 != ''">n10,</if>
+            <if test="n11 != null  and n11 != ''">n11,</if>
+            <if test="n12 != null  and n12 != ''">n12,</if>
+            <if test="n13 != null  and n13 != ''">n13,</if>
+            <if test="n14 != null  and n14 != ''">n14,</if>
+            <if test="n15 != null  and n15 != ''">n15,</if>
+            <if test="n16 != null  and n16 != ''">n16,</if>
+            <if test="n17 != null  and n17 != ''">n17,</if>
+            <if test="n18 != null  and n18 != ''">n18,</if>
+            <if test="n19 != null  and n19 != ''">n19,</if>
+            <if test="n20 != null  and n20 != ''">n20,</if>
+            <if test="n21 != null  and n21 != ''">n21,</if>
+            <if test="n22 != null  and n22 != ''">n22,</if>
+            <if test="n23 != null  and n23 != ''">n23,</if>
+            <if test="n24 != null  and n24 != ''">n24,</if>
+            <if test="n25 != null  and n25 != ''">n25,</if>
+            <if test="n26 != null  and n26 != ''">n26,</if>
+            <if test="n27 != null  and n27 != ''">n27,</if>
+            <if test="n28 != null  and n28 != ''">n28,</if>
+            <if test="n29 != null  and n29 != ''">n29,</if>
+            <if test="n30 != null  and n30 != ''">n30,</if>
+            <if test="n31 != null  and n31 != ''">n31,</if>
+            <if test="n7 != null  and n7 != ''">n7,</if>
+            <if test="n != null  and n != ''">n,</if>
+            <if test="n8 != null  and n8 != ''">n8,</if>
+            <if test="n9 != null  and n9 != ''">n9,</if>
+            <if test="bm != null ">bm,</if>
+            <if test="ycq != null ">ycq,</if>
+            <if test="zccq != null ">zccq,</if>
+            <if test="cc != null ">cc,</if>
+            <if test="jbtx != null ">jbtx,</if>
+            <if test="bmtx != null ">bmtx,</if>
+            <if test="shj != null ">shj,</if>
+            <if test="bj != null ">bj,</if>
+            <if test="hj != null ">hj,</if>
+            <if test="saj != null ">saj,</if>
+            <if test="cjj != null ">cjj,</if>
+            <if test="cj != null ">cj,</if>
+            <if test="lcj != null ">lcj,</if>
+            <if test="pcj != null ">pcj,</if>
+            <if test="gsj != null ">gsj,</if>
+            <if test="lsk != null ">lsk,</if>
+            <if test="cd != null ">cd,</if>
+            <if test="zt != null ">zt,</if>
+            <if test="byjb != null ">byjb,</if>
+            <if test="syjb != null ">syjb,</if>
+            <if test="year != null ">year,</if>
+            <if test="month != null ">month,</if>
+            <if test="xm != null ">xm,</if>
+            <if test="gh != null  and gh != ''">gh,</if>
+            <if test="n1 != null  and n1 != ''">n1,</if>
+            <if test="n2 != null  and n2 != ''">n2,</if>
+            <if test="n4 != null  and n4 != ''">n4,</if>
+            <if test="n5 != null  and n5 != ''">n5,</if>
+            <if test="n6 != null  and n6 != ''">n6,</if>
+            <if test="gs != null ">gs,</if>
+            <if test="kqqr != null ">kqqr,</if>
+            <if test="rzqq != null ">rzqq,</if>
+            <if test="lzqq != null ">lzqq,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="n3 != null  and n3 != ''">#{n3},</if>
+            <if test="n10 != null  and n10 != ''">#{n10},</if>
+            <if test="n11 != null  and n11 != ''">#{n11},</if>
+            <if test="n12 != null  and n12 != ''">#{n12},</if>
+            <if test="n13 != null  and n13 != ''">#{n13},</if>
+            <if test="n14 != null  and n14 != ''">#{n14},</if>
+            <if test="n15 != null  and n15 != ''">#{n15},</if>
+            <if test="n16 != null  and n16 != ''">#{n16},</if>
+            <if test="n17 != null  and n17 != ''">#{n17},</if>
+            <if test="n18 != null  and n18 != ''">#{n18},</if>
+            <if test="n19 != null  and n19 != ''">#{n19},</if>
+            <if test="n20 != null  and n20 != ''">#{n20},</if>
+            <if test="n21 != null  and n21 != ''">#{n21},</if>
+            <if test="n22 != null  and n22 != ''">#{n22},</if>
+            <if test="n23 != null  and n23 != ''">#{n23},</if>
+            <if test="n24 != null  and n24 != ''">#{n24},</if>
+            <if test="n25 != null  and n25 != ''">#{n25},</if>
+            <if test="n26 != null  and n26 != ''">#{n26},</if>
+            <if test="n27 != null  and n27 != ''">#{n27},</if>
+            <if test="n28 != null  and n28 != ''">#{n28},</if>
+            <if test="n29 != null  and n29 != ''">#{n29},</if>
+            <if test="n30 != null  and n30 != ''">#{n30},</if>
+            <if test="n31 != null  and n31 != ''">#{n31},</if>
+            <if test="n7 != null  and n7 != ''">#{n7},</if>
+            <if test="n != null  and n != ''">#{n},</if>
+            <if test="n8 != null  and n8 != ''">#{n8},</if>
+            <if test="n9 != null  and n9 != ''">#{n9},</if>
+            <if test="bm != null ">#{bm},</if>
+            <if test="ycq != null ">#{ycq},</if>
+            <if test="zccq != null ">#{zccq},</if>
+            <if test="cc != null ">#{cc},</if>
+            <if test="jbtx != null ">#{jbtx},</if>
+            <if test="bmtx != null ">#{bmtx},</if>
+            <if test="shj != null ">#{shj},</if>
+            <if test="bj != null ">#{bj},</if>
+            <if test="hj != null ">#{hj},</if>
+            <if test="saj != null ">#{saj},</if>
+            <if test="cjj != null ">#{cjj},</if>
+            <if test="cj != null ">#{cj},</if>
+            <if test="lcj != null ">#{lcj},</if>
+            <if test="pcj != null ">#{pcj},</if>
+            <if test="gsj != null ">#{gsj},</if>
+            <if test="lsk != null ">#{lsk},</if>
+            <if test="cd != null ">#{cd},</if>
+            <if test="zt != null ">#{zt},</if>
+            <if test="byjb != null ">#{byjb},</if>
+            <if test="syjb != null ">#{syjb},</if>
+            <if test="year != null ">#{year},</if>
+            <if test="month != null ">#{month},</if>
+            <if test="xm != null ">#{xm},</if>
+            <if test="gh != null  and gh != ''">#{gh},</if>
+            <if test="n1 != null  and n1 != ''">#{n1},</if>
+            <if test="n2 != null  and n2 != ''">#{n2},</if>
+            <if test="n4 != null  and n4 != ''">#{n4},</if>
+            <if test="n5 != null  and n5 != ''">#{n5},</if>
+            <if test="n6 != null  and n6 != ''">#{n6},</if>
+            <if test="gs != null ">#{gs},</if>
+            <if test="kqqr != null ">#{kqqr},</if>
+            <if test="rzqq != null ">#{rzqq},</if>
+            <if test="lzqq != null ">#{lzqq},</if>
+        </trim>
+    </insert>
+
+    <update id="confirmMyGrjl" parameterType="AttendanceGrjl">
+        update uf_grjl set kqqr = 1
+        where gh = #{gh} and  year = #{year} and month =#{month} -1
+    </update>
+
+    <select id="selectConfirmDataIsOK" parameterType="AttendanceGrjl" resultType="Integer">
+        select
+        case when (CHARINDEX('班卡',case when n1 is null then '' else n1 end) +
+        CHARINDEX('班卡',case when n2 is null then '' else n2 end) +
+        CHARINDEX('班卡',case when n3 is null then '' else n3 end) +
+        CHARINDEX('班卡',case when n4 is null then '' else n4 end) +
+        CHARINDEX('班卡',case when n5 is null then '' else n5 end) +
+        CHARINDEX('班卡',case when n6 is null then '' else n6 end) +
+        CHARINDEX('班卡',case when n7 is null then '' else n7 end) +
+        CHARINDEX('班卡',case when n8 is null then '' else n8 end) +
+        CHARINDEX('班卡',case when n9 is null then '' else n9 end) +
+        CHARINDEX('班卡',case when n10 is null then '' else n10 end) +
+        CHARINDEX('班卡',case when n11 is null then '' else n11 end) +
+        CHARINDEX('班卡',case when n12 is null then '' else n12 end) +
+        CHARINDEX('班卡',case when n13 is null then '' else n13 end) +
+        CHARINDEX('班卡',case when n14 is null then '' else n14 end) +
+        CHARINDEX('班卡',case when n15 is null then '' else n15 end) +
+        CHARINDEX('班卡',case when n16 is null then '' else n16 end) +
+        CHARINDEX('班卡',case when n17 is null then '' else n17 end) +
+        CHARINDEX('班卡',case when n18 is null then '' else n18 end) +
+        CHARINDEX('班卡',case when n19 is null then '' else n19 end) +
+        CHARINDEX('班卡',case when n20 is null then '' else n20 end) +
+        CHARINDEX('班卡',case when n21 is null then '' else n21 end) +
+        CHARINDEX('班卡',case when n22 is null then '' else n22 end) +
+        CHARINDEX('班卡',case when n23 is null then '' else n23 end) +
+        CHARINDEX('班卡',case when n24 is null then '' else n24 end) +
+        CHARINDEX('班卡',case when n25 is null then '' else n25 end) +
+        CHARINDEX('班卡',case when n26 is null then '' else n26 end) +
+        CHARINDEX('班卡',case when n27 is null then '' else n27 end) +
+        CHARINDEX('班卡',case when n28 is null then '' else n28 end) +
+        CHARINDEX('班卡',case when n29 is null then '' else n29 end) +
+        CHARINDEX('班卡',case when n30 is null then '' else n30 end) +
+        CHARINDEX('班卡',case when n31 is null then '' else n31 end) )=0 then 0 else 1 end
+        from uf_grjl
+        where gh = #{gh} and  year = #{year} and month =#{month} -1
+    </select>
+
+    <update id="updateAttendanceGrjl" parameterType="AttendanceGrjl">
+        update uf_grjl
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="n3 != null  and n3 != ''">n3 = #{n3},</if>
+            <if test="n10 != null  and n10 != ''">n10 = #{n10},</if>
+            <if test="n11 != null  and n11 != ''">n11 = #{n11},</if>
+            <if test="n12 != null  and n12 != ''">n12 = #{n12},</if>
+            <if test="n13 != null  and n13 != ''">n13 = #{n13},</if>
+            <if test="n14 != null  and n14 != ''">n14 = #{n14},</if>
+            <if test="n15 != null  and n15 != ''">n15 = #{n15},</if>
+            <if test="n16 != null  and n16 != ''">n16 = #{n16},</if>
+            <if test="n17 != null  and n17 != ''">n17 = #{n17},</if>
+            <if test="n18 != null  and n18 != ''">n18 = #{n18},</if>
+            <if test="n19 != null  and n19 != ''">n19 = #{n19},</if>
+            <if test="n20 != null  and n20 != ''">n20 = #{n20},</if>
+            <if test="n21 != null  and n21 != ''">n21 = #{n21},</if>
+            <if test="n22 != null  and n22 != ''">n22 = #{n22},</if>
+            <if test="n23 != null  and n23 != ''">n23 = #{n23},</if>
+            <if test="n24 != null  and n24 != ''">n24 = #{n24},</if>
+            <if test="n25 != null  and n25 != ''">n25 = #{n25},</if>
+            <if test="n26 != null  and n26 != ''">n26 = #{n26},</if>
+            <if test="n27 != null  and n27 != ''">n27 = #{n27},</if>
+            <if test="n28 != null  and n28 != ''">n28 = #{n28},</if>
+            <if test="n29 != null  and n29 != ''">n29 = #{n29},</if>
+            <if test="n30 != null  and n30 != ''">n30 = #{n30},</if>
+            <if test="n31 != null  and n31 != ''">n31 = #{n31},</if>
+            <if test="n7 != null  and n7 != ''">n7 = #{n7},</if>
+            <if test="n != null  and n != ''">n = #{n},</if>
+            <if test="n8 != null  and n8 != ''">n8 = #{n8},</if>
+            <if test="n9 != null  and n9 != ''">n9 = #{n9},</if>
+            <if test="bm != null ">bm = #{bm},</if>
+            <if test="ycq != null ">ycq = #{ycq},</if>
+            <if test="zccq != null ">zccq = #{zccq},</if>
+            <if test="cc != null ">cc = #{cc},</if>
+            <if test="jbtx != null ">jbtx = #{jbtx},</if>
+            <if test="bmtx != null ">bmtx = #{bmtx},</if>
+            <if test="shj != null ">shj = #{shj},</if>
+            <if test="bj != null ">bj = #{bj},</if>
+            <if test="hj != null ">hj = #{hj},</if>
+            <if test="saj != null ">saj = #{saj},</if>
+            <if test="cjj != null ">cjj = #{cjj},</if>
+            <if test="cj != null ">cj = #{cj},</if>
+            <if test="lcj != null ">lcj = #{lcj},</if>
+            <if test="pcj != null ">pcj = #{pcj},</if>
+            <if test="gsj != null ">gsj = #{gsj},</if>
+            <if test="lsk != null ">lsk = #{lsk},</if>
+            <if test="cd != null ">cd = #{cd},</if>
+            <if test="zt != null ">zt = #{zt},</if>
+            <if test="byjb != null ">byjb = #{byjb},</if>
+            <if test="syjb != null ">syjb = #{syjb},</if>
+            <if test="year != null ">year = #{year},</if>
+            <if test="month != null ">month = #{month},</if>
+            <if test="xm != null ">xm = #{xm},</if>
+            <if test="gh != null  and gh != ''">gh = #{gh},</if>
+            <if test="n1 != null  and n1 != ''">n1 = #{n1},</if>
+            <if test="n2 != null  and n2 != ''">n2 = #{n2},</if>
+            <if test="n4 != null  and n4 != ''">n4 = #{n4},</if>
+            <if test="n5 != null  and n5 != ''">n5 = #{n5},</if>
+            <if test="n6 != null  and n6 != ''">n6 = #{n6},</if>
+            <if test="gs != null ">gs = #{gs},</if>
+            <if test="kqqr != null ">kqqr = #{kqqr},</if>
+            <if test="rzqq != null ">rzqq = #{rzqq},</if>
+            <if test="lzqq != null ">lzqq = #{lzqq},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAttendanceGrjlById" parameterType="Long">
+        delete from uf_grjl where id = #{id}
+    </delete>
+
+    <delete id="deleteAttendanceGrjlByIds" parameterType="String">
+        delete from uf_grjl where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

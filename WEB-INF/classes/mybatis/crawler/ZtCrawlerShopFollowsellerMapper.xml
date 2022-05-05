@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.crawler.followseller.mapper.ZtCrawlerShopFollowsellerMapper">
+    
+    <resultMap type="ZtCrawlerShopFollowseller" id="ZtCrawlerShopFollowsellerResult">
+        <result property="id"    column="id"    />
+        <result property="channel"    column="channel"    />
+        <result property="shopLink"    column="shop_link"    />
+        <result property="listing"    column="listing"    />
+        <result property="parentAsin"    column="parent_asin"    />
+        <result property="price"    column="price"    />
+        <result property="info"    column="info"    />
+        <result property="procondition"    column="procondition"    />
+        <result property="procondition1"    column="procondition_1"    />
+        <result property="seller"    column="seller"    />
+        <result property="crawlDate"    column="crawl_date"    />
+        <result property="site"    column="site"    />
+    </resultMap>
+
+    <sql id="selectZtCrawlerShopFollowsellerVo">
+        select id, channel, shop_link, listing, parent_asin, price, info, procondition, procondition_1, seller, crawl_date, site from zt_crawler_shop_followseller
+    </sql>
+
+    <select id="selectZtCrawlerShopFollowsellerList" parameterType="ZtCrawlerShopFollowseller" resultMap="ZtCrawlerShopFollowsellerResult">
+        <include refid="selectZtCrawlerShopFollowsellerVo"/>
+        <where>  
+            <if test="channel != null  and channel != ''"> and channel = #{channel}</if>
+            <if test="shopLink != null  and shopLink != ''"> and shop_link = #{shopLink}</if>
+            <if test="listing != null  and listing != ''"> and listing = #{listing}</if>
+            <if test="parentAsin != null  and parentAsin != ''"> and parent_asin = #{parentAsin}</if>
+            <if test="price != null  and price != ''"> and price = #{price}</if>
+            <if test="info != null  and info != ''"> and info = #{info}</if>
+            <if test="procondition != null  and procondition != ''"> and procondition = #{procondition}</if>
+            <if test="procondition1 != null  and procondition1 != ''"> and procondition_1 = #{procondition1}</if>
+            <if test="seller != null  and seller != ''"> and seller = #{seller}</if>
+            <if test="params.beginCrawlDate != null and params.beginCrawlDate != '' and params.endCrawlDate != null and params.endCrawlDate != ''"> and crawl_date between #{params.beginCrawlDate} and #{params.endCrawlDate}</if>
+            <if test="site != null  and site != ''"> and site = #{site}</if>
+        </where>
+    </select>
+    
+    <select id="selectZtCrawlerShopFollowsellerById" parameterType="Long" resultMap="ZtCrawlerShopFollowsellerResult">
+        <include refid="selectZtCrawlerShopFollowsellerVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertZtCrawlerShopFollowseller" parameterType="ZtCrawlerShopFollowseller" useGeneratedKeys="true" keyProperty="id">
+        insert into zt_crawler_shop_followseller
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="channel != null  and channel != ''">channel,</if>
+            <if test="shopLink != null  and shopLink != ''">shop_link,</if>
+            <if test="listing != null  and listing != ''">listing,</if>
+            <if test="parentAsin != null  and parentAsin != ''">parent_asin,</if>
+            <if test="price != null  and price != ''">price,</if>
+            <if test="info != null  and info != ''">info,</if>
+            <if test="procondition != null  and procondition != ''">procondition,</if>
+            <if test="procondition1 != null  and procondition1 != ''">procondition_1,</if>
+            <if test="seller != null  and seller != ''">seller,</if>
+            <if test="crawlDate != null ">crawl_date,</if>
+            <if test="site != null  and site != ''">site,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="channel != null  and channel != ''">#{channel},</if>
+            <if test="shopLink != null  and shopLink != ''">#{shopLink},</if>
+            <if test="listing != null  and listing != ''">#{listing},</if>
+            <if test="parentAsin != null  and parentAsin != ''">#{parentAsin},</if>
+            <if test="price != null  and price != ''">#{price},</if>
+            <if test="info != null  and info != ''">#{info},</if>
+            <if test="procondition != null  and procondition != ''">#{procondition},</if>
+            <if test="procondition1 != null  and procondition1 != ''">#{procondition1},</if>
+            <if test="seller != null  and seller != ''">#{seller},</if>
+            <if test="crawlDate != null ">#{crawlDate},</if>
+            <if test="site != null  and site != ''">#{site},</if>
+         </trim>
+    </insert>
+
+    <update id="updateZtCrawlerShopFollowseller" parameterType="ZtCrawlerShopFollowseller">
+        update zt_crawler_shop_followseller
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="channel != null  and channel != ''">channel = #{channel},</if>
+            <if test="shopLink != null  and shopLink != ''">shop_link = #{shopLink},</if>
+            <if test="listing != null  and listing != ''">listing = #{listing},</if>
+            <if test="parentAsin != null  and parentAsin != ''">parent_asin = #{parentAsin},</if>
+            <if test="price != null  and price != ''">price = #{price},</if>
+            <if test="info != null  and info != ''">info = #{info},</if>
+            <if test="procondition != null  and procondition != ''">procondition = #{procondition},</if>
+            <if test="procondition1 != null  and procondition1 != ''">procondition_1 = #{procondition1},</if>
+            <if test="seller != null  and seller != ''">seller = #{seller},</if>
+            <if test="crawlDate != null ">crawl_date = #{crawlDate},</if>
+            <if test="site != null  and site != ''">site = #{site},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteZtCrawlerShopFollowsellerById" parameterType="Long">
+        delete from zt_crawler_shop_followseller where id = #{id}
+    </delete>
+
+    <delete id="deleteZtCrawlerShopFollowsellerByIds" parameterType="String">
+        delete from zt_crawler_shop_followseller where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

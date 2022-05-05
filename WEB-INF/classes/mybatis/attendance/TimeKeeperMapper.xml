@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.attendance.timekeeper.mapper.TimeKeeperMapper">
+    <resultMap id="TimeKeeperResult" type="com.tianyi.project.attendance.timekeeper.domain.TimeKeeper">
+        <result property="userId" column="user_id"></result>
+        <result property="workCode" column="workcode"></result>
+        <result property="userName" column="user_name"></result>
+        <result property="deptId" column="dept_id"></result>
+        <result property="deptName" column="dept_name"></result>
+        <result property="phonenumber" column="phone_num"></result>
+    </resultMap>
+
+    <select id="selectTimeKeeperList" resultMap="TimeKeeperResult"
+            parameterType="com.tianyi.project.attendance.timekeeper.domain.TimeKeeper">
+        select distinct b.workcode
+        ,c.id as dept_id
+        ,b.lastname as user_name
+        ,b.mobile as phone_num
+        ,c.departmentname as dept_name
+        from timeKeeper_config a
+        ,HrmResource b
+        ,HrmDepartment c
+        <where>
+            <if test="workCode!=null and workCode!=''">b.workcode=#{workCode}</if>
+            <if test="userName!=null and userName!=''">b.lastname=#{userName}</if>
+            and a.user_id=b.workcode
+            and b.departmentid=c.id
+        </where>
+    </select>
+
+    <resultMap type="com.tianyi.project.system.user.domain.User" id="UserResult">
+        <id property="userId" column="user_id"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="loginName" column="login_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="email" column="email"/>
+        <result property="phonenumber" column="phonenumber"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+    </resultMap>
+
+    <select id="selectUnallocatedList" resultMap="UserResult"
+            parameterType="com.tianyi.project.system.user.domain.User">
+        select id as user_id
+        ,departmentid as dept_id
+        ,loginid as login_name
+        ,lastname as user_name
+        ,mobile as phonenumber
+        ,email as email
+        ,0 as status
+        ,created as create_time
+        from HrmResource
+        <where>
+            <if test="loginName!=null and loginName!=''">and login_name=#{loginName}</if>
+            <if test="userName!=null and userName!=''">and user_name=#{userName}</if>
+            and loginid is not null
+            and status!=5
+            and id not in (select user_id from timeKeeper_config)
+        </where>
+    </select>
+
+    <select id="selectUserByName" resultMap="UserResult">
+        select id
+        ,workcode+' '+lastname as user_name
+        from HrmResource
+        <where>
+            <!--<if test="userName!=null and userName!=''">and loginid+' '+lastname like concat('%', #{userName}, '%')</if>-->
+            and workcode is not null
+            and status!=5
+            and workcode not in (select user_id from timeKeeper_config)
+        </where>
+    </select>
+
+    <resultMap type="com.tianyi.framework.web.domain.Ztree" id="ZtreeResult">
+        <id property="id" column="id"/>
+        <result property="pId" column="pId"/>
+        <result property="name" column="name"/>
+        <result property="title" column="title"/>
+        <result property="checked" column="checked"/>
+        <result property="open" column="open"/>
+        <result property="nocheck" column="nocheck"/>
+    </resultMap>
+
+    <select id="deptTreeData" resultMap="ZtreeResult">
+        select dept_id as id
+        ,parent_id as pId
+        ,dept_name as name
+        ,dept_name as title
+        ,0 as checked
+        ,0 as open
+        ,case when tlevel &lt;= 2 then 1 else 0 end as nocheck
+        from sys_dept
+        where tlevel &lt; 5
+    </select>
+
+    <select id="selectDeptByWorkcode" resultType="java.lang.Long" parameterType="java.lang.String">
+        select department_id
+        from timeKeeper_config
+        where user_id=#{workcode}
+    </select>
+
+    <select id="selectZtDepts" resultType="com.tianyi.project.attendance.timekeeper.domain.ZtSysDept">
+        select dept_id as ztDeptId
+        ,oa_dept_id as oaDeptId
+        from sys_dept
+    </select>
+
+    <insert id="addTimeKeepers" parameterType="java.util.ArrayList">
+        insert into timeKeeper_config (user_id,department_id) values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.workCode},#{item.deptId})
+        </foreach>
+    </insert>
+
+    <delete id="deleteTimeKeeperByWorkCode" parameterType="java.lang.String">
+        delete timeKeeper_config where user_id=#{workCode}
+    </delete>
+</mapper>

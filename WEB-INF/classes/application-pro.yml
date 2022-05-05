@@ -1,0 +1,408 @@
+# 数据源配置
+spring:
+#  data:
+#    mongodb:
+#      uri: mongodb://root:BBpark123@dds-uf64ba9d7500ec94-pub.mongodb.rds.aliyuncs.com:3717/?authSource=admin
+#      database: finance
+  datasource:
+    druid:
+      # 主库数据源
+      master:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://124.71.174.53:3306/zhongtai?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
+        username: developer
+        password: csbd@123
+        # 初始连接数
+        initialSize: 5
+        # 最小连接池数量
+        minIdle: 10
+        # 最大连接池数量
+        maxActive: 200
+        # 配置获取连接等待超时的时间
+        maxWait: 60000
+        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+        timeBetweenEvictionRunsMillis: 60000
+        # 配置一个连接在池中最小生存的时间，单位是毫秒
+        minEvictableIdleTimeMillis: 300000
+        # 配置一个连接在池中最大生存的时间，单位是毫秒
+        maxEvictableIdleTimeMillis: 900000
+        # 配置检测连接是否有效
+        validationQuery: SELECT 1 FROM DUAL
+        testWhileIdle: true
+        testOnBorrow: true
+        testOnReturn: false
+        removeAbandoned: true
+        removeAbandonedTimeout: 360
+        webStatFilter:
+          enabled: true
+        statViewServlet:
+          enabled: true
+          # 设置白名单，不填则允许所有访问
+          allow:
+          url-pattern: /druid/*
+          # 控制台管理用户名和密码
+          login-username:
+          login-password:
+        filter:
+          stat:
+            enabled: true
+            # 慢SQL记录
+            log-slow-sql: true
+            slow-sql-millis: 1000
+            merge-sql: true
+          wall:
+            config:
+              multi-statement-allow: true
+#      # 从库数据源 OA数据库
+#      sqlserver:
+#        # 从数据源开关
+#        enabled: true
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+#        url: jdbc:sqlserver://rm-bp19988v9pz3fktihso.sqlserver.rds.aliyuncs.com:3433;databaseName=ecology
+#        username: oats
+#        password: Bbpark123
+#        # 初始连接数
+#        initialSize: 5
+#        # 最小连接池数量
+#        minIdle: 10
+#        # 最大连接池数量
+#        maxActive: 40
+#        # 配置获取连接等待超时的时间
+#        maxWait: 60000
+#        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+#        timeBetweenEvictionRunsMillis: 60000
+#        # 配置一个连接在池中最小生存的时间，单位是毫秒
+#        minEvictableIdleTimeMillis: 300000
+#        # 配置一个连接在池中最大生存的时间，单位是毫秒
+#        maxEvictableIdleTimeMillis: 600000
+#        # 配置检测连接是否有效
+#        validationQuery: SELECT top 1 1 FROM sysobjects
+#        testWhileIdle: true
+#        testOnBorrow: true
+#        testOnReturn: false
+#        removeAbandoned: true
+#        removeAbandonedTimeout: 300
+#        logAbandoned: true
+#        webStatFilter:
+#          enabled: true
+#        statViewServlet:
+#          enabled: true
+#          # 设置白名单，不填则允许所有访问
+#          allow:
+#          url-pattern: /druid/*
+#          # 控制台管理用户名和密码
+#          login-username:
+#          login-password:
+#        filter:
+#          stat:
+#            enabled: true
+#            # 慢SQL记录
+#            log-slow-sql: true
+#            slow-sql-millis: 1000
+#            merge-sql: true
+#          wall:
+#            config:
+#              multi-statement-allow: true
+#      # 从库数据源  oracle数据库
+#      oracle:
+#        # 从数据源开关
+#        enabled: true
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        driverClassName: oracle.jdbc.driver.OracleDriver
+#        url: jdbc:oracle:thin:@116.62.208.78:1521/xepdb1
+#        username: nsintf
+#        password: feng998
+#        # 初始连接数
+#        initialSize: 5
+#        # 最小连接池数量
+#        minIdle: 10
+#        # 最大连接池数量
+#        maxActive: 40
+#        # 配置获取连接等待超时的时间
+#        maxWait: 60000
+#        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+#        timeBetweenEvictionRunsMillis: 60000
+#        # 配置一个连接在池中最小生存的时间，单位是毫秒
+#        minEvictableIdleTimeMillis: 300000
+#        # 配置一个连接在池中最大生存的时间，单位是毫秒
+#        maxEvictableIdleTimeMillis: 600000
+#        # 配置检测连接是否有效
+#        validationQuery: SELECT 1 FROM DUAL
+#        testWhileIdle: true
+#        testOnBorrow: true
+#        testOnReturn: false
+#        removeAbandoned: true
+#        removeAbandonedTimeout: 300
+#        logAbandoned: true
+#        webStatFilter:
+#          enabled: true
+#        statViewServlet:
+#          enabled: true
+#          # 设置白名单，不填则允许所有访问
+#          allow:
+#          url-pattern: /druid/*
+#          # 控制台管理用户名和密码
+#          login-username:
+#          login-password:
+#        filter:
+#          stat:
+#            enabled: true
+#            # 慢SQL记录
+#            log-slow-sql: true
+#            slow-sql-millis: 1000
+#            merge-sql: true
+#          wall:
+#            config:
+#              multi-statement-allow: true
+#      ns:
+#        # 从数据源开关
+#        enabled: true
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        driverClassName: com.netsuite.jdbc.openaccess.OpenAccessDriver
+#        url: jdbc:ns://5166205.connect.api.netsuite.com:1708;ServerDataSource=NetSuite.com;Encrypted=1;CustomProperties=(AccountID=5166205;RoleID=3)
+#        username: taiyue.deng@shinebed.com
+#        password: Admin123
+#        # 初始连接数
+#        initialSize: 5
+#        # 最小连接池数量
+#        minIdle: 5
+#        # 最大连接池数量
+#        maxActive: 40
+#        # 配置获取连接等待超时的时间
+#        maxWait: 60000
+#        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+#        timeBetweenEvictionRunsMillis: 60000
+#        # 配置一个连接在池中最小生存的时间，单位是毫秒
+#        minEvictableIdleTimeMillis: 300000
+#        # 配置一个连接在池中最大生存的时间，单位是毫秒
+#        maxEvictableIdleTimeMillis: 600000
+#        # 配置检测连接是否有效
+#        validationQuery: SELECT 1 FROM AB面_中天
+#        testWhileIdle: true
+#        testOnBorrow: true
+#        testOnReturn: false
+#        removeAbandoned: true
+#        removeAbandonedTimeout: 600
+#        logAbandoned: true
+#        webStatFilter:
+#          enabled: true
+#        statViewServlet:
+#          enabled: true
+#          # 设置白名单，不填则允许所有访问
+#          allow:
+#          url-pattern: /druid/*
+#          # 控制台管理用户名和密码
+#          login-username:
+#          login-password:
+#        filter:
+#          stat:
+#            enabled: true
+#            # 慢SQL记录
+#            log-slow-sql: true
+#            slow-sql-millis: 1000
+#            merge-sql: true
+#          wall:
+#            config:
+#              multi-statement-allow: true
+#      # boss服务器上oracle
+#      pdbmis:
+#        # 从数据源开关
+#        enabled: true
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        driverClassName: oracle.jdbc.driver.OracleDriver
+#        url: jdbc:oracle:thin:@47.111.12.216:1523/pdbmis1
+#        username: nsintf
+#        password: nsintf
+#        # 初始连接数
+#        initialSize: 5
+#        # 最小连接池数量
+#        minIdle: 10
+#        # 最大连接池数量
+#        maxActive: 40
+#        # 配置获取连接等待超时的时间
+#        maxWait: 60000
+#        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+#        timeBetweenEvictionRunsMillis: 60000
+#        # 配置一个连接在池中最小生存的时间，单位是毫秒
+#        minEvictableIdleTimeMillis: 300000
+#        # 配置一个连接在池中最大生存的时间，单位是毫秒
+#        maxEvictableIdleTimeMillis: 600000
+#        # 配置检测连接是否有效
+#        validationQuery: SELECT 1 FROM DUAL
+#        testWhileIdle: true
+#        testOnBorrow: true
+#        testOnReturn: false
+#        removeAbandoned: true
+#        removeAbandonedTimeout: 300
+#        logAbandoned: true
+#        webStatFilter:
+#          enabled: true
+#        statViewServlet:
+#          enabled: true
+#          # 设置白名单，不填则允许所有访问
+#          allow:
+#          url-pattern: /druid/*
+#          # 控制台管理用户名和密码
+#          login-username:
+#          login-password:
+#        filter:
+#          stat:
+#            enabled: true
+#            # 慢SQL记录
+#            log-slow-sql: true
+#            slow-sql-millis: 1000
+#            merge-sql: true
+#          wall:
+#            config:
+#              multi-statement-allow: true
+#      # boss数据库
+#      boss:
+#        # 从数据源开关
+#        enabled: true
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        driverClassName: com.mysql.cj.jdbc.Driver
+#        url: jdbc:mysql://124.71.174.53:3306/csbd?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
+#        username: operate
+#        password: operatepwd
+#        # 初始连接数
+#        initialSize: 5
+#        # 最小连接池数量
+#        minIdle: 10
+#        # 最大连接池数量
+#        maxActive: 40
+#        # 配置获取连接等待超时的时间
+#        maxWait: 60000
+#        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+#        timeBetweenEvictionRunsMillis: 60000
+#        # 配置一个连接在池中最小生存的时间，单位是毫秒
+#        minEvictableIdleTimeMillis: 300000
+#        # 配置一个连接在池中最大生存的时间，单位是毫秒
+#        maxEvictableIdleTimeMillis: 600000
+#        # 配置检测连接是否有效
+#        validationQuery: SELECT 1 FROM DUAL
+#        testWhileIdle: true
+#        testOnBorrow: true
+#        testOnReturn: false
+#        removeAbandoned: true
+#        removeAbandonedTimeout: 300
+#        logAbandoned: true
+#        webStatFilter:
+#          enabled: true
+#        statViewServlet:
+#          enabled: true
+#          # 设置白名单，不填则允许所有访问
+#          allow:
+#          url-pattern: /druid/*
+#          # 控制台管理用户名和密码
+#          login-username:
+#          login-password:
+#        filter:
+#          stat:
+#            enabled: true
+#            # 慢SQL记录
+#            log-slow-sql: true
+#            slow-sql-millis: 1000
+#            merge-sql: true
+#          wall:
+#            config:
+#              multi-statement-allow: true
+#      # 从库数据源 shinebed_data_interaction_platform
+#      sdip:
+#        # 从数据源开关
+#        enabled: true
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+#        url: jdbc:sqlserver://rm-bp19988v9pz3fktihso.sqlserver.rds.aliyuncs.com:3433;shinebed_data_interaction_platform?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
+#        username: oats
+#        password: Bbpark123
+#        # 初始连接数
+#        initialSize: 5
+#        # 最小连接池数量
+#        minIdle: 10
+#        # 最大连接池数量
+#        maxActive: 40
+#        # 配置获取连接等待超时的时间
+#        maxWait: 60000
+#        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+#        timeBetweenEvictionRunsMillis: 60000
+#        # 配置一个连接在池中最小生存的时间，单位是毫秒
+#        minEvictableIdleTimeMillis: 300000
+#        # 配置一个连接在池中最大生存的时间，单位是毫秒
+#        maxEvictableIdleTimeMillis: 600000
+#        # 配置检测连接是否有效
+#        validationQuery: SELECT top 1 1 FROM sysobjects
+#        testWhileIdle: true
+#        testOnBorrow: true
+#        testOnReturn: false
+#        removeAbandoned: true
+#        removeAbandonedTimeout: 300
+#        logAbandoned: true
+#        webStatFilter:
+#          enabled: true
+#        statViewServlet:
+#          enabled: true
+#          # 设置白名单，不填则允许所有访问
+#          allow:
+#          url-pattern: /druid/*
+#          # 控制台管理用户名和密码
+#          login-username:
+#          login-password:
+#        filter:
+#          stat:
+#          enabled: true
+#          # 慢SQL记录
+#          log-slow-sql: true
+#          slow-sql-millis: 1000
+#          merge-sql: true
+#        wall:
+#          config:
+#          multi-statement-allow: true
+#      # 从库数据源 zhongtai_cloud
+#      cloud:
+#        enabled: true
+#        type: com.alibaba.druid.pool.DruidDataSource
+#        driverClassName: com.mysql.cj.jdbc.Driver
+#        url: jdbc:mysql://rm-uf65c4iv3934464qjno.mysql.rds.aliyuncs.com:3306/boss_shinebed?useUnicode=true&characterEncoding=utf8&useSSL=false
+#        username: zhongtai
+#        password: Xiongtai123
+#        # 初始连接数
+#        initialSize: 5
+#        # 最小连接池数量
+#        minIdle: 10
+#        # 最大连接池数量
+#        maxActive: 20
+#        # 配置获取连接等待超时的时间
+#        maxWait: 60000
+#        # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+#        timeBetweenEvictionRunsMillis: 60000
+#        # 配置一个连接在池中最小生存的时间，单位是毫秒
+#        minEvictableIdleTimeMillis: 300000
+#        # 配置一个连接在池中最大生存的时间，单位是毫秒
+#        maxEvictableIdleTimeMillis: 600000
+#        # 配置检测连接是否有效
+#        validationQuery: SELECT 1 FROM DUAL
+#        testWhileIdle: true
+#        testOnBorrow: true
+#        testOnReturn: false
+#        webStatFilter:
+#          enabled: true
+#        statViewServlet:
+#          enabled: true
+#          # 设置白名单，不填则允许所有访问
+#          allow:
+#          url-pattern: /druid/*
+#          # 控制台管理用户名和密码
+#          login-username:
+#          login-password:
+#        filter:
+#          stat:
+#          enabled: true
+#          # 慢SQL记录
+#          log-slow-sql: true
+#          slow-sql-millis: 1000
+#          merge-sql: true
+#        wall:
+#          config:
+#          multi-statement-allow: true

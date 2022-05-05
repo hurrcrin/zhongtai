@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.supplychain.billingplan.mapper.billingplanMapper">
+    <resultMap type="billingplan" id="billingplanResult">
+        <result property="vendor" column="vendor"/>
+        <result property="receiptnum" column="receiptNum"/>
+        <result property="receiptdate" column="receiptDate"/>
+        <result property="accountdate" column="accountDate"/>
+        <result property="receiptname" column="receiptName"/>
+        <result property="unit" column="unit"/>
+        <result property="orderquantity" column="orderQuantity"/>
+        <result property="crossamount" column="crossAmount"/>
+        <result property="amount" column="amount"/>
+        <result property="hscode" column="HSCODE"/>
+        <result property="status" column="status"/>
+        <result property="invoicenum" column="invoiceNum"/>
+        <result property="transactionids" column="transactionids"/>
+    </resultMap>
+
+    <resultMap type="billingplandetail" id="billingplandetailResult">
+        <result property="id" column="id"/>
+        <result property="transactionid" column="transactionId"/>
+        <result property="vendor" column="vendor"/>
+        <result property="receiptnum" column="receiptNum"/>
+        <result property="receiptdate" column="receiptDate"/>
+        <result property="accountdate" column="accountDate"/>
+        <result property="tranid" column="tranId"/>
+        <result property="sku" column="sku"/>
+        <result property="receiptname" column="receiptName"/>
+        <result property="unit" column="unit"/>
+        <result property="orderquantity" column="orderQuantity"/>
+        <result property="rate" column="rate"/>
+        <result property="price" column="price"/>
+        <result property="crossamount" column="crossAmount"/>
+        <result property="amount" column="amount"/>
+        <result property="lineid" column="lineid"/>
+        <result property="po" column="PO"/>
+        <result property="vendorid" column="vendorid"/>
+        <result property="hscode" column="HSCODE"/>
+        <result property="status" column="status"/>
+        <result property="flag" column="flag"/>
+    </resultMap>
+
+    <resultMap type="billingplanrecord" id="billingplanrecordResult">
+        <result property="ID" column="ID"/>
+        <result property="transactionId" column="transactionId"/>
+        <result property="billQuantity" column="billQuantity"/>
+        <result property="returnId" column="returnId"/>
+        <result property="invoiceNum" column="invoiceNum"/>
+    </resultMap>
+
+    <!--开票计划汇总数据-->
+    <sql id="selectbillingplanVo">
+        select vendor,receiptNum,receiptDate,accountDate,receiptName,unit,sum(orderQuantity) as orderQuantity,sum(crossAmount) as crossAmount,sum(amount) as amount,HSCODE,status,t2.invoiceNum,GROUP_CONCAT(t1.transactionId) as transactionids from zt_billingplan_detail t1 left join zt_billingplan_record t2 on t1.transactionId=t2.transactionId
+    </sql>
+
+    <!--开票计划明细数据-->
+    <sql id="selectbillingplandetailVo">
+        select id, transactionId, vendor, receiptNum, receiptDate, accountDate, tranId, sku, receiptName, unit, orderQuantity, rate, price, crossAmount, amount, lineid, PO, vendorid, HSCODE, status, flag from zt_billingplan_detail
+    </sql>
+
+    <!--开票计划汇总数据条件-->
+    <select id="selectbillingplanList" parameterType="billingplan" resultMap="billingplanResult">
+        <include refid="selectbillingplanVo"/>
+        <where>
+            <if test="vendor != null  and vendor != ''">and vendor like concat('%', #{vendor}, '%')</if>
+            <if test="receiptnum != null  and receiptnum != ''">and receiptNum like concat('%', #{receiptnum}, '%')</if>
+            <if test="params.beginReceiptdate != null and params.beginReceiptdate != '' and params.endReceiptdate != null and params.endReceiptdate != ''">
+                and receiptDate between #{params.beginReceiptdate} and #{params.endReceiptdate}
+            </if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+            and flag=1 group by vendor,receiptNum,receiptDate,accountDate,receiptName,unit
+        </where>
+    </select>
+
+    <!--开票计划明细数据条件-->
+    <select id="selectbillingplandetailList" parameterType="billingplandetail"
+            resultMap="billingplandetailResult">
+        <include refid="selectbillingplandetailVo"/>
+        <where>
+            <if test="vendor != null  and vendor != ''">and vendor like concat('%', #{vendor}, '%')</if>
+            <if test="receiptnum != null  and receiptnum != ''">and receiptNum like concat('%', #{receiptnum}, '%')</if>
+            <if test="params.beginReceiptdate != null and params.beginReceiptdate != '' and params.endReceiptdate != null and params.endReceiptdate != ''">
+                and receiptDate between #{params.beginReceiptdate} and #{params.endReceiptdate}
+            </if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+            and flag=1
+        </where>
+    </select>
+
+    <!--开票计划通过transactionids查询明细数据-->
+    <select id="selectbillingplandetailListByTransactionids" parameterType="String"
+            resultMap="billingplandetailResult">
+        <include refid="selectbillingplandetailVo"/>
+        <where>
+            <if test="transactionids != null  and transactionids != ''">and transactionId in (${transactionids})</if>
+        </where>
+    </select>
+
+    <sql id="selectbillingplanrecordVo">
+        select ID,transactionId,billQuantity,returnId,invoiceNum from zt_billingplan_record
+    </sql>
+
+    <!--查看开票计划历史记录是否存在该transactionId的记录-->
+    <select id="selectbillingplanrecordByTransactionId" parameterType="String"
+            resultMap="billingplanrecordResult">
+        <include refid="selectbillingplanrecordVo"/>
+        <where>
+            <if test="transactionId != null  and transactionId != ''">and transactionId =#{transactionId}</if>
+        </where>
+    </select>
+
+    <!-- 插入开票计划历史记录-->
+    <insert id="insertInvoicenum" parameterType="String">
+        INSERT INTO
+        zt_billingplan_record
+        (
+        transactionId,
+        billQuantity,
+        invoiceNum
+        )
+        select #{transactionId},orderQuantity,#{invoicenum}
+        from zt_billingplan_detail
+        where transactionId=#{transactionId}
+    </insert>
+
+    <!-- 更新开票计划历史记录-->
+    <update id="updateInvoicenum" parameterType="String">
+        UPDATE
+        zt_billingplan_record
+        <set>
+            <if test="invoicenum != null and invoicenum !=''">invoicenum = #{invoicenum},</if>
+        </set>
+        WHERE
+        transactionId=#{transactionId}
+    </update>
+</mapper>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.mapper.SysUserMapper">
+
+    <resultMap type="com.tianyi.project.monitor.job.domain.SysUser" id="SysUserResult">
+        <id property="userId" column="user_id"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="loginName" column="login_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="userType" column="user_type"/>
+        <result property="email" column="email"/>
+        <result property="phonenumber" column="phonenumber"/>
+        <result property="sex" column="sex"/>
+        <result property="avatar" column="avatar"/>
+        <result property="password" column="password"/>
+        <result property="salt" column="salt"/>
+        <result property="status" column="status"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="loginIp" column="login_ip"/>
+        <result property="loginDate" column="login_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="oaUserId" column="oa_user_id"/>
+    </resultMap>
+
+    <sql id="selectOASysUserVo">
+        select departmentid as dept_id,
+            loginid as login_name,
+            lastname as user_name,
+            '00' as user_type,
+            email,
+            substring(mobile, 1, 11) as phonenumber,
+            sex,
+            password,
+            case when status in (4,5,6,7) then 1 else 0 end as status,
+            0 as del_flag,
+            'admin' as create_by,
+            convert(varchar(100),getdate(),120) as create_time,
+            id as oa_user_id
+        from HrmResource
+    </sql>
+
+    <sql id="selectBossSysUserVo">
+        select user_id,
+            dept_id,
+            login_name,
+            user_name,
+            user_type,
+            email,
+            phonenumber,
+            sex,
+            avatar,
+            password,
+            salt,
+            status,
+            del_flag,
+            login_ip,
+            login_date,
+            create_by,
+            create_time,
+            update_by,
+            update_time,
+            remark
+        from sys_user
+    </sql>
+
+    <select id="selectOASysUserList" resultMap="SysUserResult">
+        <include refid="selectOASysUserVo"/>
+        where loginid!='' and loginid is not null
+    </select>
+
+    <select id="selectBossSysUserByUserId" parameterType="Integer" resultMap="SysUserResult">
+        <include refid="selectBossSysUserVo"/>
+        <where>
+            oa_user_id = #{oaUserId}
+        </where>
+    </select>
+
+    <insert id="insertBossSysUser" parameterType="com.tianyi.project.monitor.job.domain.SysUser" useGeneratedKeys="true"
+            keyProperty="userId">
+        insert into sys_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId!='' and userId!=null">user_id,</if>
+            <if test="deptId!='' and deptId!=null">dept_id,</if>
+            <if test="loginName!='' and loginName!=null">login_name,</if>
+            <if test="userName!='' and userName!=null">user_name,</if>
+            <if test="userType!='' and userType!=null">user_type,</if>
+            <if test="email!='' and email!=null">email,</if>
+            <if test="phonenumber!='' and phonenumber!=null">phonenumber,</if>
+            <if test="sex!='' and sex!=null">sex,</if>
+            <if test="avatar!='' and avatar!=null">avatar,</if>
+            <if test="password!='' and password!=null">password,</if>
+            <if test="salt!='' and salt!=null">salt,</if>
+            <if test="status!='' and status!=null">status,</if>
+            <if test="delFlag!='' and delFlag!=null">del_flag,</if>
+            <if test="loginIp!='' and loginIp!=null">login_ip,</if>
+            <if test="loginDate!='' and loginDate!=null">login_date,</if>
+            <if test="createBy!='' and createBy!=null">create_by,</if>
+            <if test="createTime!='' and createTime!=null">create_time,</if>
+            <if test="updateBy!='' and updateBy!=null">update_by,</if>
+            <if test="updateTime!='' and updateTime!=null">update_time,</if>
+            <if test="remark!='' and remark!=null">remark,</if>
+            <if test="oaUserId!='' and oaUserId!=null">oa_user_id,</if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="userId!='' and userId!=null">#{userId},</if>
+            <if test="deptId!='' and deptId!=null">#{deptId},</if>
+            <if test="loginName!='' and loginName!=null">#{loginName},</if>
+            <if test="userName!='' and userName!=null">#{userName},</if>
+            <if test="userType!='' and userType!=null">#{userType},</if>
+            <if test="email!='' and email!=null">#{email},</if>
+            <if test="phonenumber!='' and phonenumber!=null">#{phonenumber},</if>
+            <if test="sex!='' and sex!=null">#{sex},</if>
+            <if test="avatar!='' and avatar!=null">#{avatar},</if>
+            <if test="password!='' and password!=null">#{password},</if>
+            <if test="salt!='' and salt!=null">#{salt},</if>
+            <if test="status!='' and status!=null">#{status},</if>
+            <if test="delFlag!='' and delFlag!=null">#{delFlag},</if>
+            <if test="loginIp!='' and loginIp!=null">#{loginIp},</if>
+            <if test="loginDate!=null">#{loginDate},</if>
+            <if test="createBy!='' and createBy!=null">#{createBy},</if>
+            <if test="createTime!=null">#{createTime},</if>
+            <if test="remark!='' and remark!=null">#{remark},</if>
+            <if test="oaUserId!='' and oaUserId!=null">#{oaUserId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBossSysUser" parameterType="com.tianyi.project.monitor.job.domain.SysUser">
+        update sys_user
+        <set>
+            <if test="deptId!='' and deptId!=null">dept_id=#{deptId},</if>
+            <if test="userName!='' and userName!=null">user_name=#{userName},</if>
+            <if test="userType!='' and userType!=null">user_type=#{userType},</if>
+            <if test="email!='' and email!=null">email=#{email},</if>
+            <if test="phonenumber!='' and phonenumber!=null">phonenumber=#{phonenumber},</if>
+            <if test="sex!='' and sex!=null">sex=#{sex},</if>
+            <if test="avatar!='' and avatar!=null">avatar=#{avatar},</if>
+            <if test="password!='' and password!=null">password=#{password},</if>
+            <if test="salt!='' and salt!=null">salt=#{salt},</if>
+            <if test="status!='' and status!=null">status=#{status},</if>
+            <if test="delFlag!='' and delFlag!=null">del_flag=#{delFlag},</if>
+            <if test="loginIp!='' and loginIp!=null">login_ip=#{loginIp},</if>
+            <if test="loginDate!=null">login_date=#{loginDate},</if>
+            <if test="updateBy!='' and updateBy!=null">update_by=#{createBy},</if>
+            <if test="updateTime!=null">update_time=#{createTime},</if>
+            <if test="remark!='' and remark!=null">remark=#{remark},</if>
+        </set>
+        where oa_user_id=#{oaUserId}
+    </update>
+
+    <insert id="insertBossSysUserRole" parameterType="com.tianyi.project.monitor.job.domain.SysUser">
+        insert into sys_user_role (user_id,role_id) values (#{userId},2)
+    </insert>
+</mapper> 

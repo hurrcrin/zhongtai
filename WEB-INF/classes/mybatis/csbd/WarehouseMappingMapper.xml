@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.csbd.mapper.WarehouseMappingMapper">
+
+  <resultMap id="BaseResultMap" type="com.tianyi.project.csbd.entity.dao.WarehouseMapping">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="inside_id" jdbcType="INTEGER" property="insideId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="state" jdbcType="VARCHAR" property="state" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="warehouse_account" jdbcType="VARCHAR" property="warehouseAccount" />
+    <result column="channel_name" jdbcType="VARCHAR" property="channelName" />
+    <result column="warehouse_code" jdbcType="VARCHAR" property="warehouseCode" />
+    <result column="customer_code" jdbcType="VARCHAR" property="customerCode" />
+    <result column="platform" jdbcType="VARCHAR" property="platform" />
+    <result column="belonging_country" jdbcType="VARCHAR" property="belongingCountry" />
+    <result column="sub_warehouse_system" jdbcType="VARCHAR" property="subWarehouseSystem" />
+    <result column="warehouse_id" jdbcType="INTEGER" property="warehouseId" />
+    <result column="seller_id" jdbcType="VARCHAR" property="sellerId" />
+    <result column="warehouse_mapping" jdbcType="VARCHAR" property="warehouseMapping" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, inside_id, name, phone, city, state, country, warehouse_account, channel_name,
+    warehouse_code, customer_code, platform, belonging_country, sub_warehouse_system,
+    warehouse_id, seller_id, warehouse_mapping
+  </sql>
+
+  <select id="selectAllMapping" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from warehouse_mapping
+    where platform = '西邮'
+  </select>
+
+</mapper>

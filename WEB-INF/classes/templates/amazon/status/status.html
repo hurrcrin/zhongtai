@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('报告状态列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>国家：</p>
+                                <select name="country" th:with="type=${@dict.getType('sys_am_country')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>渠道平台：</p>
+                                <select name="platform" th:with="type=${@dict.getType('sys_am_platform')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>报告类型：</p>
+                                <select name="reporttype" th:with="type=${@dict.getType('sys_am_report_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>报告时间：</p>
+                                <input type="text" name="reporttime"/>
+                            </li>
+                            <li>
+                                <p>操作时间：</p>
+                                <input type="text" name="operatetime"/>
+                            </li>
+                            <li>
+                                <p>状态：</p>
+                                <select name="status" th:with="type=${@dict.getType('sys_am_report_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="amazon:status:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="amazon:status:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="amazon:status:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="amazon:status:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('amazon:status:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('amazon:status:remove')}]];
+        var countryDatas = [[${@dict.getType('sys_am_country')}]];
+        var platformDatas = [[${@dict.getType('sys_am_platform')}]];
+        var reporttypeDatas = [[${@dict.getType('sys_am_report_type')}]];
+        var statusDatas = [[${@dict.getType('sys_am_report_status')}]];
+        var prefix = ctx + "amazon/status";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "报告状态",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'id', 
+                    title : '状态id',
+                    visible: false
+                },
+                {
+                    field : 'country', 
+                    title : '国家',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(countryDatas, value);
+                    }
+                },
+                {
+                    field : 'platform', 
+                    title : '渠道平台',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(platformDatas, value);
+                    }
+                },
+                {
+                    field : 'reporttype', 
+                    title : '报告类型',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(reporttypeDatas, value);
+                    }
+                },
+                {
+                    field : 'reporttime', 
+                    title : '报告时间'
+                },
+                {
+                    field : 'operatetime', 
+                    title : '操作时间'
+                },
+                {
+                    field : 'status', 
+                    title : '状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(statusDatas, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

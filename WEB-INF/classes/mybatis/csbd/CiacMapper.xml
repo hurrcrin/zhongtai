@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.csbd.mapper.CiacMapper">
+    
+  <insert id="batchInsertStockLevels">
+    <foreach collection="list" item="item" separator=";">
+    insert into ciac_stock_levels
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="item.dataTime != null">
+        data_time,
+      </if>
+      <if test="item.productId != null">
+        product_id,
+      </if>
+      <if test="item.warehouseId != null">
+        warehouse_id,
+      </if>
+      <if test="item.clientId != null">
+        client_id,
+      </if>
+      <if test="item.sku != null">
+        sku,
+      </if>
+      <if test="item.level != null">
+        level,
+      </if>
+      <if test="item.totalStockLevel != null">
+        total_stock_level,
+      </if>
+      <if test="item.lowStockLevel != null">
+        low_stock_level,
+      </if>
+      <if test="item.lastUpdated != null">
+        last_updated,
+      </if>
+      <if test="item.quantity != null">
+        quantity,
+      </if>
+        create_time,
+      <if test="item.createBy != null">
+        create_by,
+      </if>
+
+      <if test="item.updateBy != null">
+        update_by,
+      </if>
+      update_time
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="item.dataTime != null">
+        #{item.dataTime},
+      </if>
+      <if test="item.productId != null">
+        #{item.productId},
+      </if>
+      <if test="item.warehouseId != null">
+        #{item.warehouseId},
+      </if>
+      <if test="item.clientId != null">
+        #{item.clientId},
+      </if>
+      <if test="item.sku != null">
+        #{item.sku},
+      </if>
+      <if test="item.level != null">
+        #{item.level},
+      </if>
+      <if test="item.totalStockLevel != null">
+        #{item.totalStockLevel},
+      </if>
+      <if test="item.lowStockLevel != null">
+        #{item.lowStockLevel},
+      </if>
+      <if test="item.lastUpdated != null">
+        #{item.lastUpdated},
+      </if>
+      <if test="item.quantity != null">
+        #{item.quantity},
+      </if>
+
+       now(),
+
+      <if test="item.createBy != null">
+        #{item.createBy},
+      </if>
+      <if test="item.updateBy != null">
+        #{item.updateBy},
+      </if>
+      now()
+    </trim>
+    </foreach>
+  </insert>
+
+
+  <insert id="insertStockLevels" parameterType="com.tianyi.project.csbd.entity.dao.CiacStockLevelDAO">
+      insert into ciac_stock_levels
+      <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="dataTime != null">
+          data_time,
+        </if>
+        <if test="productId != null">
+          product_id,
+        </if>
+        <if test="warehouseId != null">
+          warehouse_id,
+        </if>
+        <if test="clientId != null">
+          client_id,
+        </if>
+        <if test="sku != null">
+          sku,
+        </if>
+        <if test="level != null">
+          level,
+        </if>
+        <if test="totalStockLevel != null">
+          total_stock_level,
+        </if>
+        <if test="lowStockLevel != null">
+          low_stock_level,
+        </if>
+        <if test="lastUpdated != null">
+          last_updated,
+        </if>
+        <if test="quantity != null">
+          quantity,
+        </if>
+        create_time,
+        <if test="createBy != null">
+          create_by,
+        </if>
+
+        <if test="updateBy != null">
+          update_by,
+        </if>
+        update_time
+      </trim>
+      <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="dataTime != null">
+          #{dataTime},
+        </if>
+        <if test="productId != null">
+          #{productId,jdbcType=INTEGER},
+        </if>
+        <if test="warehouseId != null">
+          #{warehouseId,jdbcType=INTEGER},
+        </if>
+        <if test="clientId != null">
+          #{clientId,jdbcType=INTEGER},
+        </if>
+        <if test="sku != null">
+          #{sku,jdbcType=VARCHAR},
+        </if>
+        <if test="level != null">
+          #{level,jdbcType=INTEGER},
+        </if>
+        <if test="totalStockLevel != null">
+          #{totalStockLevel,jdbcType=VARCHAR},
+        </if>
+        <if test="lowStockLevel != null">
+          #{lowStockLevel,jdbcType=INTEGER},
+        </if>
+        <if test="lastUpdated != null">
+          #{lastUpdated,jdbcType=TIMESTAMP},
+        </if>
+        <if test="quantity != null">
+          #{quantity,jdbcType=INTEGER},
+        </if>
+
+        now(),
+
+        <if test="createBy != null">
+          #{createBy,jdbcType=VARCHAR},
+        </if>
+
+        <if test="updateBy != null">
+          #{updateBy,jdbcType=TIMESTAMP},
+        </if>
+        now()
+      </trim>
+  </insert>
+
+    
+</mapper>

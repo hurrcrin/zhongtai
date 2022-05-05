@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('排班表管理列表')" />
+    <style>
+        .test td:nth-child(3){
+            min-width: 70px;
+        }
+        .test td:nth-child(5){
+            min-width: 120px;
+        }
+        .test td:nth-child(6){
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>工号：</p>
+                                <input type="text" name="gh"/>
+                            </li>
+                            <li>
+                                <p>年：</p>
+                                <input type="text" name="n"/>
+                            </li>
+                            <li>
+                                <p>月：</p>
+                                <input type="text" name="y"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="attendance:pbb:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="attendance:pbb:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="attendance:pbb:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-info" onclick="$.table.importExcel()" shiro:hasPermission="attendance:pbb:import">
+                    <i class="fa fa-upload"></i> 导入
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="attendance:pbb:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" class="test"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('attendance:pbb:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('attendance:pbb:remove')}]];
+        var prefix = ctx + "attendance/pbb";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                importUrl: prefix + "/importData",
+                importTemplateUrl: prefix + "/importTemplate",
+                exportUrl: prefix + "/export",
+                modalName: "排班表管理",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                    field : 'id',
+                    title : 'id',
+                    hidden : true
+                },
+                    {
+                        field : 'company',
+                        title : '公司',
+                        formatter: function (value, row, index) {
+                            return '<div style="width:40px;">'+value+'</div>';
+                        }
+                    },
+                    {
+                        field : 'department',
+                        title : '部门',
+                        formatter: function (value, row, index) {
+                            return '<div style="width:70px;">'+value+'</div>';
+                        }
+                    },
+                {
+                    field : 'name',
+                    title : ' 姓名 ',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:40px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'gh',
+                    title : '工号'
+                },
+                {
+                    field : 'n',
+                    title : '年'
+                },
+                {
+                    field : 'y',
+                    title : '月'
+                },
+                {
+                    field : 'n1',
+                    title : '1号'
+                },
+                {
+                    field : 'n2',
+                    title : '2号'
+                },
+                {
+                    field : 'n3',
+                    title : '3号'
+                },
+                {
+                    field : 'n4',
+                    title : '4号'
+                },
+                {
+                    field : 'n5',
+                    title : '5号'
+                },
+                {
+                    field : 'n6',
+                    title : '6号'
+                },
+                {
+                    field : 'n7',
+                    title : '7号'
+                },
+                {
+                    field : 'n8',
+                    title : '8号'
+                },
+                {
+                    field : 'n9',
+                    title : '9号'
+                },
+                {
+                    field : 'n10',
+                    title : '10号'
+                },
+                {
+                    field : 'n11',
+                    title : '11号'
+                },
+                {
+                    field : 'n12',
+                    title : '12号'
+                },
+                {
+                    field : 'n13',
+                    title : '13号'
+                },
+                {
+                    field : 'n14',
+                    title : '14号'
+                },
+                {
+                    field : 'n15',
+                    title : '15号'
+                },
+                {
+                    field : 'n16',
+                    title : '16号'
+                },
+                {
+                    field : 'n17',
+                    title : '17号'
+                },
+                {
+                    field : 'n18',
+                    title : '18号'
+                },
+                {
+                    field : 'n19',
+                    title : '19号'
+                },
+                {
+                    field : 'n20',
+                    title : '20号'
+                },
+                {
+                    field : 'n21',
+                    title : '21号'
+                },
+                {
+                    field : 'n22',
+                    title : '22号'
+                },
+                {
+                    field : 'n23',
+                    title : '23号'
+                },
+                {
+                    field : 'n24',
+                    title : '24号'
+                },
+                {
+                    field : 'n25',
+                    title : '25号'
+                },
+                {
+                    field : 'n26',
+                    title : '26号'
+                },
+                {
+                    field : 'n27',
+                    title : '27号'
+                },
+                {
+                    field : 'n28',
+                    title : '28号'
+                },
+                {
+                    field : 'n29',
+                    title : '29号'
+                },
+                {
+                    field : 'n30',
+                    title : '30号'
+                },
+                {
+                    field : 'n31',
+                    title : '31号'
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class="mt20 mb10">
+        <div class="col-xs-offset-1">
+            <input type="file" id="file" name="file"/>
+            <div class="mt10 pt5">
+                <a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+            </div>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+</script>
+</html>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.it.mapper.MoneyLedgerMapper">
+    <select id="selectRemainingBudget" parameterType="com.tianyi.project.it.domain.MoneyLedger"
+            resultType="java.math.BigDecimal">
+        SELECT
+            remainmoney
+        FROM
+            formtable_main_549
+        WHERE
+            year = #{nf}
+            AND month = #{yf}
+            AND moneyBelong = #{gs}
+            AND moneyCategory = #{dl}
+    </select>
+</mapper>

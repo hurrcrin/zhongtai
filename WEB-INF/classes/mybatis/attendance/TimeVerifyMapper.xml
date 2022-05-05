@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.attendance.verify.mapper.TimeVerifyMapper">
+    <resultMap id="TemporalIntervalResult" type="com.tianyi.project.attendance.verify.domain.TemporalInterval">
+        <result property="startDate" column="startDate"/>
+        <result property="endDate" column="endDate"/>
+    </resultMap>
+    <sql id="selectVacateVo">
+        SELECT
+            a.requestId,
+            ( a.ksrq+ ' ' + a.kssj ) AS startDate,
+            ( a.jsrq+ ' ' + a.jssj ) AS endDate
+        FROM
+            formtable_main_16 a,
+            (
+            SELECT DISTINCT
+                a.requestid,
+                a.time,
+                b.nodeid
+            FROM
+                ( SELECT requestid, MAX ( receivedate + ' ' + receivetime ) AS TIME FROM workflow_currentoperator WHERE workflowid = 487 GROUP BY requestid ) a
+                LEFT JOIN workflow_currentoperator b ON a.requestid= b.requestid
+                AND a.time = ( b.receivedate+ ' ' + b.receivetime )
+            ) b
+    </sql>
+
+    <select id="selectVacateByXm" resultMap="TemporalIntervalResult" parameterType="String">
+        <include refid="selectVacateVo"/>
+        <where>
+            <if test="xm!=null and xm!=''">
+                AND a.xm=#{xm}
+            </if>
+            AND a.requestId= b.requestid
+            AND b.nodeid!= 3170
+        </where>
+    </select>
+
+    <select id="selectWhiteList" resultType="java.lang.Long">
+        select empno from formtable_main_553
+    </select>
+
+    <sql id="selectOvertimeVo">
+        SELECT DISTINCT
+            a.jbrq
+        FROM
+            ( SELECT a.requestId, a.xm, b.jbrq FROM formtable_main_17 a, formtable_main_17_dt1 b WHERE a.id= b.mainid ) a,
+            (
+            SELECT
+                a.requestid,
+                a.time,
+                b.nodeid
+            FROM
+                ( SELECT requestid, MAX ( receivedate + ' ' + receivetime ) AS TIME FROM workflow_currentoperator WHERE workflowid = 484 GROUP BY requestId ) a
+                LEFT JOIN workflow_currentoperator b ON a.requestid= b.requestid
+                AND a.time = ( b.receivedate+ ' ' + b.receivetime )
+            ) b
+    </sql>
+
+    <select id="selectOvertimeByXm" resultType="String" parameterType="String">
+        <include refid="selectOvertimeVo"/>
+        <where>
+            <if test="xm!=null and xm!=''">
+                AND a.xm=#{xm}
+            </if>
+            AND a.requestid= b.requestid
+            AND b.nodeid != 3151
+        </where>
+    </select>
+
+    <sql id="selectBusinessTripVo">
+        SELECT
+            a.requestId,
+            ( a.ksrq+ ' ' + a.kssj ) AS startDate,
+            ( a.jsrq+ ' ' + a.jssj ) AS endDate
+        FROM
+            formtable_main_28 a,
+            (
+            SELECT DISTINCT
+                a.requestid,
+                a.time,
+                b.nodeid
+            FROM
+                ( SELECT requestid, MAX ( receivedate + ' ' + receivetime ) AS TIME FROM workflow_currentoperator WHERE workflowid = 485 GROUP BY requestid ) a
+                LEFT JOIN workflow_currentoperator b ON a.requestid= b.requestid
+                AND a.time = ( b.receivedate+ ' ' + b.receivetime )
+            ) b
+    </sql>
+
+    <select id="selectBusinessTripByXm" resultMap="TemporalIntervalResult" parameterType="String">
+        <include refid="selectBusinessTripVo"/>
+        <where>
+            <if test="xm!=null and xm!=''">
+                AND a.xm=#{xm}
+            </if>
+            AND a.requestid= b.requestid
+            AND b.nodeid!= 3159
+        </where>
+    </select>
+
+    <sql id="selectRetroactiveVo">
+        SELECT
+            b.bqrq+ ' ' + CAST ( b.bqsd AS CHAR ( 1 ) )
+        FROM
+            formtable_main_29 a,
+            formtable_main_29_dt1 b,
+            (
+            SELECT DISTINCT
+                a.requestid,
+                a.nodeid
+            FROM
+                workflow_currentoperator a,
+                ( SELECT requestid, MAX ( receivedate + ' ' + receivetime ) AS TIME FROM workflow_currentoperator WHERE workflowid = 486 AND nodeid != 3166 GROUP BY requestid ) b
+            WHERE
+                a.requestid= b.requestid
+            AND ( a.receivedate+ ' ' + a.receivetime ) = b.time
+            ) c
+    </sql>
+
+    <select id="selectRetroactiveByXm" resultType="String" parameterType="String">
+        <include refid="selectRetroactiveVo"/>
+        <where>
+            <if test="xm!=null and xm!=''">
+                AND a.xm=#{xm}
+            </if>
+            AND a.id=b.mainid
+            AND a.requestid= c.requestid
+        </where>
+    </select>
+</mapper>

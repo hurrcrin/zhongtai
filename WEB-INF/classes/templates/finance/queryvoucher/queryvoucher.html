@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('凭证查询列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId" style="float:left">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>会计期间：</p>
+                            <input type="text" name="accountPeriod" id="accountPeriod"/>
+                        </li>
+                        <li>
+                            <p>单据类型：</p>
+                            <select name="type" th:with="type=${@dict.getType('sys_voucher_type')}" id="type">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>子公司：</p>
+                            <select name="subsdiary" th:with="type=${@dict.getType('sys_subsidiary')}" id="subsdiary">
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="query()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>制单人：</p>
+                            <select name="document_maker" th:with="type=${@dict.getType('sys_document_maker')}"
+                                    id="document_maker">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>记账人：</p>
+                            <select name="bookkeeper" th:with="type=${@dict.getType('sys_bookkeeper')}" id="bookkeeper">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>审核人：</p>
+                            <select name="verifier" th:with="type=${@dict.getType('sys_verifier')}" id="verifier">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-danger btn-rounded btn-sm" onclick="generate()" id="generate"
+                               shiro:hasPermission="finance:queryvoucher:generate">
+                                <i class="fa fa-refresh"></i> 生成凭证编号
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-warning" onclick="$.table.exportExcel()"
+               shiro:hasPermission="finance:queryvoucher:export">
+                <i class="fa fa-download"></i> 导出汇总
+            </a>
+            <a class="btn btn-warning" onclick="exportDetail()" id="exportDetail"
+               shiro:hasPermission="finance:queryvoucher:exportDetail">
+                <i class="fa fa-download"></i> 导出明细
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('finance:queryvoucher:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('finance:queryvoucher:remove')}]];
+    var prefix = ctx + "finance/queryvoucher";
+    var sign = 0;
+    $(function () {
+        sign = 0;
+        $("#generate").removeAttr('onclick');
+        $("#generate").removeClass('btn btn-danger');
+        $("#generate").addClass('btn btn-default');
+    });
+
+    function query() {
+        if (sign == 0) {
+            $("#generate").removeClass('btn btn-default btn-rounded btn-sm');
+            $("#generate").addClass('btn btn-danger btn-rounded btn-sm');
+            $("#generate").click(function () {
+                generate();
+            })
+            sign++;
+        }
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "凭证查询",
+            rememberSelected: true,
+            columns: [{
+                field: 'state',
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: 'null',
+                    visible: false
+                },
+                {
+                    field: 'accountPeriod',
+                    title: '会计期间'
+                },
+                {
+                    field: 'transcationId',
+                    title: '事务处理编号'
+                },
+                {
+                    field: 'fileNum',
+                    title: '文件号码'
+                },
+                {
+                    field: 'type',
+                    title: '单据类型'
+                },
+                {
+                    field: 'amount',
+                    title: '金额'
+                },
+                {
+                    field: 'amountForeign',
+                    title: '金额外币'
+                },
+                {
+                    field: 'rate',
+                    title: '汇率'
+                },
+                {
+                    field: 'subsdiary',
+                    title: '子公司'
+                },
+                {
+                    field: 'documentMaker',
+                    title: '制单人'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-warning btn-xs " href="#" onclick="skip(\'' + row.id + '\')"><i class="fa fa-search"></i>明细数据</a>');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+        $.table.refresh();
+    }
+
+    function skip(id) {
+        console.log("id:" + id);
+        var url = "/ZhongTai/finance/queryvoucherdetail?mainid=" + id;
+        $.modal.openFull("凭证查询明细数据", url);
+    }
+
+    function exportDetail() {
+        table.set();
+        var accountPeriod = $("#accountPeriod").val();
+        var type = $("#type").val();
+        var subsdiary = $("#subsdiary").val();
+        console.log("accountPeriod:" + accountPeriod);
+        console.log("type:" + type);
+        console.log("subsdiary:" + subsdiary);
+        $.modal.confirm("确定导出所有凭证查询明细数据吗？", function () {
+            $.modal.loading("正在导出数据，请稍后...");
+            $.ajax({
+                url: "/ZhongTai/finance/queryvoucher/exportDetail",
+                type: "post",
+                data: {
+                    accountPeriod: accountPeriod,
+                    type: type,
+                    subsdiary: subsdiary
+                },
+                dataType: "json",
+                success: function (result) {
+                    if (result.code == web_status.SUCCESS) {
+                        window.location.href = ctx + "common/download?fileName=" + encodeURI(result.msg) + "&delete=" + true;
+                    } else if (result.code == web_status.WARNING) {
+                        $.modal.alertWarning(result.msg)
+                    } else {
+                        $.modal.alertError(result.msg);
+                    }
+                    $.modal.closeLoading();
+                }
+            })
+        });
+    }
+
+    // 选中数据
+    function generate() {
+        var id = $.table.selectColumns("id");
+        var accountPeriod = $("#accountPeriod").val();
+        var type = $("#type").val();
+        var subsdiary = $("#subsdiary").val();
+        var document_maker = $("#document_maker").val();
+        var bookkeeper = $("#bookkeeper").val();
+        var verifier = $("#verifier").val();
+        console.log("document_maker:" + document_maker);
+        console.log("bookkeeper:" + bookkeeper);
+        console.log("verifier:" + verifier);
+        if (document_maker == "" || document_maker == null) {
+            alert("请填写制单人!");
+        }
+        if (bookkeeper == "" || bookkeeper == null) {
+            alert("请填写记账人!");
+        }
+        if (verifier == "" || verifier == null) {
+            alert("请填写审核人!");
+        }
+        if (document_maker != "" && document_maker != null && bookkeeper != "" && bookkeeper != null && verifier != "" && verifier != null) {
+            if (id.length == 0) {
+                if (subsdiary == "" || subsdiary == null) {
+                    alert("请填写子公司!");
+                } else if (accountPeriod == "" || accountPeriod == null) {
+                    alert("请填写会计期间!");
+                } else {
+                    var message = "确定当前全部数据生成凭证号?";
+                    if (confirm(message) == true) {
+                        $.ajax({
+                            url: "/ZhongTai/finance/queryvoucher/generate",
+                            type: "post",
+                            data: {
+                                accountPeriod: accountPeriod,
+                                type: type,
+                                subsdiary: subsdiary,
+                                document_maker: document_maker,
+                                bookkeeper: bookkeeper,
+                                verifier: verifier
+                            },
+                            dataType: "json",
+                            success: function (str) {
+                                var strfy = JSON.stringify(str);
+                                var json = eval('(' + strfy + ')');
+                                console.log("strfy:" + strfy);
+                                console.log("json:" + json);
+                                var result = json.result;
+                                console.log("result:" + result);
+                                if (result == 0) {
+                                    alert("凭证编号已生成!");
+                                    $.table.refresh();
+                                } else {
+                                    alert("凭证编号生成失败,请联系管理员!");
+                                }
+                            }
+                        })
+                    } else {
+                        //donothing
+                    }
+                }
+            }
+        }
+    };
+</script>
+</body>
+</html>

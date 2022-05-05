@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.crawler.shoplink.mapper.ZtCrawlerShopLinkMapper">
+    
+    <resultMap type="ZtCrawlerShopLink" id="ZtCrawlerShopLinkResult">
+        <result property="id"    column="id"    />
+        <result property="brand"    column="brand"    />
+        <result property="channel"    column="channel"    />
+        <result property="shoplink"    column="shoplink"    />
+    </resultMap>
+
+    <sql id="selectZtCrawlerShopLinkVo">
+        select id, brand, channel, shoplink from zt_crawler_shop_link
+    </sql>
+
+    <select id="selectZtCrawlerShopLinkList" parameterType="ZtCrawlerShopLink" resultMap="ZtCrawlerShopLinkResult">
+        <include refid="selectZtCrawlerShopLinkVo"/>
+        <where>  
+            <if test="brand != null  and brand != ''"> and brand = #{brand}</if>
+            <if test="channel != null  and channel != ''"> and channel = #{channel}</if>
+            <if test="shoplink != null  and shoplink != ''"> and shoplink = #{shoplink}</if>
+        </where>
+    </select>
+    
+    <select id="selectZtCrawlerShopLinkById" parameterType="Long" resultMap="ZtCrawlerShopLinkResult">
+        <include refid="selectZtCrawlerShopLinkVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertZtCrawlerShopLink" parameterType="ZtCrawlerShopLink" useGeneratedKeys="true" keyProperty="id">
+        insert into zt_crawler_shop_link
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="brand != null  and brand != ''">brand,</if>
+            <if test="channel != null  and channel != ''">channel,</if>
+            <if test="shoplink != null  and shoplink != ''">shoplink,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="brand != null  and brand != ''">#{brand},</if>
+            <if test="channel != null  and channel != ''">#{channel},</if>
+            <if test="shoplink != null  and shoplink != ''">#{shoplink},</if>
+         </trim>
+    </insert>
+
+    <update id="updateZtCrawlerShopLink" parameterType="ZtCrawlerShopLink">
+        update zt_crawler_shop_link
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="brand != null  and brand != ''">brand = #{brand},</if>
+            <if test="channel != null  and channel != ''">channel = #{channel},</if>
+            <if test="shoplink != null  and shoplink != ''">shoplink = #{shoplink},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteZtCrawlerShopLinkById" parameterType="Long">
+        delete from zt_crawler_shop_link where id = #{id}
+    </delete>
+
+    <delete id="deleteZtCrawlerShopLinkByIds" parameterType="String">
+        delete from zt_crawler_shop_link where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

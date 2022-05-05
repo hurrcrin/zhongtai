@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改排班表管理')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-pbb-edit" th:object="${attendancePbb}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">姓名：</label>
+                <div class="col-sm-8">
+                    <input name="name" th:field="*{name}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">工号：</label>
+                <div class="col-sm-8">
+                    <input name="gh" th:field="*{gh}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">年：</label>
+                <div class="col-sm-8">
+                    <input name="n" th:field="*{n}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">月：</label>
+                <div class="col-sm-8">
+                    <input name="y" th:field="*{y}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">1号：</label>
+                <div class="col-sm-8">
+                    <input name="n1" th:field="*{n1}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">2号：</label>
+                <div class="col-sm-8">
+                    <input name="n2" th:field="*{n2}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">3号：</label>
+                <div class="col-sm-8">
+                    <input name="n3" th:field="*{n3}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">4号：</label>
+                <div class="col-sm-8">
+                    <input name="n4" th:field="*{n4}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">5号：</label>
+                <div class="col-sm-8">
+                    <input name="n5" th:field="*{n5}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">6号：</label>
+                <div class="col-sm-8">
+                    <input name="n6" th:field="*{n6}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">7号：</label>
+                <div class="col-sm-8">
+                    <input name="n7" th:field="*{n7}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">8号：</label>
+                <div class="col-sm-8">
+                    <input name="n8" th:field="*{n8}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">9号：</label>
+                <div class="col-sm-8">
+                    <input name="n9" th:field="*{n9}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">10号：</label>
+                <div class="col-sm-8">
+                    <input name="n10" th:field="*{n10}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">11号：</label>
+                <div class="col-sm-8">
+                    <input name="n11" th:field="*{n11}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">12号：</label>
+                <div class="col-sm-8">
+                    <input name="n12" th:field="*{n12}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">13号：</label>
+                <div class="col-sm-8">
+                    <input name="n13" th:field="*{n13}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">14号：</label>
+                <div class="col-sm-8">
+                    <input name="n14" th:field="*{n14}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">15号：</label>
+                <div class="col-sm-8">
+                    <input name="n15" th:field="*{n15}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">16号：</label>
+                <div class="col-sm-8">
+                    <input name="n16" th:field="*{n16}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">17号：</label>
+                <div class="col-sm-8">
+                    <input name="n17" th:field="*{n17}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">18号：</label>
+                <div class="col-sm-8">
+                    <input name="n18" th:field="*{n18}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">19号：</label>
+                <div class="col-sm-8">
+                    <input name="n19" th:field="*{n19}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">20号：</label>
+                <div class="col-sm-8">
+                    <input name="n20" th:field="*{n20}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">21号：</label>
+                <div class="col-sm-8">
+                    <input name="n21" th:field="*{n21}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">22号：</label>
+                <div class="col-sm-8">
+                    <input name="n22" th:field="*{n22}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">23号：</label>
+                <div class="col-sm-8">
+                    <input name="n23" th:field="*{n23}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">24号：</label>
+                <div class="col-sm-8">
+                    <input name="n24" th:field="*{n24}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">25号：</label>
+                <div class="col-sm-8">
+                    <input name="n25" th:field="*{n25}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">26号：</label>
+                <div class="col-sm-8">
+                    <input name="n26" th:field="*{n26}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">27号：</label>
+                <div class="col-sm-8">
+                    <input name="n27" th:field="*{n27}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">28号：</label>
+                <div class="col-sm-8">
+                    <input name="n28" th:field="*{n28}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">29号：</label>
+                <div class="col-sm-8">
+                    <input name="n29" th:field="*{n29}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">30号：</label>
+                <div class="col-sm-8">
+                    <input name="n30" th:field="*{n30}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">31号：</label>
+                <div class="col-sm-8">
+                    <input name="n31" th:field="*{n31}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "attendance/pbb";
+        $("#form-pbb-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-pbb-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

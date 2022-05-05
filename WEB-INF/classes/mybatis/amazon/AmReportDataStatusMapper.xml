@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.amazon.status.mapper.AmReportDataStatusMapper">
+    
+    <resultMap type="AmReportDataStatus" id="AmReportDataStatusResult">
+        <result property="id"    column="id"    />
+        <result property="country"    column="country"    />
+        <result property="platform"    column="platform"    />
+        <result property="reporttype"    column="reportType"    />
+        <result property="reporttime"    column="reportTime"    />
+        <result property="operatetime"    column="operateTime"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectAmReportDataStatusVo">
+        select id, country, platform, reportType, reportTime, operateTime, status from am_report_data_status
+    </sql>
+
+    <select id="selectAmReportDataStatusList" parameterType="AmReportDataStatus" resultMap="AmReportDataStatusResult">
+        <include refid="selectAmReportDataStatusVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="country != null  and country != ''"> and country = #{country}</if>
+            <if test="platform != null  and platform != ''"> and platform = #{platform}</if>
+            <if test="reporttype != null  and reporttype != ''"> and reportType = #{reporttype}</if>
+            <if test="reporttime != null  and reporttime != ''"> and reportTime = #{reporttime}</if>
+            <if test="operatetime != null  and operatetime != ''"> and operateTime = #{operatetime}</if>
+            <if test="status != null "> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectAmReportDataStatusById" parameterType="Long" resultMap="AmReportDataStatusResult">
+        <include refid="selectAmReportDataStatusVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAmReportDataStatus" parameterType="AmReportDataStatus" useGeneratedKeys="true" keyProperty="id">
+        insert into am_report_data_status
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="country != null  and country != ''">country,</if>
+            <if test="platform != null  and platform != ''">platform,</if>
+            <if test="reporttype != null  and reporttype != ''">reportType,</if>
+            <if test="reporttime != null  and reporttime != ''">reportTime,</if>
+            <if test="operatetime != null  and operatetime != ''">operateTime,</if>
+            <if test="status != null ">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="country != null  and country != ''">#{country},</if>
+            <if test="platform != null  and platform != ''">#{platform},</if>
+            <if test="reporttype != null  and reporttype != ''">#{reporttype},</if>
+            <if test="reporttime != null  and reporttime != ''">#{reporttime},</if>
+            <if test="operatetime != null  and operatetime != ''">#{operatetime},</if>
+            <if test="status != null ">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAmReportDataStatus" parameterType="AmReportDataStatus">
+        update am_report_data_status
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="country != null  and country != ''">country = #{country},</if>
+            <if test="platform != null  and platform != ''">platform = #{platform},</if>
+            <if test="reporttype != null  and reporttype != ''">reportType = #{reporttype},</if>
+            <if test="reporttime != null  and reporttime != ''">reportTime = #{reporttime},</if>
+            <if test="operatetime != null  and operatetime != ''">operateTime = #{operatetime},</if>
+            <if test="status != null ">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAmReportDataStatusById" parameterType="Long">
+        delete from am_report_data_status where id = #{id}
+    </delete>
+
+    <delete id="deleteAmReportDataStatusByIds" parameterType="String">
+        delete from am_report_data_status where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

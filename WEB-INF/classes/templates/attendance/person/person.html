@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('员工自助查询页面')"/>
+    <!--    <th:block th:include="include :: header('用户个人信息')" />-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <!--    <link href='https://use.fontawesome.com/releases/v5.0.6/css/all.css' rel='stylesheet'>-->
+    <!--    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>-->
+    <link th:href="@{/fullcalendar/core/main.css}" rel='stylesheet'/>
+    <link th:href="@{/fullcalendar/daygrid/main.css}" rel='stylesheet'/>
+    <!--    <link th:href="@{/fullcalendar/bootstrap/main.css}" rel='stylesheet'/>-->
+    <style>
+        .fc-button {
+            padding: 0 10px !important;
+        }
+
+        .info-table {
+            width: 100%;
+        }
+
+        .info-table td {
+            border-bottom: 1.4px solid #e7eaec;
+            font-weight: 400;
+            font-size: 13px;
+            color: #676a6c;
+            text-align: left;
+            padding: 10px 0;
+            box-sizing: border-box;
+
+        }
+
+        .info-table tr td:nth-child(1) {
+            width: 26%;
+            min-width: 26%;
+            max-width: 26%;
+        }
+
+        .info-table tr td:nth-child(2) {
+            width: 24%;
+            min-width: 24%;
+            max-width: 24%;
+        }
+
+        .info-table tr td:nth-child(4) {
+            width: 24%;
+            min-width: 24%;
+            max-width: 24%;
+        }
+
+        .info-table tr td:nth-child(3) {
+            width: 26%;
+            min-width: 26%;
+            max-width: 26%;
+            padding-left: 5px;
+
+        }
+
+        .record-block {
+            padding: 5px 0;
+        }
+
+        .empty-data {
+            padding: 5px;
+            color: grey;
+            text-align: center;
+        }
+
+        #tongdao {
+            display: flex;
+            align-items: center;
+        }
+
+        .tong-block {
+            padding: 5px 0;
+            flex: 1;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .tong-block img {
+            min-height: 45px;;
+            max-height: 45px;;
+            height: 45px;
+            width: 60px;
+            min-width: 60px;
+            max-width: 60px;
+        }
+    </style>
+</head>
+<body class="white-bg" style="min-width:1100px;overflow-x: auto">
+<!-- <input id="userId" name="userId" type="hidden" th:value="${user.userId}" /> -->
+<div class="row" style="padding:20px;">
+    <div class="col-sm-4 pr5">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title ibox-title-gray dashboard-header gray-bg">
+                <h5>个人资料</h5>
+            </div>
+            <div class="ibox-content">
+                <!--                <div class="text-center">-->
+                <!--                    &lt;!&ndash; <p><img class="img-circle img-lg" th:src="(${user.avatar} == '') ? @{/img/profile.jpg} : @{${user.avatar}}"></p> &ndash;&gt;-->
+                <!--                    <p><img class="img-circle img-lg"></p>-->
+                <!--                    <p><a href="javascript:avatar()">修改头像</a></p>-->
+                <!--                </div>-->
+                <div>
+                    <table class="info-table">
+                        <tr>
+                            <td>姓名：</td>
+                            <td><span id="lastname"></span></td>
+                            <td>公司：</td>
+                            <td><span id="company"></span></td>
+                        </tr>
+                        <tr>
+                            <td>工号：</td>
+                            <td><span id="loginid"></span></td>
+                            <td>部门：</td>
+                            <td><span id="department"></span></td>
+                        </tr>
+                        <tr>
+                            <td>上班时间：</td>
+                            <td><span id="startTime"></span></td>
+                            <td>班次：</td>
+                            <td><span id="bcName"></span></td>
+                        </tr>
+                        <tr>
+                            <td>下班时间：</td>
+                            <td><span id="endTime"></span></td>
+                            <td>待调休(H)：</td>
+                            <td><span id="sy"></span></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="ibox float-e-margins">
+            <div class="ibox-title ibox-title-gray dashboard-header gray-bg">
+                <h5>异常推送记录</h5>
+            </div>
+            <div class="ibox-content" id="recordList"></div>
+        </div>
+        <div class="ibox float-e-margins">
+            <div class="ibox-title ibox-title-gray dashboard-header gray-bg">
+                <h5>快速通道</h5>
+            </div>
+            <div class="ibox-content" id="tongdao">
+                <div class="tong-block"><a
+                        href="http://oa.wuxitianyi.com.cn:88/workflow/request/AddRequest.jsp?workflowid=487&isagent=0&beagenter=0&f_weaver_belongto_userid="
+                        target="_blank"><img th:src="@{/img/1.png}" src="../../../static/img/1.png"/></a>
+                    <div>请假申请</div>
+                </div>
+                <div class="tong-block"><a
+                        href="http://oa.wuxitianyi.com.cn:88/workflow/request/AddRequest.jsp?workflowid=485&isagent=0&beagenter=0&f_weaver_belongto_userid="
+                        target="_blank"><img th:src="@{/img/2.png}"/></a>
+                    <div>出差申请</div>
+                </div>
+                <div class="tong-block"><a
+                        href="http://oa.wuxitianyi.com.cn:88/workflow/request/AddRequest.jsp?workflowid=484&isagent=0&beagenter=0&f_weaver_belongto_userid="
+                        target="_blank"><img th:src="@{/img/3.png}"/></a>
+                    <div>加班申请</div>
+                </div>
+                <div class="tong-block"><a
+                        href="http://oa.wuxitianyi.com.cn:88/workflow/request/AddRequest.jsp?workflowid=486&isagent=0&beagenter=0&f_weaver_belongto_userid="
+                        target="_blank"><img th:src="@{/img/4.png}"/></a>
+                    <div>补签申请</div>
+                </div>
+                <div class="tong-block"><a
+                        href="http://116.62.208.78:48080/ZhongTai/attendance/personConfirm"
+                        target="_blank"><img th:src="@{/img/5.png}"/></a>
+                    <div>考勤月报表</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-sm-8 about">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title ibox-title-gray dashboard-header gray-bg">
+                <h5>考勤日历</h5>
+            </div>
+            <div style="padding: 20px 10px">
+                <div id='calendar'></div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:src="@{/fullcalendar/core/main.js}"></script>
+<script th:src="@{/fullcalendar/daygrid/main.js}"></script>
+<!--<script th:src="@{/fullcalendar/bootstrap/main.js}"></script>-->
+<script th:src="@{/fullcalendar/core/locales/zh-cn.js}"></script>
+<script th:inline="javascript">
+    const ctx1 = [[@{/}]];
+
+        /*用户管理-头像*/
+        function avatar() {
+            var url = ctx1 + 'system/user/profile/avatar';
+            $.modal.open("修改头像", url);
+        }
+    const date = new Date();
+    let year = date.getFullYear();
+    let month = date.getMonth();
+    var calendar = null;
+    document.addEventListener('DOMContentLoaded', function () {
+        setCalendar([]);
+        getCalendar();
+        getUserInfo();
+        getRecordList();
+    })
+
+    function getCalendar() {
+        const parent = window.parent;
+        $.modal.loading("日历数据加载中，请稍后...");
+        setCalendar([]);
+        $.ajax({
+            url: ctx1 + "attendance/data/calendarData",
+            type: "post",
+            data: {
+                year: year, month: month + 1
+            },
+            dataType: "json",
+            async: true,
+            success: function (res) {
+                $.modal.closeLoading();
+                // setCalendar()
+                if (res.data && !res.code) {
+                    setCalendar(res.data);
+                } else {
+                    parent.$.modal.msgError("后台报错");
+                }
+                // alert("发送成功,等待ERP生成,请勿重复发送!");
+            },
+            error: function () {
+                $.modal.closeLoading();
+                parent.$.modal.msgError("后台报错");
+            }
+        })
+    }
+
+    let nowYear = date.getFullYear();
+    let nowMonth = date.getMonth();
+    let nowDate = date.getDate();
+
+    function setPre() {
+        if (month === 0) {
+            month = 12;
+            year = year - 1;
+        }
+        month = month - 1;
+    }
+
+    function setNext() {
+        if (month === 11) {
+            month = -1;
+            year = year + 1;
+        }
+        month = month + 1;
+    }
+
+    function setToday() {
+        year = nowYear
+        month = nowMonth
+    }
+
+
+    function getDefaultDate() {
+        let dateList = [year]
+        if ((month + 1) >= 10) {
+            dateList.push(month + 1)
+        } else {
+            dateList.push('0' + (month + 1))
+        }
+        if (nowYear === year && nowMonth === month) {
+            if (nowDate >= 10) {
+                dateList.push(nowDate)
+            } else {
+                dateList.push('0' + nowDate)
+            }
+        } else {
+            dateList.push('01')
+        }
+        return dateList.join('-')
+    }
+
+    function setCalendar(events) {
+        var calendarEl = document.getElementById('calendar');
+        if (calendar) {
+            calendar.destroy()
+        }
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            defaultDate: getDefaultDate(),
+            locale: 'zh-cn',
+            plugins: ['dayGrid'],
+            events: events.map((v) => {
+                v.title = (v.title || '').trim()
+                return {
+                    ...v,
+                    color: v.title === '迟到' ? '#f8ac59' : ((v.title || '').indexOf('班卡') > -1 ? 'red' : '#3788d8')
+                }
+            })
+        });
+        calendar.render();
+        $('.fc-prev-button').click(function () {
+            setPre();
+            getCalendar();
+        });
+        $('.fc-today-button').click(function () {
+            setToday();
+            getCalendar();
+        });
+        $('.fc-next-button span').click(function () {
+            setNext();
+            if (year > nowYear || (year === nowYear && month > nowMonth)) {
+                setCalendar([])
+            } else {
+                getCalendar();
+            }
+        });
+    }
+
+    function getUserInfo() {
+        $.ajax({
+            url: ctx1 + "attendance/data/personalInfo",
+            type: "post",
+            dataType: "json",
+            async: true,
+            success: function (res) {
+                if (!res.code) {
+
+                    // bcName: "常白班"
+                    // company: "集团共享部门"
+                    // department: "技术开发组"
+                    // endTime: "17:30"
+                    // lastname: "伍威"
+                    // loginid: "50163"
+                    // startTime: "08:30"
+                    // sy: 22
+                    if (res.data) {
+                        for (let i in res.data) {
+                            const ele = document.getElementById(i)
+                            if (ele) {
+                                document.getElementById(i).innerHTML = res.data[i]
+                            }
+                        }
+                    }
+                    console.log(res.data)
+                } else {
+                    parent.$.modal.msgError("后台报错");
+                }
+            },
+            error: function () {
+                parent.$.modal.msgError("后台报错");
+            }
+        })
+        // personalInfo
+    }
+
+    function getRecordList() {
+        // "/attendance/data/personalErrorInfo
+        $.ajax({
+            url: ctx1 + "attendance/data/personalErrorInfo",
+            type: "post",
+            dataType: "json",
+            async: true,
+            success: function (res) {
+                if (!res.code) {
+                    if (res.data) {
+                        setRecordList(res.data)
+                    } else {
+                        setRecordList()
+                    }
+                } else {
+                    parent.$.modal.msgError("后台报错");
+                }
+            },
+            error: function () {
+                parent.$.modal.msgError("后台报错");
+            }
+        })
+    }
+
+    function setRecordList(list = []) {
+        const dom = document.getElementById('recordList');
+        if (list.length === 0) {
+            dom.innerHTML = `<div class="empty-data">暂无数据</div>`
+            return
+        }
+        dom.innerHTML = list.map((v) => {
+            const item = v || '';
+            const startIndex = item.indexOf(',');
+            if (startIndex === -1) {
+                return ''
+            }
+            const [title, href] = [item.substr(0, startIndex), item.substr(startIndex + 1, item.length)]
+            return `<div class="record-block"><a href="${href}" target="_blank">${title}</a></div>`
+        }).join('')
+    }
+
+</script>
+</body>
+</html>

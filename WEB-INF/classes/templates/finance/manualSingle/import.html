@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('导入')"/>
+    <th:block th:include="include :: bootstrap-editable-css"/>
+    <style>
+        .container-div1 {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px;
+        }
+
+        .title {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333333
+        }
+
+        #importFile {
+            margin-bottom: 10px
+        }
+
+        .notice {
+            color: red
+
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<div class="container-div1">
+    <div class="title">导入文件</div>
+    <input type="file" id="importFile"/>
+    <div class="notice">提示：仅允许导入“zip”格式的文件,文件最大200M</div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-table-editable-js"/>
+<script th:inline="javascript">
+    $(function () {
+        let fileName = ''
+        $('#importFile').change(function () {
+            var fileItem = $('#importFile')[0].files[0]
+            fileName = fileItem.name
+            if ((fileItem.type || '').indexOf('zip') === -1) {
+                parent.$.modal.msgError("请上传zip格式的文件！");
+                return
+            }
+            var formData = new FormData();
+            formData.append('file', fileItem)
+            $.modal.loading("上传中，请稍后...");
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', ctx + 'replace/zip', true);
+            xhr.responseType = 'blob';
+            xhr.onload = function (e) {
+                if (xhr.status === 200) {
+                    resolveBlob(this)
+                    $.modal.closeLoading();
+                } else {
+                    if (xhr.status === 500) {
+                        $.modal.closeLoading();
+                        parent.$.modal.msgError("替换失败，请联系管理员！");
+                    }
+                }
+            };
+            xhr.send(formData);
+        })
+
+        function resolveBlob(res) {
+            const aLink = document.createElement('a')
+            var blob = new Blob([res.response], {type: 'application/zip'})
+            aLink.href = URL.createObjectURL(blob)
+            aLink.setAttribute('download', (fileName || '').indexOf('zip') === -1 ? '文件.zip' : fileName) // 设置下载文件名称
+            document.body.appendChild(aLink)
+            aLink.click()
+            document.body.removeChild(aLink)
+            window.URL.revokeObjectURL(aLink.href)
+        }
+
+    });
+
+
+</script>
+</body>
+</html>

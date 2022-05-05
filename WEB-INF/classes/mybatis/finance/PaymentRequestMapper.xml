@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.finance.bbpark.mapper.PaymentRequestMapper">
+    <select id="paymentRequest" parameterType="PaymentRequest" resultType="Double">
+        SELECT
+        (
+        (
+        SELECT
+        (CASE WHEN MONTH(#{rq}) = 1 THEN JANUARY WHEN MONTH(#{rq}) = 2 THEN FEBRUARY WHEN MONTH(#{rq}) = 3 THEN MARCH WHEN MONTH(#{rq}) = 4 THEN APRIL WHEN MONTH(#{rq}) = 5 THEN MAY WHEN MONTH(#{rq}) = 6 THEN JUNE WHEN MONTH(#{rq}) = 7 THEN JULY WHEN MONTH(#{rq}) = 8 THEN AUGUST WHEN MONTH(#{rq}) = 9 THEN SEPTEMBER WHEN MONTH(#{rq}) = 10 THEN OCTOBER WHEN MONTH(#{rq}) = 11 THEN NOVEMBER WHEN MONTH(#{rq}) = 12 THEN DECEMBER ELSE NULL END) JE
+        FROM SUPERMODEL_2020YUSUAN
+        WHERE 1=1
+        AND UUID = #{yscc}
+        AND EDITION = #{bb}
+        )
+        -
+        (
+        SELECT
+        Q2.HZJE - Q2.CZJE
+        FROM
+        (
+        SELECT
+        CASE WHEN SUM(Q.HZJE) IS NULL THEN 0 ELSE  SUM(Q.HZJE) END HZJE,
+        CASE WHEN SUM(Q.CZJE) IS NULL THEN 0 ELSE  SUM(Q.CZJE) END CZJE
+        FROM
+        (
+        SELECT
+        CASE WHEN B.HZJE IS NULL THEN 0 ELSE B.HZJE END HZJE,
+        CASE WHEN B.CZJE IS NULL THEN 0 ELSE B.CZJE END CZJE
+        -- A.REQUESTID REQUESTID,
+        -- B.HZJE HZJE
+        FROM
+        formtable_main_476 A
+        LEFT JOIN formtable_main_476_dt1 B ON  A.ID = B.MAINID
+        LEFT JOIN workflow_nownode W ON W.REQUESTID = A.REQUESTID
+        WHERE 1=1
+        AND B.YSCC = #{yscc}
+        AND MONTH(A.RQ) = MONTH(#{rq})
+        AND (A.sfyswzc = '1' OR A.sfyswzc is NULL OR LEN(A.sfyswzc) = 0)
+        AND NOWNODEID != '2528'
+        and NOWNODEID != '2798'
+        AND EDITION = #{bb}
+        )Q
+        )Q2
+        )
+        -
+        (
+        SELECT
+        CASE WHEN SUM(Q.TZZ_TZJE) IS NULL THEN 0 ELSE SUM(Q.TZZ_TZJE) END JE
+        FROM
+        (SELECT
+        CASE WHEN D.TZZ_TZJE IS NULL THEN 0 ELSE D.TZZ_TZJE END TZZ_TZJE
+        FROM
+        formtable_main_476 A
+        LEFT JOIN formtable_main_476_dt3 D ON D.MAINID = A.ID
+        LEFT JOIN workflow_nownode W ON W.REQUESTID = A.REQUESTID
+        WHERE 1=1
+        AND W.nownodeid !='2791'
+        AND D.TZLY_YSCC = #{yscc}
+        AND D.TZLY_YUE = MONTH(#{rq})
+        AND D.TZLY_BB = #{bb})Q
+        )
+        +
+        (
+        SELECT
+        CASE WHEN SUM(Q.TZJE) IS NULL THEN 0 ELSE SUM(Q.TZJE) END JE
+        FROM
+        (
+        SELECT
+        CASE WHEN D.TZZ_TZJE IS NULL THEN 0 ELSE D.TZZ_TZJE END TZJE
+        FROM
+        formtable_main_476 A
+        LEFT JOIN formtable_main_476_dt3 D ON D.MAINID = A.ID
+        LEFT JOIN workflow_nownode W ON W.REQUESTID = A.REQUESTID
+        WHERE 1=1
+        AND W.nownodeid ='2796'
+        AND D.TZZ_YSCC = #{yscc}
+        AND D.TZZ_YUE = MONTH(#{rq})
+        AND D.TZZ_BB = #{bb}
+        )Q
+        )
+        +
+        (
+        SELECT
+        CASE WHEN SUM(Q.CZJE) IS NULL THEN 0 ELSE SUM(Q.CZJE) END JE
+        FROM
+        (SELECT
+        CASE WHEN E.CZJE IS NULL THEN 0 ELSE E.CZJE END CZJE
+        FROM
+        formtable_main_476 A
+        LEFT JOIN formtable_main_476_dt4 E ON E.MAINID = A.ID
+        LEFT JOIN workflow_nownode W ON W.REQUESTID = A.REQUESTID
+        WHERE 1=1
+        AND W.nownodeid ='2830'
+        AND E.YSCC = #{yscc}
+        AND MONTH(E.RQ) = MONTH(#{rq})
+        AND E.BB = #{bb})Q
+        )
+        )
+    </select>
+</mapper>

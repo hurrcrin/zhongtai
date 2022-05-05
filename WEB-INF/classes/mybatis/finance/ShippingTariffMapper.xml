@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.finance.shipping.mapper.ShippingTariffMapper">
+
+    <resultMap type="ShippingTariff" id="ShippingTariffResult">
+        <result property="id" column="id"/>
+        <result property="costType" column="费用类型"/>
+        <result property="fiscalPeriod" column="会计期间"/>
+        <result property="detailDocumentType" column="明细单据类型"/>
+        <result property="subsidiary" column="subsidiary"/>
+        <result property="subsidiaryName" column="子公司"/>
+        <result property="channelState" column="渠道国家"/>
+        <result property="platid" column="platid"/>
+        <result property="fullname" column="fullName"/>
+        <result property="sellersku" column="sellersku"/>
+        <result property="carriedForwardNum" column="结转数量"/>
+        <result property="unitCost" column="成本单价"/>
+        <result property="amountCost" column="成本金额"/>
+        <result property="oceanFreight" column="海运费_结转金额"/>
+        <result property="tariff" column="关税_结转金额"/>
+        <result property="gst" column="GST"/>
+    </resultMap>
+
+    <sql id="selectShippingTariffVo">
+        select id, 费用类型, 会计期间, 明细单据类型, subsidiary, 子公司, 渠道国家, platid, fullName, sellersku, 结转数量, 成本单价, 成本金额, 海运费_结转金额, 关税_结转金额, GST
+        from mv_sb_inv_act_d
+    </sql>
+
+    <select id="selectShippingTariffList" parameterType="ShippingTariff" resultMap="ShippingTariffResult">
+        <include refid="selectShippingTariffVo"/>
+        <where>
+            <if test="costType != null  and costType != ''">and 费用类型 = #{costType}</if>
+            <if test="fiscalPeriod != null  and fiscalPeriod != ''">and 会计期间 = #{fiscalPeriod}</if>
+            <if test="detailDocumentType != null  and detailDocumentType != ''">and 明细单据类型 = '${detailDocumentType}'
+            </if>
+            <if test="subsidiary != null  and subsidiary != ''">and subsidiary = #{subsidiary}</if>
+        </where>
+    </select>
+
+    <select id="selectShippingTariffById" parameterType="Long" resultMap="ShippingTariffResult">
+        <include refid="selectShippingTariffVo"/>
+        where id = #{id}
+    </select>
+    <select id="maxLSH" resultType="string">
+select Max(number) from item
+    </select>
+</mapper>

@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: ZhongTai
+Implementation-Version: 1.0.1
+Built-By: 13715
+Implementation-Vendor-Id: com.tianyi
+Created-By: Apache Maven 3.6.3
+Build-Jdk: 1.8.0_321
+Implementation-URL: http://116.62.208.78:48080/ZhongTai
+

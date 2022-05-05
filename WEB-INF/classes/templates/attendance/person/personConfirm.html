@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('个人考勤确认')"/>
+    <style>
+        .dateDataTable {
+            width: 100%;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        .first-td {
+            min-width: 100px;
+            max-width: 100px;
+            width: 100px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: #efefef;
+        }
+
+        .second-td {
+            width: 60px;
+            text-align: center;
+            background-color: #efefef;
+        }
+
+        .dateData, .gatherData {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .dateData > .block {
+            min-width: 14.28%;
+            width: 14.28%;
+            max-width: 14.28%;
+        }
+
+        .dateData > .block > .title, .gatherData > .block > .title {
+            background-color: #efefef;
+            text-align: center;
+            min-height: 40px;
+            line-height: 40px;
+        }
+
+        .dateData > .block > .value, .gatherData > .block > .value {
+            font-size: 12px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gatherData > .block {
+            min-width: 12.5%;
+            width: 12.5%;
+            max-width: 12.5%;
+        }
+
+        .success {
+
+        }
+
+        .error {
+            background-color: #f8ac59;
+            color: #ffffff;
+        }
+
+        .error1 {
+            background-color: red;
+            color: #ffffff;
+        }
+
+        .border-top-current {
+            border-top: 1px solid #c1c2c4 !important;
+        }
+
+        .border-bottom-current {
+            border-bottom: 1px solid #c1c2c4 !important;
+        }
+
+        .border-left-current {
+            border-left: 1px solid #c1c2c4 !important;
+        }
+
+        .border-right-current {
+            border-right: 1px solid #c1c2c4 !important;
+        }
+
+        @media screen and (max-width: 1000px) {
+            .person-mobile {
+                min-width: 670px !important;
+            }
+
+            .search-btn-person input {
+                width: 100px !important;
+            }
+
+            .search-btn-person select {
+                width: 100px !important;
+            }
+
+            .person-mobile * {
+                font-size: 5px !important;
+            }
+        }
+
+        .week-day {
+            flex: 1;
+            text-align: center;
+            height: 44px;
+            line-height: 44px;
+        }
+    </style>
+</head>
+<body class="gray-bg person-mobile" style="min-width:1100px;overflow-x: auto">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse" style="display: block !important;">
+            <form id="formId">
+                <div class="select-list search-btn-person">
+                    <ul>
+                        <li class="select-time" style="display: inline-block">
+                            <p>年：</p>
+                            <select class="form-control" name="n" id="year">
+                                <!--                                <option value="2020">2020</option>-->
+                                <!--                                <option value="2021">2021</option>-->
+                                <!--                                <option value="2022">2022</option>-->
+                            </select>
+                        </li>
+                        <li class="select-time" style="display: inline-block">
+                            <p>月：</p>
+                            <select class="form-control" name="m" id="month">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                                <option value="6">6</option>
+                                <option value="7">7</option>
+                                <option value="8">8</option>
+                                <option value="9">9</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                            </select>
+                        </li>
+                        <li style="display: inline-block">
+                            <a class="btn btn-primary btn-rounded btn-sm" id="search"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" id="reset"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                            <a class="btn btn-success btn-rounded btn-sm" id="queren"><i></i>考勤确认</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table class="dateDataTable" style="margin-top: 10px">
+                <tr class="border-top-current border-left-current border-right-current border-bottom-current">
+                    <td class="first-td border-right-current">基础信息</td>
+                    <td class="second-td">姓名</td>
+                    <td id="name"></td>
+                    <td class="second-td">工号</td>
+                    <td id="gh"></td>
+                    <td class="second-td">部门</td>
+                    <td id="bumen"></td>
+                    <td class="second-td" style="width:70px">确认状态</td>
+                    <td>
+                        <span id="kqqr"></span>
+                    </td>
+                </tr>
+                <tr class="border-left-current border-right-current">
+                    <td class="first-td">日考勤数据</td>
+                    <td colspan="8" class="border-left-current border-bottom-current">
+                        <div class="gatherData">
+                            <div class="week-day">星期一</div>
+                            <div class="week-day">星期二</div>
+                            <div class="week-day">星期三</div>
+                            <div class="week-day">星期四</div>
+                            <div class="week-day">星期五</div>
+                            <div class="week-day">星期六</div>
+                            <div class="week-day">星期天</div>
+                        </div>
+                        <div class="dateData" id="dateData"></div>
+                    </td>
+                </tr>
+                <tr class="border-left-current border-right-current border-bottom-current">
+                    <td class="first-td">汇总数据</td>
+                    <td colspan="8" class="border-left-current">
+                        <div class="gatherData">
+                            <div class="block">
+                                <div class="title">应出勤（天）</div>
+                                <div class="value" id="ycq"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">正常出勤（天）</div>
+                                <div class="value" id="zccq"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">出差（天）</div>
+                                <div class="value" id="cc"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">加班调休（天）</div>
+                                <div class="value" id="jbtx"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">年假（天）</div>
+                                <div class="value" id="nj"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">事假（天）</div>
+                                <div class="value" id="shj"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">病假（天）</div>
+                                <div class="value" id="bj"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">婚假（天）</div>
+                                <div class="value" id="hj"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">丧假（天）</div>
+                                <div class="value" id="saj"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">产检假（天）</div>
+                                <div class="value" id="cjj"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">产假（天）</div>
+                                <div class="value" id="cj"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">流产假（天）</div>
+                                <div class="value" id="lcj"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">陪产假（天）</div>
+                                <div class="value" id="pcj"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">工伤假（天）</div>
+                                <div class="value" id="gsj"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">漏刷卡（次）</div>
+                                <div class="value" id="lsk"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">迟到（次）</div>
+                                <div class="value" id="cd"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">早退（次）</div>
+                                <div class="value" id="zt"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">本月加班(小时)</div>
+                                <div class="value" id="byjb"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">剩余加班(小时)</div>
+                                <div class="value" id="syjb"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">入职缺勤（天）</div>
+                                <div class="value" id="rzqq"></div>
+                            </div>
+                            <div class="block">
+                                <div class="title">离职缺勤（天）</div>
+                                <div class="value" id="lzqq"></div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    const ctx1 = [[@{/}]];
+    // const date = new Date();
+    const currentYear = getDefaultDate().year;
+    const currentMonth = getDefaultDate().month;
+    $(function () {
+        initDate()
+        search()
+        initClick()
+    });
+    let lastDay = getLastDay([currentYear, (currentMonth) >= 10 ? (currentMonth) : '0' + (currentMonth), '01'].join('-'))
+
+    function getDefaultDate() {
+        const _date = new Date();
+        let _currentYear = _date.getFullYear();
+        let _currentMonth = _date.getMonth() + 1;
+        if (_currentMonth === 1) {
+            _currentYear = _currentYear - 1;
+            _currentMonth = 12;
+        } else {
+            _currentMonth = _currentMonth - 1
+        }
+        return {year: _currentYear, month: _currentMonth}
+    }
+
+    function initDate() {
+        initYear();
+        initMonth()
+    }
+
+    function initMonth() {
+        const monthDom = document.getElementById('month')
+        monthDom.value = currentMonth
+    }
+
+    function initYear() {
+        const yearDom = document.getElementById('year')
+        const fullYear = new Date().getFullYear()
+        let yearOptionList = [];
+        for (let i = -1; i < 2; i++) {
+            yearOptionList.push(`<option value="${fullYear + i}">${fullYear + i}</option>`)
+        }
+        yearDom.innerHTML = yearOptionList.join('')
+        document.getElementById('year').value = currentYear.toString()
+    }
+
+    function getLastDay(d) {
+        let current = new Date(d);
+        let currentMonth = current.getMonth();
+        let nextMonth = ++currentMonth;
+        let nextMonthDayOne = new Date(current.getFullYear(), nextMonth, 1);
+        let minusDate = 1000 * 60 * 60 * 24;
+        return new Date(nextMonthDayOne.getTime() - minusDate).getDate();
+    }
+
+    function initClick() {
+        $('#queren').click(function () {
+            const value = document.getElementById('kqqr').innerHTML
+            if (value === '已确认') {
+                return
+            }
+            changeValue()
+        });
+        $('#search').click(function () {
+            search()
+        });
+        $('#reset').click(function () {
+            document.getElementById('year').value = currentYear.toString()
+            document.getElementById('month').value = currentMonth.toString()
+        });
+    }
+
+    function changeValue() {
+        let year = $('#year').val()
+        let month = $('#month').val()
+        $.modal.loading("请求中，请稍后...");
+        $.ajax({
+            url: ctx1 + "attendance/grjl/confirmMyGrjl",
+            type: "post",
+            data: {
+                year: year, month: month
+            },
+            dataType: "json",
+            async: true,
+            success: function (res) {
+                if (!res.code) {
+                    search();
+                } else {
+                    $.modal.closeLoading();
+                    parent.$.modal.msgError(res.msg);
+                }
+            },
+            error: function () {
+                $.modal.closeLoading();
+                parent.$.modal.msgError("后台报错");
+            }
+        })
+    }
+
+    //查询
+    function search() {
+        let year = $('#year').val()
+        let month = $('#month').val()
+        lastDay = getLastDay([parseInt(year), (parseInt(month)) >= 10 ? (parseInt(month)) : '0' + (parseInt(month)), '01'].join('-'))
+
+        $.modal.loading("数据查询中，请稍后...");
+        $.ajax({
+            url: ctx1 + "attendance/grjl/getMyGrjl",
+            type: "post",
+            data: {
+                year: year, month: month
+            },
+            dataType: "json",
+            async: true,
+            success: function (res) {
+                if (!res.code) {
+                    $.modal.closeLoading();
+                    if (res.data) {
+                        setData(res.data);
+                    } else {
+                        resetData()
+                    }
+                } else {
+                    $.modal.closeLoading();
+                    parent.$.modal.msgError("后台报错");
+                }
+            },
+            error: function () {
+                $.modal.closeLoading();
+                parent.$.modal.msgError("后台报错");
+            }
+        })
+    }
+
+    function getLeftDay() {
+        let year = $('#year').val()
+        let month = $('#month').val()
+        const beginMonth = new Date(year + '-' + month + '-' + '01')
+        const days = beginMonth.getDay();
+        return days === 0 ? 6 : days - 1
+    }
+
+    function resetData() {
+        const list = ['ycq', 'zccq', 'cc', 'jbtx', 'nj', 'shj', 'bj', 'hj', 'saj', 'cjj',
+            'cj', 'lcj', 'pcj', 'gsj', 'lsk', 'cd', 'zt', 'byjb', 'syjb', 'rzqq', 'lzqq'
+        ]
+        let dateList = []
+        for (let i = 0; i < getLeftDay(); i++) {
+            dateList.push(`<div class="block">
+                                <div class="title"></div>
+                                <div class="value ="></div>
+                            </div>`)
+        }
+        for (let i = 0; i < lastDay; i++) {
+            dateList.push(`<div class="block">
+                                <div class="title">${i + 1}日</div>
+                                <div class="value =">&nbsp;</div>
+                            </div>`)
+        }
+        document.getElementById('dateData').innerHTML = dateList.join('')
+        for (let i = 0; i < list.length; i++) {
+            document.getElementById(list[i]).innerHTML = ''
+        }
+        document.getElementById('kqqr').innerHTML = ''
+        document.getElementById('queren').style.display = 'none'
+        document.getElementById('name').innerHTML = ''
+        document.getElementById('gh').innerHTML = ''
+        document.getElementById('bumen').innerHTML = ''
+
+    }
+
+    function setData(data) {
+        const list = ['ycq', 'zccq', 'cc', 'jbtx', 'nj', 'shj', 'bj', 'hj', 'saj', 'cjj',
+            'cj', 'lcj', 'pcj', 'gsj', 'lsk', 'cd', 'zt', 'byjb', 'syjb', 'rzqq', 'lzqq'
+        ]
+        let dateList = []
+        for (let i = 0; i < getLeftDay(); i++) {
+            dateList.push(`<div class="block">
+                                <div class="title"></div>
+                                <div class="value ="></div>
+                            </div>`)
+        }
+        for (let i = 0; i < lastDay; i++) {
+            const message = data['n' + (i + 1)] || ''
+            const status = (message) => {
+                message = (message || '').trim()
+                if (message === '迟到') {
+                    return 'error'
+                } else if (message.indexOf('班卡') > -1) {
+                    return 'error1'
+                }
+            }
+
+            dateList.push(`<div class="block">
+                                <div class="title">${i + 1}日</div>
+                                <div class="value ${status(message)}">${message}</div>
+                            </div>`)
+        }
+        document.getElementById('dateData').innerHTML = dateList.join('')
+        for (let i in data) {
+            for (let i = 0; i < list.length; i++) {
+                document.getElementById(list[i]).innerHTML = data[list[i]] || '0'
+            }
+            document.getElementById('kqqr').innerHTML = data.kqqr === 0 ? '<span style="color:red">未确认</span>' : '已确认'
+            document.getElementById('queren').style.display = data.kqqr === 0 ? 'inline-block' : 'none'
+            document.getElementById('name').innerHTML = data.name || ''
+            document.getElementById('gh').innerHTML = data.gh || ''
+            document.getElementById('bumen').innerHTML = data.bumen || ''
+        }
+    }
+</script>
+</body>
+</html>

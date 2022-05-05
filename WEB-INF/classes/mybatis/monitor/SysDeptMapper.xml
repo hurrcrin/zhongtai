@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.mapper.SysDeptMapper">
+    <resultMap type="com.tianyi.project.monitor.job.domain.SysDept" id="SysDeptResult">
+        <id property="deptId" column="dept_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="ancestors" column="ancestors"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="leader" column="leader"/>
+        <result property="leaderId" column="leader_id"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="status" column="status"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="oaDeptId" column="oa_dept_id"/>
+        <result property="tlevel" column="tlevel"/>
+        <result property="oaParentId" column="oa_parent_id"/>
+        <result property="isSubsidiary" column="is_subsidiary"/>
+        <result property="parentIsSubsidiary" column="parent_is_subsidiary"/>
+    </resultMap>
+
+    <!--查询最大层级-->
+    <select id="selectMaxTlevel" resultType="Integer">
+        select max(tlevel) from HrmDepartment
+    </select>
+
+    <!--查询集团-->
+    <select id="selectBossBloc" resultMap="SysDeptResult">
+        select dept_id,parent_id,ancestors,dept_name
+        from sys_dept
+        where parent_id=0
+    </select>
+
+    <!--分级查询子公司和部门-->
+    <sql id="selectOADeptVo">
+        select * from
+        (select id as oa_dept_id,
+		ltrim(rtrim(departmentname)) as dept_name,
+        case when supdepid=0 then subcompanyid1 else supdepid end as oa_parent_id,
+        '天一' as leader,
+        1 as leader_id,
+        case when canceled=1 then 1 else 0 end as status,
+        0 as del_flag,
+        'admin' as create_by,
+        convert(varchar(100),getdate(),120) as create_time,
+        tlevel+1 as tlevel,
+        0 as is_subsidiary,
+        case when supdepid=0 then 1 else 0 end as parent_is_subsidiary
+        from HrmDepartment
+        where case when canceled is null then 0 else canceled end != 1
+		union all
+		select id as oa_dept_id,
+        ltrim(rtrim(subcompanyname)) as dept_name,
+		case when supsubcomid=0 then companyid else supsubcomid end as oa_parent_id,
+        '天一' as leader,
+        1 as leader_id,
+        case when canceled=1 then 1 else 0 end as status,
+        0 as del_flag,
+        'admin' as create_by,
+        convert(varchar(100),getdate(),120) as create_time,
+		tlevel,
+		1 as is_subsidiary,
+		1 as parent_is_subsidiary
+        from HrmSubCompany
+        where case when canceled is null then 0 else canceled end != 1) a
+    </sql>
+
+    <select id="selectOADept" resultMap="SysDeptResult" parameterType="Integer">
+        <include refid="selectOADeptVo"/>
+        where a.tlevel=#{tlevel}
+    </select>
+
+    <!--根据Boss是否存在该部门-->
+    <select id="selectBossDept" parameterType="Integer" resultMap="SysDeptResult">
+        select dept_id,
+        parent_id,
+        ancestors,
+        dept_name,
+        order_num,
+        leader,
+        phone,
+        email,
+        status,
+        del_flag,
+        create_by,
+        create_time,
+        update_by,
+        update_time
+        from sys_dept
+        where oa_dept_id=#{oaDeptId}
+        and is_subsidiary=#{isSubsidiary}
+    </select>
+
+    <insert id="insertBossDept" parameterType="com.tianyi.project.monitor.job.domain.SysDept"
+            useGeneratedKeys="true"
+            keyProperty="deptId">
+        insert into sys_dept
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deptId!='' and deptId!=null">dept_id,</if>
+            <if test="parentId!='' and parentId!=null">parent_id,</if>
+            <if test="ancestors!='' and ancestors!=null">ancestors,</if>
+            <if test="deptName!='' and deptName!=null">dept_name,</if>
+            <if test="orderNum!='' and orderNum!=null">order_num,</if>
+            <if test="leader!='' and leader!=null">leader,</if>
+            <if test="leaderId!='' and leaderId!=null">leader_id,</if>
+            <if test="phone!='' and phone!=null">phone,</if>
+            <if test="email!='' and email!=null">email,</if>
+            <if test="status!='' and status!=null">status,</if>
+            <if test="delFlag!='' and delFlag!=null">del_flag,</if>
+            <if test="createBy!='' and createBy!=null">create_by,</if>
+            <if test="createTime!='' and createTime!=null">create_time,</if>
+            <if test="tlevel!='' and tlevel!=null">tlevel,</if>
+            <if test="oaDeptId!='' and oaDeptId!=null">oa_dept_id,</if>
+            <if test="isSubsidiary!=null">is_subsidiary,</if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="deptId!='' and deptId!=null">#{deptId},</if>
+            <if test="parentId!='' and parentId!=null">#{parentId},</if>
+            <if test="ancestors!='' and ancestors!=null">#{ancestors},</if>
+            <if test="deptName!='' and deptName!=null">#{deptName},</if>
+            <if test="orderNum!='' and orderNum!=null">#{orderNum},</if>
+            <if test="leader!='' and leader!=null">#{leader},</if>
+            <if test="leaderId!='' and leaderId!=null">#{leaderId},</if>
+            <if test="phone!='' and phone!=null">#{phone},</if>
+            <if test="email!='' and email!=null">#{email},</if>
+            <if test="status!='' and status!=null">#{status},</if>
+            <if test="delFlag!='' and delFlag!=null">#{delFlag},</if>
+            <if test="createBy!='' and createBy!=null">#{createBy},</if>
+            <if test="createTime!='' and createTime!=null">#{createTime},</if>
+            <if test="tlevel!='' and tlevel!=null">#{tlevel},</if>
+            <if test="oaDeptId!='' and oaDeptId!=null">#{oaDeptId},</if>
+            <if test="isSubsidiary!=null">#{isSubsidiary},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBossDept" parameterType="com.tianyi.project.monitor.job.domain.SysDept">
+        update sys_dept
+        <set>
+            <if test="deptId!='' and deptId!=null">dept_id=#{deptId},</if>
+            <if test="parentId!='' and parentId!=null">parent_id=#{parentId},</if>
+            <if test="ancestors!='' and ancestors!=null">ancestors=#{ancestors},</if>
+            <if test="deptName!='' and deptName!=null">dept_name=#{deptName},</if>
+            <if test="orderNum!='' and orderNum!=null">order_num=#{orderNum},</if>
+            <if test="leader!='' and leader!=null">leader=#{leader},</if>
+            <if test="leaderId!='' and leaderId!=null">leader_id=#{leaderId},</if>
+            <if test="phone!='' and phone!=null">phone=#{phone},</if>
+            <if test="email!='' and email!=null">email=#{email},</if>
+            <if test="status!='' and status!=null">status=#{status},</if>
+            <if test="delFlag!='' and delFlag!=null">del_flag=#{delFlag},</if>
+            <if test="createBy!='' and createBy!=null">update_by=#{createBy},</if>
+            <if test="createTime!='' and createTime!=null">update_time=#{createTime},</if>
+            <if test="isSubsidiary!=null">is_subsidiary=#{isSubsidiary},</if>
+        </set>
+        where oa_dept_id=#{oaDeptId}
+        and is_subsidiary=#{isSubsidiary}
+    </update>
+</mapper>

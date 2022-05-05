@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.finance.claimreport.mapper.ClaimReportMapper">
+    <resultMap type="com.tianyi.project.finance.claimreport.domain.AmazonTranReimContrast"
+               id="AmazonTranReimContrastResult">
+        <result property="id" column="id"/>
+        <result property="sellerId" column="seller_id"/>
+        <result property="currency" column="currency"/>
+        <result property="platid" column="platid"/>
+        <result property="tableName" column="table_name"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.finance.claimreport.domain.ClaimReportDetail" id="ClaimReportDetailResult">
+        <result property="id" column="id"/>
+        <result property="account_period" column="account_period"/>
+        <result property="seller_id" column="seller_id"/>
+        <result property="order_id" column="order_id"/>
+        <result property="sku" column="sku"/>
+        <result property="currency" column="currency"/>
+        <result property="amount_total" column="amount_total"/>
+        <result property="other" column="other"/>
+        <result property="discrepancy" column="discrepancy"/>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.finance.claimreport.domain.AmazonReimbursementData"
+               id="AmazonReimbursementDataResult">
+        <result property="id" column="id"/>
+        <result property="account_period" column="account_period"/>
+        <result property="seller_id" column="seller_id"/>
+        <result property="reason" column="reason"/>
+        <result property="original_reimbursement_type" column="original_reimbursement_type"/>
+        <result property="sku" column="sku"/>
+        <result property="currency" column="currency"/>
+        <result property="amount_total" column="amount_total"/>
+        <result property="quantity_reimbursed_cash" column="quantity_reimbursed_cash"/>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.finance.claimreport.domain.AmazonTransaction"
+               id="AmazonTransactionResult">
+        <result property="id" column="id"/>
+        <result property="account_period" column="account_period"/>
+        <result property="platid" column="platid"/>
+        <result property="currency" column="currency"/>
+        <result property="other" column="other"/>
+    </resultMap>
+
+    <select id="selectAmazonTranReimContrastList"
+            parameterType="com.tianyi.project.finance.claimreport.domain.AmazonTranReimContrast"
+            resultMap="AmazonTranReimContrastResult">
+        SELECT GROUP_CONCAT(id) as id
+        ,seller_id
+        ,GROUP_CONCAT(currency) as currency
+        ,GROUP_CONCAT(platid) as platid
+        ,table_name
+        ,GROUP_CONCAT(type) as type
+        from amazon_tran_reim_contrast
+        <where>
+            <if test="sellerId != null  and sellerId != ''">and seller_id=#{sellerId}</if>
+            <if test='currency != null  and currency != "" and sellerId!="A2NZAE0QDOIPZO"'>and currency=#{currency}</if>
+        </where>
+        group by seller_id,table_name
+    </select>
+
+    <select id="selectClaimReportDetailList"
+            parameterType="com.tianyi.project.finance.claimreport.domain.AmazonTranReimContrast"
+            resultMap="ClaimReportDetailResult">
+        select a.id
+        ,a.account_period
+        ,a.seller_id
+        ,a.order_id
+        ,a.sku
+        ,a.currency
+        ,round(a.amount_total,2) as amount_total
+        ,round(b.other,2) as other
+        ,round(a.amount_total,2)-round(b.other,2) as discrepancy
+        from
+        (select GROUP_CONCAT(id) as id
+        ,account_period
+        ,seller_id
+        ,case when amazon_order_id is null then 'null' else amazon_order_id end as order_id
+        ,sku
+        ,currency_unit as currency
+        ,sum(amount_total) as amount_total
+        from amazon_reimbursement_data
+        <where>
+            <if test="sellerId != null  and sellerId != ''">and seller_id=#{sellerId}</if>
+            and currency_unit in (${currency})
+        </where>
+        group by
+        order_id
+        ,amazon_order_id
+        ,sku
+        ,currency_unit
+        ,account_period
+        ,seller_id) a
+        left join
+        (select null as id
+        ,account_period
+        ,#{sellerId} as seller_id
+        ,case when order_id is null then 'null' else order_id end as order_id
+        ,sku
+        ,currency
+        ,sum(other) as other
+        from ${tableName}
+        where currency in (${currency})
+        and platid in (${platid})
+        and type in (${type})
+        group by
+        account_period
+        ,sku
+        ,order_id
+        ,currency) b
+        on a.account_period=b.account_period
+        and a.order_id=b.order_id
+        and a.sku=b.sku
+        and a.seller_id=b.seller_id
+        and a.currency=b.currency
+        <where>
+            and (round(a.amount_total,2)-round(b.other,2)!=0
+            or round(a.amount_total,2)-round(b.other,2) is null
+            and a.amount_total!=0)
+            <if test="accountPeriod != null  and accountPeriod != ''">and a.account_period=#{accountPeriod}</if>
+        </where>
+
+        union
+
+        select b.id
+        ,b.account_period
+        ,b.seller_id
+        ,b.order_id
+        ,b.sku
+        ,b.currency
+        ,round(a.amount_total,2) as amount_total
+        ,round(b.other,2) as other
+        ,round(a.amount_total,2)-round(b.other,2) as discrepancy
+        from
+        (select GROUP_CONCAT(id) as id
+        ,account_period
+        ,seller_id
+        ,case when amazon_order_id is null then 'null' else amazon_order_id end as order_id
+        ,sku
+        ,currency_unit as currency
+        ,sum(amount_total) as amount_total
+        from amazon_reimbursement_data
+        <where>
+            <if test="sellerId != null  and sellerId != ''">and seller_id=#{sellerId}</if>
+            and currency_unit in (${currency})
+        </where>
+        group by
+        order_id
+        ,amazon_order_id
+        ,sku
+        ,currency_unit
+        ,account_period
+        ,seller_id) a
+        right join
+        (select null as id
+        ,account_period
+        ,#{sellerId} as seller_id
+        ,case when order_id is null then 'null' else order_id end as order_id
+        ,sku
+        ,currency
+        ,sum(other) as other
+        from ${tableName}
+        where currency in (${currency})
+        and platid in (${platid})
+        and sku is not null
+        and type in (${type})
+        group by
+        account_period
+        ,sku
+        ,order_id
+        ,currency) b
+        on a.account_period=b.account_period
+        and a.order_id=b.order_id
+        and a.sku=b.sku
+        and a.seller_id=b.seller_id
+        and a.currency=b.currency
+        <where>
+            and (round(a.amount_total,2)-round(b.other,2)!=0
+            or round(a.amount_total,2)-round(b.other,2) is null
+            and (a.amount_total!=0 or a.amount_total is null))
+            <if test="accountPeriod != null  and accountPeriod != ''">and a.account_period=#{accountPeriod}</if>
+        </where>
+    </select>
+
+    <select id="selectConditionList"
+            parameterType="com.tianyi.project.finance.claimreport.domain.AmazonTranReimContrast"
+            resultMap="AmazonTranReimContrastResult">
+        SELECT GROUP_CONCAT(id) as id
+        ,seller_id
+        ,GROUP_CONCAT(currency) as currency
+        ,GROUP_CONCAT(platid) as platid
+        ,table_name
+        ,GROUP_CONCAT(type) as type
+        from amazon_tran_reim_contrast
+        <where>
+            <if test="sellerId != null  and sellerId != ''">and seller_id=#{sellerId}</if>
+            <if test='currency != null  and currency != "" and sellerId!="A2NZAE0QDOIPZO"'>and currency=#{currency}</if>
+        </where>
+        group by seller_id,table_name,currency
+    </select>
+
+    <select id="selectAmazonReimbursementDataList"
+            parameterType="com.tianyi.project.finance.claimreport.domain.AmazonTranReimContrast"
+            resultMap="AmazonReimbursementDataResult">
+        select GROUP_CONCAT(id) as id
+        ,account_period
+        ,seller_id
+        ,reason
+        ,original_reimbursement_type
+        ,change_sku as sku
+        ,currency_unit as currency
+        ,round(sum(amount_total),2) as amount_total
+        ,-sum(quantity_reimbursed_cash) as quantity_reimbursed_cash
+        from amazon_reimbursement_data
+        where account_period=#{accountPeriod}
+        and seller_id=#{sellerId}
+        and currency_unit=#{currency}
+        group by
+        change_sku
+        ,currency_unit
+        ,account_period
+        ,seller_id
+        ,reason
+        ,original_reimbursement_type
+    </select>
+
+    <select id="selectAmazonTransactionList"
+            parameterType="com.tianyi.project.finance.claimreport.domain.AmazonTranReimContrast"
+            resultMap="AmazonTransactionResult">
+        select null as id
+        ,account_period
+        ,platid
+        ,currency
+        ,round(sum(other),2) as other
+        from ${tableName}
+        where currency=#{currency}
+        and platid in (${platid})
+        and type in (${type})
+        and account_period=#{accountPeriod}
+        and sku is not null
+        group by platid
+    </select>
+
+    <update id="updateJournalReturnId" parameterType="ReturnId">
+        update amazon_reimbursement_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tranid != null  and tranid != ''">tranid_JR=#{tranid},</if>
+        </trim>
+        <where>
+            <if test="ids != null  and ids != ''">
+                and id in (${ids})
+            </if>
+        </where>
+    </update>
+
+    <update id="updateAdjustmentReturnId" parameterType="ReturnId">
+        update amazon_reimbursement_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tranid != null  and tranid != ''">tranid_IA=#{tranid},</if>
+        </trim>
+        <where>
+            <if test="ids != null  and ids != ''">
+                and id in (${ids})
+            </if>
+        </where>
+    </update>
+</mapper>

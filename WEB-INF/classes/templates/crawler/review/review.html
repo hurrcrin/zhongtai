@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('亚马逊评论列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>站点url：</p>
+                                <input type="text" name="weburl"/>
+                            </li>
+                            <li>
+                                <p>评论者：</p>
+                                <input type="text" name="user"/>
+                            </li>
+                            <li>
+                                <p>评分：</p>
+                                <input type="text" name="rating"/>
+                            </li>
+                            <li>
+                                <p>评论标题：</p>
+                                <input type="text" name="reviewTitle"/>
+                            </li>
+                            <li class="select-time">
+                                <p>评论时间：</p>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginReviewDate]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endReviewDate]"/>
+                            </li>
+                            <li>
+                                <p>asin链接：</p>
+                                <input type="text" name="asinLink"/>
+                            </li>
+                            <li>
+                                <p>评论信息：</p>
+                                <input type="text" name="reviewInfos"/>
+                            </li>
+                            <li>
+                                <p>当前asin：</p>
+                                <input type="text" name="currentAsin"/>
+                            </li>
+                            <li>
+                                <p>asin：</p>
+                                <input type="text" name="asin"/>
+                            </li>
+                            <li>
+                                <p>评论id：</p>
+                                <input type="text" name="reviewId"/>
+                            </li>
+                            <li>
+                                <p>评论状态：</p>
+                                <select name="reviewStatus" th:with="type=${@dict.getType('sys_crawler_review_status')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <!--<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="crawler:review:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="crawler:review:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>-->
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="crawler:review:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="crawler:review:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('crawler:review:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('crawler:review:remove')}]];
+        var reviewStatusDatas = [[${@dict.getType('sys_crawler_review_status')}]];
+        var prefix = ctx + "crawler/review";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "亚马逊评论",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'id', 
+                    title : '评论表id',
+                    visible: false
+                },
+                    {
+                        field : 'asin',
+                        title : 'asin'
+                    },
+                {
+                    field : 'user', 
+                    title : '评论者'
+                },
+                {
+                    field : 'rating', 
+                    title : '评分'
+                },
+                {
+                    field : 'reviewTitle', 
+                    title : '评论标题'
+                },
+                {
+                    field : 'reviewDate', 
+                    title : '评论时间'
+                },
+                {
+                    field : 'reviewContent', 
+                    title : '评论内容'
+                },
+                /*{
+                    field : 'asinLink', 
+                    title : 'asin链接'
+                },*/
+                {
+                    field : 'reviewInfos', 
+                    title : '评论信息'
+                },
+                {
+                    field : 'currentAsin', 
+                    title : '当前asin'
+                },
+
+                {
+                    field : 'reviewId',
+                    title : '评论id'
+                },
+                {
+                    field : 'reviewStatus',
+                    title : '评论状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(reviewStatusDatas, value);
+                    }
+                }
+                /*,
+                    {
+                            field : 'weburl',
+                            title : '站点url'
+                    }
+                    ,{
+                        title: '操作',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>删除</a>');
+                            return actions.join('');
+                        }
+                    }*/
+                ]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

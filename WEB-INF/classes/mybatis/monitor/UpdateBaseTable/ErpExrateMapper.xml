@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.mapper.UpdateBaseTable.ErpExrateMapper">
+    <resultMap type="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpExrate" id="ErpExrateResult">
+        <id property="id" column="id"/>
+        <result property="erpExrateId" column="erp_exrate_id"/>
+        <result property="erpExrateRate" column="erp_exrate_rate"/>
+        <result property="erpBaseCurrencyId" column="erp_base_currency_id"/>
+        <result property="erpSourceCurrencyId" column="erp_source_currency_id"/>
+        <result property="erpStartTime" column="erp_start_time"/>
+        <result property="erpEndTime" column="erp_end_time"/>
+        <result property="erpExratePeriod" column="erp_exrate_period"/>
+    </resultMap>
+
+    <sql id="selectErpExrateVo">
+        select a.CURRENCYRATE_id as erp_exrate_id,
+        max(EXCHANGE_RATE) as erp_exrate_rate,
+        a.BASE_CURRENCY_ID as erp_base_currency_id,
+        a.CURRENCY_ID as erp_source_currency_id,
+        trunc(to_date(to_char(DATE_EFFECTIVE,'yyyy-mm'),'yyyy-mm'),'month') as erp_start_time,
+        max(DATE_EFFECTIVE) as erp_end_time,
+        to_char(DATE_EFFECTIVE,'yyyy-mm') erp_exrate_period
+        from CURRENCYRATES as a
+        left join CURRENCIES as b on a.BASE_CURRENCY_ID =b.CURRENCY_ID
+        left join CURRENCIES as c on a.CURRENCY_ID =c.CURRENCY_ID
+        ,(select BASE_CURRENCY_ID,CURRENCY_ID,to_char(DATE_EFFECTIVE,'yyyy-mm'),max(CURRENCYRATE_id) CURRENCYRATE_id
+        from CURRENCYRATES
+        where 1=1
+        group by BASE_CURRENCY_ID,CURRENCY_ID,to_char(DATE_EFFECTIVE,'yyyy-mm')
+        )ma
+        where 1=1
+        and a.CURRENCYRATE_ID = ma.CURRENCYRATE_id
+        group by a.CURRENCYRATE_id,a.BASE_CURRENCY_ID,a.CURRENCY_ID,to_char(DATE_EFFECTIVE,'yyyy-mm'),trunc(to_date(to_char(DATE_EFFECTIVE,'yyyy-mm'),'yyyy-mm'),'month')
+        order by erp_end_time desc
+    </sql>
+
+    <sql id="selectBossExrateVo">
+        select id,
+        erp_exrate_id,
+        erp_exrate_rate,
+        erp_base_currency_id,
+        erp_source_currency_id,
+        erp_start_time,
+        erp_end_time,
+        erp_exrate_period
+        from erp_exrate
+    </sql>
+
+    <select id="selectErpExrateAll" resultMap="ErpExrateResult">
+        <include refid="selectErpExrateVo"/>
+    </select>
+
+    <select id="selectBossExrateByExrateId" resultMap="ErpExrateResult" parameterType="Integer">
+        <include refid="selectBossExrateVo"/>
+        <where>
+            <if test="erpExrateId!=null">
+                and erp_exrate_id=#{erpExrateId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBossExrate" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpExrate"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into erp_exrate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="erpExrateId != null">erp_exrate_id,</if>
+            <if test="erpExrateRate != null">erp_exrate_rate,</if>
+            <if test="erpBaseCurrencyId != null">erp_base_currency_id,</if>
+            <if test="erpSourceCurrencyId != null">erp_source_currency_id,</if>
+            <if test="erpStartTime != null and erpStartTime != ''">erp_start_time,</if>
+            <if test="erpEndTime != null and erpEndTime!=''">erp_end_time,</if>
+            <if test="erpExratePeriod != null and erpExratePeriod!=''">erp_exrate_period,</if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="erpExrateId != null">#{erpExrateId},</if>
+            <if test="erpExrateRate != null">#{erpExrateRate},</if>
+            <if test="erpBaseCurrencyId != null">#{erpBaseCurrencyId},</if>
+            <if test="erpSourceCurrencyId != null">#{erpSourceCurrencyId},</if>
+            <if test="erpStartTime != null and erpStartTime != ''">#{erpStartTime},</if>
+            <if test="erpEndTime != null and erpEndTime!=''">#{erpEndTime},</if>
+            <if test="erpExratePeriod != null and erpExratePeriod!=''">#{erpExratePeriod},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBossExrate" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpExrate">
+        update erp_exrate
+        <set>
+            <if test="erpExrateRate != null">erp_exrate_rate=#{erpExrateRate},</if>
+            <if test="erpBaseCurrencyId != null">erp_base_currency_id=#{erpBaseCurrencyId},</if>
+            <if test="erpSourceCurrencyId != null">erp_source_currency_id=#{erpSourceCurrencyId},</if>
+            <if test="erpStartTime != null and erpStartTime != ''">erp_start_time=#{erpStartTime},</if>
+            <if test="erpEndTime != null and erpEndTime!=''">erp_end_time=#{erpEndTime},</if>
+            <if test="erpExratePeriod != null and erpExratePeriod!=''">erp_exrate_period=#{erpExratePeriod},</if>
+        </set>
+        where erp_exrate_id = #{erpExrateId}
+    </update>
+</mapper>

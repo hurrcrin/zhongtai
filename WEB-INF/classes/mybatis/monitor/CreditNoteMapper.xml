@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.mapper.CreditNoteMapper">
+    <resultMap type="com.tianyi.project.monitor.job.domain.AmazonRefundReferenceTable"
+               id="AmazonRefundReferenceTableResult">
+        <result property="tablename" column="tablename"/>
+        <result property="state" column="state"/>
+        <result property="type" column="type"/>
+        <result property="marketplace" column="marketplace"/>
+        <result property="fieldValue" column="field_value"/>
+        <result property="fieldOriginal" column="field_original"/>
+        <result property="sku" column="sku"/>
+        <result property="accounts" column="accounts"/>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.monitor.job.domain.AmazonTransaction" id="AmazonTransactionResult">
+        <result property="sku" column="sku"/>
+        <result property="quantity" column="quantity"/>
+        <result property="amount" column="amount"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <select id="selectAmazonRefundReferenceTable"
+            parameterType="com.tianyi.project.monitor.job.domain.AmazonRefundReferenceTable"
+            resultMap="AmazonRefundReferenceTableResult">
+        select tablename, state, type, marketplace, field_value, field_original, sku, accounts from
+        amazon_refund_reference_table
+        <where>
+            <if test="state != null  and state != ''">and state=#{state}</if>
+            <if test="type != null  and type != ''">and type=#{type}</if>
+            <if test="marketplace != null  and marketplace != ''">and marketplace=#{marketplace}</if>
+        </where>
+    </select>
+
+    <select id="selectAmazonTransaction"
+            parameterType="String"
+            resultMap="AmazonTransactionResult">
+        select c.sku,
+        c.quantity,
+        case when c.state='JP' then 0-round(sum(c.${fieldValue}),0) else 0-round(sum(c.${fieldValue}),2) end as amount,
+        c.type
+        from
+        (select a.sku,a.quantity,a.${fieldValue},b.state,b.sku as type from ${tableName} a
+        left join amazon_refund_reference_table b
+        on a.type=b.type and a.marketplace=b.marketplace
+        <where>
+            <if test="accountPeriod != null  and accountPeriod != ''">and a.account_period=#{accountPeriod}</if>
+            <if test="type != null  and type != ''">and a.type=#{type}</if>
+            <if test="marketplace != null  and marketplace != ''">and a.marketplace=#{marketplace}</if>
+            <if test="platform != null  and platform != ''">and a.platid=#{platform}</if>
+            and a.${fieldValue}!=0 and b.field_value=#{fieldValue}
+        </where>
+        ) c
+        group by c.sku,c.type
+    </select>
+</mapper>

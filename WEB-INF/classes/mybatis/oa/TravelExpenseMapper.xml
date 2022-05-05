@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.oa.shinebed.mapper.TravelExpenseMapper">
+    <resultMap type="com.tianyi.project.oa.shinebed.domain.travelExpense.Journal"
+               id="JournalResult">
+        <result property="name" column="lastname"/>
+        <result property="nameid" column="loginid"/>
+        <result property="zgs" column="zgs"/>
+        <result property="jk" column="jk"/>
+        <result property="date" column="date"/>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.oa.shinebed.domain.travelExpense.Reimbursement"
+               id="ReimbursementResult">
+        <result property="xm" column="loginid"/>
+        <result property="bm" column="bm2"/>
+        <result property="bz" column="bzsm"/>
+        <result property="date" column="date"/>
+        <result property="zgs" column="zgs"/>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.oa.shinebed.domain.travelExpense.ReimbursementLine"
+               id="ReimbursementLineResult">
+        <result property="dept" column="bm2"/>
+        <result property="fylx" column="fylx"/>
+        <result property="sm" column="sm"/>
+        <result property="je" column="je"/>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.oa.shinebed.domain.travelExpense.Verification"
+               id="VerificationResult">
+        <result property="fybxid" column="fybxid"/>
+        <result property="rjzid" column="rjzid"/>
+        <result property="km" column="km"/>
+        <result property="bz" column="bzsm"/>
+        <result property="bm" column="bm2"/>
+        <result property="date" column="date"/>
+    </resultMap>
+
+
+    <select id="selectJournal" parameterType="String" resultMap="JournalResult">
+        select b.lastname
+        ,b.loginid
+        ,a.fygsgs2 as zgs
+        ,a.jk
+        ,REPLACE(CONVERT(varchar(10),getdate(),120),N'-0','-') as date
+        from formtable_main_416 a,hrmresource b
+        <where>
+            <if test="requestId != null  and requestId != ''">and a.requestId=#{requestId}</if>
+            and a.xm=b.id
+        </where>
+    </select>
+
+    <select id="selectReimbursement" parameterType="String" resultMap="ReimbursementResult">
+        select a.id
+        ,b.loginid
+        ,a.bm2
+        ,a.bzsm
+        ,REPLACE(CONVERT(varchar(10),getdate(),120),N'-0','-') as date
+        ,a.fygsgs2 as zgs
+        from formtable_main_416 a,HrmResource b
+        <where>
+            <if test="requestId != null  and requestId != ''">and a.requestId=#{requestId}</if>
+            and a.xm=b.id
+        </where>
+    </select>
+
+    <select id="selectReimbursementLine" parameterType="String" resultMap="ReimbursementLineResult">
+        select b.bm2
+        ,b.fylx
+        ,b.sm
+        ,b.je
+        from formtable_main_416 a,formtable_main_416_dt2 b
+        <where>
+            <if test="requestId != null  and requestId != ''">and a.requestId=#{requestId}</if>
+            and a.id=b.mainid
+        </where>
+    </select>
+
+    <select id="selectVerification" parameterType="String" resultMap="VerificationResult">
+        select fybxid
+        ,rjzid
+        ,km
+        ,bzsm
+        ,bm2
+        ,REPLACE(CONVERT(varchar(10),getdate(),120),N'-0','-') as date
+        from formtable_main_416
+        <where>
+            <if test="requestId != null  and requestId != ''">and requestId=#{requestId}</if>
+        </where>
+    </select>
+
+    <update id="updateTranid" parameterType="String">
+        update formtable_main_416
+        <set>
+            <if test="reimbursementId != null and reimbursementId != ''">fybxid = #{reimbursementId},</if>
+            <if test="reimbursementTranid != null and reimbursementTranid != ''">fybxbh = #{reimbursementTranid},</if>
+            <if test="journalId != null and journalId != ''">rjzid = #{journalId},</if>
+            <if test="journalTranid != null and journalTranid != ''">rjzbh = #{journalTranid},</if>
+            <if test="verificationId != null and verificationId != ''">zdfkid = #{verificationId},</if>
+            <if test="verificationTranid != null and verificationTranid != ''">zdfkbh = #{verificationTranid},</if>
+        </set>
+        where requestId = #{requestId}
+    </update>
+</mapper>

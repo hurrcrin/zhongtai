@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.finance.queryvoucherdetail.mapper.QueryVoucherDetailMapper">
+
+    <resultMap type="QueryVoucherDetail" id="QueryVoucherDetailResult">
+        <result property="id" column="id"/>
+        <result property="fileNum" column="file_num"/>
+        <result property="transcationId" column="transcation_id"/>
+        <result property="accountPeriod" column="account_period"/>
+        <result property="type" column="type"/>
+        <result property="subject" column="subject"/>
+        <result property="auxiliaryItem" column="auxiliary_item"/>
+        <result property="lineMemo" column="line_memo"/>
+        <result property="titleMemo" column="title_memo"/>
+        <result property="debit" column="debit"/>
+        <result property="credit" column="credit"/>
+        <result property="amount" column="amount"/>
+        <result property="amountForeign" column="amount_foreign"/>
+        <result property="rate" column="exchange_rate"/>
+        <result property="currency" column="currency"/>
+        <result property="documentMaker" column="document_maker"/>
+        <result property="documentMakerSign" column="document_maker_sign"/>
+        <result property="subsdiary" column="subsdiary"/>
+        <result property="isactive" column="isactive"/>
+        <result property="mainid" column="mainId"/>
+    </resultMap>
+
+    <sql id="selectQueryVoucherDetailVo">
+        select id, file_num, transcation_id, account_period, type, subject, auxiliary_item, line_memo, title_memo, debit, credit, amount, currency, document_maker, document_maker_sign, subsdiary, isactive, mainId,amount_foreign,exchange_rate from tran_data_detail
+    </sql>
+
+    <select id="selectQueryVoucherDetailList" parameterType="QueryVoucherDetail" resultMap="QueryVoucherDetailResult">
+        <include refid="selectQueryVoucherDetailVo"/>
+        <where>
+            <if test="mainid != null  and mainid != ''">and mainId = #{mainid}</if>
+            and isactive=1
+        </where>
+    </select>
+
+    <select id="selectQueryVoucherDetailById" parameterType="String" resultMap="QueryVoucherDetailResult">
+        <include refid="selectQueryVoucherDetailVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertQueryVoucherDetail" parameterType="QueryVoucherDetail">
+        insert into tran_data_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="fileNum != null  and fileNum != ''">file_num,</if>
+            <if test="transcationId != null  and transcationId != ''">transcation_id,</if>
+            <if test="accountPeriod != null  and accountPeriod != ''">account_period,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="subject != null  and subject != ''">subject,</if>
+            <if test="auxiliaryItem != null  and auxiliaryItem != ''">auxiliary_item,</if>
+            <if test="lineMemo != null  and lineMemo != ''">line_memo,</if>
+            <if test="titleMemo != null  and titleMemo != ''">title_memo,</if>
+            <if test="debit != null ">debit,</if>
+            <if test="credit != null ">credit,</if>
+            <if test="amount != null ">amount,</if>
+            <if test="amountForeign != null ">amount_foreign,</if>
+            <if test="rate != null ">exchange_rate,</if>
+            <if test="currency != null  and currency != ''">currency,</if>
+            <if test="documentMaker != null  and documentMaker != ''">document_maker,</if>
+            <if test="documentMakerSign != null ">document_maker_sign,</if>
+            <if test="subsdiary != null  and subsdiary != ''">subsdiary,</if>
+            <if test="isactive != null ">isactive,</if>
+            <if test="mainid != null ">mainId,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="fileNum != null  and fileNum != ''">#{fileNum},</if>
+            <if test="transcationId != null  and transcationId != ''">#{transcationId},</if>
+            <if test="accountPeriod != null  and accountPeriod != ''">#{accountPeriod},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="subject != null  and subject != ''">#{subject},</if>
+            <if test="auxiliaryItem != null  and auxiliaryItem != ''">#{auxiliaryItem},</if>
+            <if test="lineMemo != null  and lineMemo != ''">#{lineMemo},</if>
+            <if test="titleMemo != null  and titleMemo != ''">#{titleMemo},</if>
+            <if test="debit != null ">#{debit},</if>
+            <if test="credit != null ">#{credit},</if>
+            <if test="amount != null ">#{amount},</if>
+            <if test="amountForeign != null ">#{amountForeign},</if>
+            <if test="rate != null ">#{rate},</if>
+            <if test="currency != null  and currency != ''">#{currency},</if>
+            <if test="documentMaker != null  and documentMaker != ''">#{documentMaker},</if>
+            <if test="documentMakerSign != null ">#{documentMakerSign},</if>
+            <if test="subsdiary != null  and subsdiary != ''">#{subsdiary},</if>
+            <if test="isactive != null ">#{isactive},</if>
+            <if test="mainid != null ">#{mainid},</if>
+        </trim>
+    </insert>
+
+    <update id="updateQueryVoucherDetail" parameterType="QueryVoucherDetail">
+        update tran_data_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileNum != null  and fileNum != ''">file_num = #{fileNum},</if>
+            <if test="transcationId != null  and transcationId != ''">transcation_id = #{transcationId},</if>
+            <if test="accountPeriod != null  and accountPeriod != ''">account_period = #{accountPeriod},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="subject != null  and subject != ''">subject = #{subject},</if>
+            <if test="auxiliaryItem != null  and auxiliaryItem != ''">auxiliary_item = #{auxiliaryItem},</if>
+            <if test="lineMemo != null  and lineMemo != ''">line_memo = #{lineMemo},</if>
+            <if test="titleMemo != null  and titleMemo != ''">title_memo = #{titleMemo},</if>
+            <if test="debit != null ">debit = #{debit},</if>
+            <if test="credit != null ">credit = #{credit},</if>
+            <if test="amount != null ">amount = #{amount},</if>
+            <if test="amountForeign != null ">amount_foreign = #{amountForeign},</if>
+            <if test="rate != null ">exchange_rate = #{rate},</if>
+            <if test="currency != null  and currency != ''">currency = #{currency},</if>
+            <if test="documentMaker != null  and documentMaker != ''">document_maker = #{documentMaker},</if>
+            <if test="documentMakerSign != null ">document_maker_sign = #{documentMakerSign},</if>
+            <if test="subsdiary != null  and subsdiary != ''">subsdiary = #{subsdiary},</if>
+            <if test="isactive != null ">isactive = #{isactive},</if>
+            <if test="mainid != null ">mainId = #{mainid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteQueryVoucherDetailById" parameterType="String">
+        delete from tran_data_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteQueryVoucherDetailByIds" parameterType="String">
+        delete from tran_data_detail where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

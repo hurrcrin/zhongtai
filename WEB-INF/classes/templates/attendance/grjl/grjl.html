@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('考勤月报表列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>年：</p>
+                            <input type="text" name="year"/>
+                        </li>
+                        <li>
+                            <p>月：</p>
+                            <input type="text" name="month"/>
+                        </li>
+                        <li>
+                            <p>姓名：</p>
+                            <input type="text" name="n"/>
+                        </li>
+                        <li>
+                            <p>工号：</p>
+                            <input type="text" name="gh"/>
+                        </li>
+                        <li>
+                            <p>公司：</p>
+                            <select name="gs" th:with="type=${@dict.getType('attendance_gs')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>部门：</p>
+                            <input type="text" name="bumen"/>
+                        </li>
+                        <li>
+                            <p>考勤确认：</p>
+                            <select name="kqqr" th:with="type=${@dict.getType('attendance_confirm_status')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="attendance:grjl:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="attendance:grjl:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="attendance:grjl:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="attendance:grjl:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('attendance:grjl:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('attendance:grjl:remove')}]];
+    var gsDatas = [[${@dict.getType('attendance_gs')}]];
+    var kqqrDatas = [[${@dict.getType('attendance_confirm_status')}]];
+    var prefix = ctx + "attendance/grjl";
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "考勤月报表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'gs',
+                    title : '公司',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(gsDatas, value);
+                    }
+                },
+                {
+                    field : 'bumen',
+                    title : '部门',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:70px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'gh',
+                    title : '工号'
+                },
+                {
+                    field : 'name',
+                    title : '姓名',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'year',
+                    title : '年'
+                },
+                {
+                    field : 'month',
+                    title : '月'
+                },
+                {
+                    field : 'n1',
+                    title : '1号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n2',
+                    title : '2号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+
+                {
+                    field : 'n3',
+                    title : '3号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n4',
+                    title : '4号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n5',
+                    title : '5号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n6',
+                    title : '6号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+
+                {
+                    field : 'n7',
+                    title : '7号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n8',
+                    title : '8号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n9',
+                    title : '9号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n10',
+                    title : '10号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n11',
+                    title : '11号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n12',
+                    title : '12号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n13',
+                    title : '13号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n14',
+                    title : '14号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n15',
+                    title : '15号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n16',
+                    title : '16号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n17',
+                    title : '17号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n18',
+                    title : '18号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n19',
+                    title : '19号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n20',
+                    title : '20号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n21',
+                    title : '21号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n22',
+                    title : '22号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n23',
+                    title : '23号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n24',
+                    title : '23号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n25',
+                    title : '25号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n26',
+                    title : '26号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n27',
+                    title : '27号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n28',
+                    title : '28号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n29',
+                    title : '29号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n30',
+                    title : '30号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+                {
+                    field : 'n31',
+                    title : '31号',
+                    formatter: function (value, row, index) {
+                        return '<div style="width:60px;">'+value+'</div>';
+                    }
+                },
+
+
+                {
+                    field : 'ycq',
+                    title : '应出勤'
+                },
+                {
+                    field : 'zccq',
+                    title : '正常出勤'
+                },
+                {
+                    field : 'cc',
+                    title : '出差'
+                },
+                {
+                    field : 'jbtx',
+                    title : '加班调休'
+                },
+                {
+                    field : 'bmtx',
+                    title : '部门调休'
+                },
+                {
+                    field : 'shj',
+                    title : '事假'
+                },
+                {
+                    field : 'bj',
+                    title : '病假'
+                },
+                {
+                    field : 'hj',
+                    title : '婚假'
+                },
+                {
+                    field : 'saj',
+                    title : '丧假'
+                },
+                {
+                    field : 'cjj',
+                    title : '产检假'
+                },
+                {
+                    field : 'cj',
+                    title : '产假'
+                },
+                {
+                    field : 'lcj',
+                    title : '流产假'
+                },
+                {
+                    field : 'pcj',
+                    title : '陪产假'
+                },
+                {
+                    field : 'gsj',
+                    title : '工伤假'
+                },
+                {
+                    field : 'lsk',
+                    title : '漏刷卡(次）'
+                },
+                {
+                    field : 'cd',
+                    title : '迟到(次)'
+                },
+                {
+                    field : 'zt',
+                    title : '早退(次)'
+                },
+                {
+                    field : 'byjb',
+                    title : '本月加班'
+                },
+                {
+                    field : 'syjb',
+                    title : '剩余加班'
+                },
+
+                {
+                    field : 'rzqq',
+                    title : '入职缺勤天数'
+                },
+                {
+                    field : 'lzqq',
+                    title : '离职缺勤天数'
+                },
+                {
+                    field : 'kqqr',
+                    title : '考勤确认',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(kqqrDatas, value);
+                    }
+                },
+                {
+                    field : 'id',
+                    title : 'id'
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

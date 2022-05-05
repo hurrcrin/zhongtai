@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.wx.mapper.WxApplicationMapper">
+
+    <resultMap type="com.tianyi.project.wx.domain.WxApplication" id="ApplicationResult">
+    	<id     property="appId"      column="app_id"      />
+        <result property="appName"    column="app_name"    />
+        <result property="appAgentId"     column="app_agentId"     />
+        <result property="appSecret"   column="app_secret"   />
+        <result property="remark"   column="remark"   />
+        <result property="createBy"      column="create_by"      />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"      column="update_by"      />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectApplicationVo">
+        select
+                app_id
+                ,app_name
+                ,app_agentId
+                ,app_secret
+                ,create_by
+                ,create_time
+                ,update_by
+                ,update_time
+                ,remark
+		from
+		    wx_application
+    </sql>
+
+    <!-- 查询条件 -->
+	<sql id="sqlwhereSearch">
+		<where>
+			<if test="appId !=null">
+				and app_id = #{appId}
+			</if>
+			<if test="appAgentId !=null and appAgentId != ''">
+				and app_agentId = #{appAgentId}
+			</if>
+		</where>
+	</sql>
+
+    <select id="selectApplication" parameterType="com.tianyi.project.wx.domain.WxApplication" resultMap="ApplicationResult">
+        <include refid="selectApplicationVo"/>
+        <include refid="sqlwhereSearch"/>
+    </select>
+
+    <select id="selectApplicationList" parameterType="com.tianyi.project.wx.domain.WxApplication" resultMap="ApplicationResult">
+        <include refid="selectApplicationVo"/>
+        <where>
+			<if test="appName != null and appName != ''">
+				AND app_name like concat('%', #{appName}, '%')
+			</if>
+			<if test="appAgentId != null and appAgentId != ''">
+				AND app_agentId like concat('%', #{appAgentId}, '%')
+			</if>
+            <if test="appSecret != null and appSecret != ''">
+                AND app_secret like concat('%', #{appSecret}, '%')
+            </if>
+			<if test="beginTime != null and beginTime != ''"><!-- 开始时间检索 -->
+				and date_format(create_time,'%y%m%d') &gt;= date_format(#{beginTime},'%y%m%d')
+			</if>
+			<if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+				and date_format(create_time,'%y%m%d') &lt;= date_format(#{endTime},'%y%m%d')
+			</if>
+		</where>
+    </select>
+
+    <insert id="insertApplication" parameterType="com.tianyi.project.wx.domain.WxApplication">
+        insert into wx_application (
+			<if test="appName != null and appName != '' ">app_name,</if>
+			<if test="appAgentId != null and appAgentId != '' ">app_agentId,</if>
+			<if test="appSecret != null and appSecret != '' ">app_secret,</if>
+			<if test="createBy != null and createBy != ''">create_by,</if>
+			<if test="remark != null and remark != ''">remark,</if>
+ 			create_time
+        )values(
+			<if test="appName != null and appName != ''">#{appName},</if>
+			<if test="appAgentId != null and appAgentId != ''">#{appAgentId},</if>
+			<if test="appSecret != null and appSecret != ''">#{appSecret},</if>
+			<if test="createBy != null and createBy != ''">#{createBy},</if>
+			<if test="remark != null and remark != ''">#{remark},</if>
+ 			sysdate()
+		)
+    </insert>
+
+    <update id="updateApplication" parameterType="com.tianyi.project.wx.domain.WxApplication">
+        update wx_application
+        <set>
+            <if test="appName != null and appName != ''">app_name = #{appName},</if>
+            <if test="appAgentId != null and appAgentId != ''">app_agentId = #{appAgentId},</if>
+            <if test="appSecret != null and appSecret != ''">app_secret = #{appSecret},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+ 			update_time = sysdate()
+        </set>
+        where app_id = #{appId}
+    </update>
+
+    <delete id="deleteApplicationByIds" parameterType="String">
+        delete from wx_application where app_id in
+        <foreach item="appId" collection="array" open="(" separator="," close=")">
+        	#{appId}
+        </foreach>
+    </delete>
+
+</mapper>

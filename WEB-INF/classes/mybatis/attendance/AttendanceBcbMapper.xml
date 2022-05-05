@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.attendance.bcb.mapper.AttendanceBcbMapper">
+
+    <resultMap type="com.tianyi.project.attendance.bcb.domain.AttendanceBcb" id="AttendanceBcbResult">
+        <result property="id"    column="id"    />
+        <result property="bcid"    column="bcid"    />
+        <result property="bcmc"    column="bcmc"    />
+        <result property="sbsj"    column="sbsj"    />
+        <result property="xbsj"    column="xbsj"    />
+        <result property="xxsjq"    column="xxsjq"    />
+        <result property="xxsjz"    column="xxsjz"    />
+        <result property="zsc"    column="zsc"    />
+        <result property="bz"    column="bz"    />
+    </resultMap>
+
+    <sql id="selectAttendanceBcbVo">
+        select id, bcid, bcmc, sbsj, xbsj, xxsjq, xxsjz, zsc, bz from uf_bcb
+    </sql>
+
+    <select id="selectAttendanceBcbList" parameterType="com.tianyi.project.attendance.bcb.domain.AttendanceBcb" resultMap="AttendanceBcbResult">
+        <include refid="selectAttendanceBcbVo"/>
+        <where>
+            <if test="bcid != null  and bcid != ''"> and bcid = #{bcid}</if>
+            <if test="bcmc != null  and bcmc != ''"> and bcmc = #{bcmc}</if>
+            <if test="sbsj != null  and sbsj != ''"> and sbsj = #{sbsj}</if>
+            <if test="xbsj != null  and xbsj != ''"> and xbsj = #{xbsj}</if>
+            <if test="xxsjq != null  and xxsjq != ''"> and xxsjq = #{xxsjq}</if>
+            <if test="xxsjz != null  and xxsjz != ''"> and xxsjz = #{xxsjz}</if>
+            <if test="zsc != null "> and zsc = #{zsc}</if>
+            <if test="bz != null  and bz != ''"> and bz = #{bz}</if>
+        </where>
+    </select>
+
+    <select id="selectAttendanceBcbById" parameterType="Long" resultMap="AttendanceBcbResult">
+        <include refid="selectAttendanceBcbVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertAttendanceBcb" parameterType="com.tianyi.project.attendance.bcb.domain.AttendanceBcb">
+        insert into uf_bcb
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="bcid != null  and bcid != ''">bcid,</if>
+            <if test="bcmc != null  and bcmc != ''">bcmc,</if>
+            <if test="sbsj != null  and sbsj != ''">sbsj,</if>
+            <if test="xbsj != null  and xbsj != ''">xbsj,</if>
+            <if test="xxsjq != null  and xxsjq != ''">xxsjq,</if>
+            <if test="xxsjz != null  and xxsjz != ''">xxsjz,</if>
+            <if test="zsc != null ">zsc,</if>
+            <if test="bz != null  and bz != ''">bz,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="bcid != null  and bcid != ''">#{bcid},</if>
+            <if test="bcmc != null  and bcmc != ''">#{bcmc},</if>
+            <if test="sbsj != null  and sbsj != ''">#{sbsj},</if>
+            <if test="xbsj != null  and xbsj != ''">#{xbsj},</if>
+            <if test="xxsjq != null  and xxsjq != ''">#{xxsjq},</if>
+            <if test="xxsjz != null  and xxsjz != ''">#{xxsjz},</if>
+            <if test="zsc != null ">#{zsc},</if>
+            <if test="bz != null  and bz != ''">#{bz},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAttendanceBcb" parameterType="com.tianyi.project.attendance.bcb.domain.AttendanceBcb">
+        update uf_bcb
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bcid != null  and bcid != ''">bcid = #{bcid},</if>
+            <if test="bcmc != null  and bcmc != ''">bcmc = #{bcmc},</if>
+            <if test="sbsj != null  and sbsj != ''">sbsj = #{sbsj},</if>
+            <if test="xbsj != null  and xbsj != ''">xbsj = #{xbsj},</if>
+            <if test="xxsjq != null  and xxsjq != ''">xxsjq = #{xxsjq},</if>
+            <if test="xxsjz != null  and xxsjz != ''">xxsjz = #{xxsjz},</if>
+            <if test="zsc != null ">zsc = #{zsc},</if>
+            <if test="bz != null  and bz != ''">bz = #{bz},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAttendanceBcbById" parameterType="Long">
+        delete from uf_bcb where id = #{id}
+    </delete>
+
+    <delete id="deleteAttendanceBcbByIds" parameterType="String">
+        delete from uf_bcb where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

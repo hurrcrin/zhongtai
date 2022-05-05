@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.task.oa.attendance.mapper.AnnualLeaveMapper">
+    <resultMap type="com.tianyi.project.monitor.job.task.oa.attendance.domain.AnnualLeave"
+               id="AnnualLeaveResult">
+        <result property="id" column="id"/>
+        <result property="workcode" column="workcode"/>
+        <result property="rzrq" column="rzrq"/>
+    </resultMap>
+
+    <insert id="InsertAnnualLeave" parameterType="com.tianyi.project.monitor.job.task.oa.attendance.domain.AnnualLeave">
+        INSERT INTO uf_qjts
+        (
+        requestId,
+        formmodeid,
+        modedatacreater,
+        modedatacreatertype,
+        modedatacreatedate,
+        modedatacreatetime,
+        fb,
+        bm,
+        xm,
+        gh,
+        sjlx,
+        sc,
+        ysy,
+        sy,
+        yxks,
+        yxjs,
+        jblc,
+        qjlc,
+        MODEUUID
+        )
+        VALUES
+            (
+            #{requestId},
+            #{formmodeid},
+            #{modedatacreater},
+            #{modedatacreatertype},
+            #{modedatacreatedate},
+            #{modedatacreatetime},
+            #{fb},
+            #{bm},
+            #{xm},
+            #{gh},
+            #{sjlx},
+            #{sc},
+            #{ysy},
+            #{sy},
+            #{yxks},
+            #{yxjs},
+            #{jblc},
+            #{qjlc},
+            #{MODEUUID}
+            )
+    </insert>
+
+    <insert id="InsertAnnualLeaveList" parameterType="java.util.List">
+        INSERT INTO uf_qjts
+        (
+        requestId,
+        formmodeid,
+        modedatacreater,
+        modedatacreatertype,
+        modedatacreatedate,
+        modedatacreatetime,
+        fb,
+        bm,
+        xm,
+        gh,
+        sjlx,
+        sc,
+        ysy,
+        sy,
+        yxks,
+        yxjs,
+        jblc,
+        qjlc,
+        MODEUUID
+        )
+        VALUES
+        <foreach collection="list" item="Qjts" separator=",">
+            (
+            #{Qjts.requestId},
+            #{Qjts.formmodeid},
+            #{Qjts.modedatacreater},
+            #{Qjts.modedatacreatertype},
+            #{Qjts.modedatacreatedate},
+            #{Qjts.modedatacreatetime},
+            #{Qjts.fb},
+            #{Qjts.bm},
+            #{Qjts.xm},
+            #{Qjts.gh},
+            #{Qjts.sjlx},
+            #{Qjts.sc},
+            #{Qjts.ysy},
+            #{Qjts.sy},
+            #{Qjts.yxks},
+            #{Qjts.yxjs},
+            #{Qjts.jblc},
+            #{Qjts.qjlc},
+            #{Qjts.MODEUUID}
+            )
+        </foreach>
+    </insert>
+
+    <select id="SelectRzrqAndGh"
+            resultType="com.tianyi.project.monitor.job.task.oa.attendance.domain.AnnualLeave">
+        SELECT
+            a.id as id,
+            a.workcode as workcode,
+            b.rzrq as rzrq
+        FROM
+            HrmResource a
+            LEFT JOIN uf_gzxx b ON a.id = b.xm
+        WHERE
+            a.loginid IS NOT NULL
+            AND a.loginid != ''
+            AND a.status != 5
+            AND b.rzrq IS NOT NULL
+            AND b.rzrq != ''
+    </select>
+</mapper>

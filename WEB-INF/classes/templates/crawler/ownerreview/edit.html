@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改自有商品评论')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-ownerreview-edit" th:object="${zhongtaiCrawlerDailyReview}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">评论者：</label>
+                <div class="col-sm-8">
+                    <input name="user" th:field="*{user}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">评分：</label>
+                <div class="col-sm-8">
+                    <input name="rating" th:field="*{rating}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">评论标题：</label>
+                <div class="col-sm-8">
+                    <input name="reviewTitle" th:field="*{reviewTitle}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">用户评论日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="reviewDate" th:value="${#dates.format(zhongtaiCrawlerDailyReview.reviewDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">评论内容：</label>
+                <div class="col-sm-8">
+                    <textarea name="reviewContent" class="form-control">[[*{reviewContent}]]</textarea>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">asin连接：</label>
+                <div class="col-sm-8">
+                    <input name="asinLink" th:field="*{asinLink}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">web url：</label>
+                <div class="col-sm-8">
+                    <input name="weburl" th:field="*{weburl}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">评论相关信息：</label>
+                <div class="col-sm-8">
+                    <input name="reviewInfos" th:field="*{reviewInfos}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">当前asin：</label>
+                <div class="col-sm-8">
+                    <input name="currentAsin" th:field="*{currentAsin}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">listing：</label>
+                <div class="col-sm-8">
+                    <input name="listing" th:field="*{listing}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">母asin：</label>
+                <div class="col-sm-8">
+                    <input name="asin" th:field="*{asin}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">评论序号：</label>
+                <div class="col-sm-8">
+                    <input name="asin" th:field="*{reviewSequence}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">评论id：</label>
+                <div class="col-sm-8">
+                    <input name="reviewId" th:field="*{reviewId}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">评论状态：</label>
+                <div class="col-sm-8">
+                    <input name="property" th:field="*{property}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">是否有图片：</label>
+                <div class="col-sm-8">
+                    <select name="reviewImgFlag" class="form-control m-b" th:with="type=${@dict.getType('sys_yes_no')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{reviewImgFlag}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">评论点赞数量：</label>
+                <div class="col-sm-8">
+                    <input name="reviewHelpfulNum" th:field="*{reviewHelpfulNum}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">抓取日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="crawlDate" th:value="${#dates.format(zhongtaiCrawlerDailyReview.crawlDate, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "crawler/ownerreview";
+        $("#form-ownerreview-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-ownerreview-edit').serialize());
+            }
+        }
+
+        $("input[name='reviewDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='crawlDate']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

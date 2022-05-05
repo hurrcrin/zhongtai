@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.attendance.pbb.mapper.AttendancePbbMapper">
+
+    <resultMap type="com.tianyi.project.attendance.pbb.domain.AttendancePbb" id="AttendancePbbResult">
+        <result property="id" column="id"/>
+        <result property="requestid" column="requestId"/>
+        <result property="xm" column="xm"/>
+        <result property="name" column="name"/>
+        <result property="department" column="department"/>
+        <result property="company" column="company"/>
+        <result property="gh" column="gh"/>
+        <result property="n" column="n"/>
+        <result property="y" column="y"/>
+        <result property="n1" column="n1"/>
+        <result property="n2" column="n2"/>
+        <result property="n3" column="n3"/>
+        <result property="n4" column="n4"/>
+        <result property="n5" column="n5"/>
+        <result property="n6" column="n6"/>
+        <result property="n7" column="n7"/>
+        <result property="n8" column="n8"/>
+        <result property="n9" column="n9"/>
+        <result property="n10" column="n10"/>
+        <result property="n11" column="n11"/>
+        <result property="n12" column="n12"/>
+        <result property="n13" column="n13"/>
+        <result property="n14" column="n14"/>
+        <result property="n15" column="n15"/>
+        <result property="n16" column="n16"/>
+        <result property="n17" column="n17"/>
+        <result property="n18" column="n18"/>
+        <result property="n19" column="n19"/>
+        <result property="n20" column="n20"/>
+        <result property="n21" column="n21"/>
+        <result property="n22" column="n22"/>
+        <result property="n23" column="n23"/>
+        <result property="n24" column="n24"/>
+        <result property="n25" column="n25"/>
+        <result property="n26" column="n26"/>
+        <result property="n27" column="n27"/>
+        <result property="n28" column="n28"/>
+        <result property="n29" column="n29"/>
+        <result property="n30" column="n30"/>
+        <result property="n31" column="n31"/>
+        <result property="gs" column="gs"/>
+        <result property="bm" column="bm"/>
+        <result property="formmodeid" column="formmodeid"/>
+        <result property="modedatacreater" column="modedatacreater"/>
+        <result property="modedatacreatertype" column="modedatacreatertype"/>
+        <result property="modedatacreatedate" column="modedatacreatedate"/>
+        <result property="modedatacreatetime" column="modedatacreatetime"/>
+        <result property="modeuuid" column="MODEUUID"/>
+    </resultMap>
+
+    <sql id="selectAttendancePbbVo">
+        select p.id, h.id as xm,h.lastname as name, gh, n,c.subcompanyname as company ,d.departmentmark as department, y+1 as y,
+        (select bcid from uf_bcb where id =n1) as n1,
+        (select bcid from uf_bcb where id =n2) as n2,
+        (select bcid from uf_bcb where id =n3) as n3,
+        (select bcid from uf_bcb where id =n4) as n4,
+        (select bcid from uf_bcb where id =n5) as n5,
+        (select bcid from uf_bcb where id =n6) as n6,
+        (select bcid from uf_bcb where id =n6) as n6,
+        (select bcid from uf_bcb where id =n7) as n7,
+        (select bcid from uf_bcb where id =n8) as n8,
+        (select bcid from uf_bcb where id =n9) as n9,
+        (select bcid from uf_bcb where id =n10) as n10,
+        (select bcid from uf_bcb where id =n11) as n11,
+        (select bcid from uf_bcb where id =n12) as n12,
+        (select bcid from uf_bcb where id =n13) as n13,
+        (select bcid from uf_bcb where id =n14) as n14,
+        (select bcid from uf_bcb where id =n15) as n15,
+        (select bcid from uf_bcb where id =n16) as n16,
+        (select bcid from uf_bcb where id =n17) as n17,
+        (select bcid from uf_bcb where id =n18) as n18,
+        (select bcid from uf_bcb where id =n19) as n19,
+        (select bcid from uf_bcb where id =n20) as n20,
+        (select bcid from uf_bcb where id =n21) as n21,
+        (select bcid from uf_bcb where id =n22) as n22,
+        (select bcid from uf_bcb where id =n23) as n23,
+        (select bcid from uf_bcb where id =n24) as n24,
+        (select bcid from uf_bcb where id =n25) as n25,
+        (select bcid from uf_bcb where id =n26) as n26,
+        (select bcid from uf_bcb where id =n27) as n27,
+        (select bcid from uf_bcb where id =n28) as n28,
+        (select bcid from uf_bcb where id =n29) as n29,
+        (select bcid from uf_bcb where id =n30) as n30,
+        (select bcid from uf_bcb where id =n31) as n31,
+        gs, bm from uf_pbb p left join HrmResource h on p.xm = h.id left join HrmDepartment d on p.bm = d.id left join HrmSubCompany c ON p.gs = c.id
+    </sql>
+    <select id="selectAttendancePbbList" parameterType="AttendancePbb" resultMap="AttendancePbbResult">
+        <include refid="selectAttendancePbbVo"/>
+        <where>
+            <if test="gh != null  and gh != ''">and gh = #{gh}</if>
+            <if test="n != null ">and n = #{n}</if>
+            <if test="y != null ">and y = #{y}-1</if>
+            <if test="name != null  and name != 'admin'">
+                and p.bm in (select department_id from timeKeeper_config where user_id =#{name})
+            </if>
+        </where>
+        order by p.id desc
+    </select>
+
+    <select id="selectAttendancePbb" parameterType="AttendancePbb" resultMap="AttendancePbbResult">
+        select top 1 xm,gs,bm from uf_pbb where gh = #{gh} order by id desc
+    </select>
+
+    <select id="selectAttendancePbbById" parameterType="Long" resultMap="AttendancePbbResult">
+        <include refid="selectAttendancePbbVo"/>
+        where p.id = #{id}
+    </select>
+
+    <insert id="insertAttendancePbb" parameterType="AttendancePbb">
+        insert into uf_pbb
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="xm != null ">xm,</if>
+            <if test="gh != null  and gh != ''">gh,</if>
+            <if test="n != null ">n,</if>
+            <if test="y != null ">y,</if>
+            <if test="n1 != null  and n1 != ''">n1,</if>
+            <if test="n2 != null  and n2 != ''">n2,</if>
+            <if test="n3 != null  and n3 != ''">n3,</if>
+            <if test="n4 != null  and n4 != ''">n4,</if>
+            <if test="n5 != null  and n5 != ''">n5,</if>
+            <if test="n6 != null  and n6 != ''">n6,</if>
+            <if test="n7 != null  and n7 != ''">n7,</if>
+            <if test="n8 != null  and n8 != ''">n8,</if>
+            <if test="n9 != null  and n9 != ''">n9,</if>
+            <if test="n10 != null  and n10 != ''">n10,</if>
+            <if test="n11 != null  and n11 != ''">n11,</if>
+            <if test="n12 != null  and n12 != ''">n12,</if>
+            <if test="n13 != null  and n13 != ''">n13,</if>
+            <if test="n14 != null  and n14 != ''">n14,</if>
+            <if test="n15 != null  and n15 != ''">n15,</if>
+            <if test="n16 != null  and n16 != ''">n16,</if>
+            <if test="n17 != null  and n17 != ''">n17,</if>
+            <if test="n18 != null  and n18 != ''">n18,</if>
+            <if test="n19 != null  and n19 != ''">n19,</if>
+            <if test="n20 != null  and n20 != ''">n20,</if>
+            <if test="n21 != null  and n21 != ''">n21,</if>
+            <if test="n22 != null  and n22 != ''">n22,</if>
+            <if test="n23 != null  and n23 != ''">n23,</if>
+            <if test="n24 != null  and n24 != ''">n24,</if>
+            <if test="n25 != null  and n25 != ''">n25,</if>
+            <if test="n26 != null  and n26 != ''">n26,</if>
+            <if test="n27 != null  and n27 != ''">n27,</if>
+            <if test="n28 != null  and n28 != ''">n28,</if>
+            <if test="n29 != null  and n29 != ''">n29,</if>
+            <if test="n30 != null  and n30 != ''">n30,</if>
+            <if test="n31 != null  and n31 != ''">n31,</if>
+            <if test="gs != null ">gs,</if>
+            <if test="bm != null ">bm,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="xm != null ">#{xm},</if>
+            <if test="gh != null  and gh != ''">#{gh},</if>
+            <if test="n != null ">#{n},</if>
+            <if test="y != null ">#{y},</if>
+            <if test="n1 != null  and n1 != ''">(select id from uf_bcb where bcid = #{n1}),</if>
+            <if test="n2 != null  and n2 != ''">(select id from uf_bcb where bcid = #{n2}),</if>
+            <if test="n3 != null  and n3 != ''">(select id from uf_bcb where bcid = #{n3}),</if>
+            <if test="n4 != null  and n4 != ''">(select id from uf_bcb where bcid = #{n4}),</if>
+            <if test="n5 != null  and n5 != ''">(select id from uf_bcb where bcid = #{n5}),</if>
+            <if test="n6 != null  and n6 != ''">(select id from uf_bcb where bcid = #{n6}),</if>
+            <if test="n7 != null  and n7 != ''">(select id from uf_bcb where bcid = #{n7}),</if>
+            <if test="n8 != null  and n8 != ''">(select id from uf_bcb where bcid = #{n8}),</if>
+            <if test="n9 != null  and n9 != ''">(select id from uf_bcb where bcid = #{n9}),</if>
+            <if test="n10 != null  and n10 != ''">(select id from uf_bcb where bcid = #{n10}),</if>
+            <if test="n11 != null  and n11 != ''">(select id from uf_bcb where bcid = #{n11}),</if>
+            <if test="n12 != null  and n12 != ''">(select id from uf_bcb where bcid = #{n12}),</if>
+            <if test="n13 != null  and n13 != ''">(select id from uf_bcb where bcid = #{n13}),</if>
+            <if test="n14 != null  and n14 != ''">(select id from uf_bcb where bcid = #{n14}),</if>
+            <if test="n15 != null  and n15 != ''">(select id from uf_bcb where bcid = #{n15}),</if>
+            <if test="n16 != null  and n16 != ''">(select id from uf_bcb where bcid = #{n16}),</if>
+            <if test="n17 != null  and n17 != ''">(select id from uf_bcb where bcid = #{n17}),</if>
+            <if test="n18 != null  and n18 != ''">(select id from uf_bcb where bcid = #{n18}),</if>
+            <if test="n19 != null  and n19 != ''">(select id from uf_bcb where bcid = #{n19}),</if>
+            <if test="n20 != null  and n20 != ''">(select id from uf_bcb where bcid = #{n20}),</if>
+            <if test="n21 != null  and n21 != ''">(select id from uf_bcb where bcid = #{n21}),</if>
+            <if test="n22 != null  and n22 != ''">(select id from uf_bcb where bcid = #{n22}),</if>
+            <if test="n23 != null  and n23 != ''">(select id from uf_bcb where bcid = #{n23}),</if>
+            <if test="n24 != null  and n24 != ''">(select id from uf_bcb where bcid = #{n24}),</if>
+            <if test="n25 != null  and n25 != ''">(select id from uf_bcb where bcid = #{n25}),</if>
+            <if test="n26 != null  and n26 != ''">(select id from uf_bcb where bcid = #{n26}),</if>
+            <if test="n27 != null  and n27 != ''">(select id from uf_bcb where bcid = #{n27}),</if>
+            <if test="n28 != null  and n28 != ''">(select id from uf_bcb where bcid = #{n28}),</if>
+            <if test="n29 != null  and n29 != ''">(select id from uf_bcb where bcid = #{n29}),</if>
+            <if test="n30 != null  and n30 != ''">(select id from uf_bcb where bcid = #{n30}),</if>
+            <if test="n31 != null  and n31 != ''">(select id from uf_bcb where bcid = #{n31}),</if>
+            <if test="gs != null ">#{gs},</if>
+            <if test="bm != null ">#{bm},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAttendancePbb" parameterType="AttendancePbb">
+        update uf_pbb
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="n1 != null  and n1 != ''">n1 = (select id from uf_bcb where bcid = #{n1}),</if>
+            <if test="n2 != null  and n2 != ''">n2 = (select id from uf_bcb where bcid = #{n2}),</if>
+            <if test="n3 != null  and n3 != ''">n3 = (select id from uf_bcb where bcid = #{n3}),</if>
+            <if test="n4 != null  and n4 != ''">n4 = (select id from uf_bcb where bcid = #{n4}),</if>
+            <if test="n5 != null  and n5 != ''">n5 = (select id from uf_bcb where bcid = #{n5}),</if>
+            <if test="n6 != null  and n6 != ''">n6 = (select id from uf_bcb where bcid = #{n6}),</if>
+            <if test="n7 != null  and n7 != ''">n7 = (select id from uf_bcb where bcid = #{n7}),</if>
+            <if test="n8 != null  and n8 != ''">n8 = (select id from uf_bcb where bcid = #{n8}),</if>
+            <if test="n9 != null  and n9 != ''">n9 = (select id from uf_bcb where bcid = #{n9}),</if>
+            <if test="n10 != null  and n10 != ''">n10 = (select id from uf_bcb where bcid = #{n10}),</if>
+            <if test="n11 != null  and n11 != ''">n11 = (select id from uf_bcb where bcid = #{n11}),</if>
+            <if test="n12 != null  and n12 != ''">n12 = (select id from uf_bcb where bcid = #{n12}),</if>
+            <if test="n13 != null  and n13 != ''">n13 = (select id from uf_bcb where bcid = #{n13}),</if>
+            <if test="n14 != null  and n14 != ''">n14 = (select id from uf_bcb where bcid = #{n14}),</if>
+            <if test="n15 != null  and n15 != ''">n15 = (select id from uf_bcb where bcid = #{n15}),</if>
+            <if test="n16 != null  and n16 != ''">n16 = (select id from uf_bcb where bcid = #{n16}),</if>
+            <if test="n17 != null  and n17 != ''">n17 = (select id from uf_bcb where bcid = #{n17}),</if>
+            <if test="n18 != null  and n18 != ''">n18 = (select id from uf_bcb where bcid = #{n18}),</if>
+            <if test="n19 != null  and n19 != ''">n19 = (select id from uf_bcb where bcid = #{n19}),</if>
+            <if test="n20 != null  and n20 != ''">n20 = (select id from uf_bcb where bcid = #{n20}),</if>
+            <if test="n21 != null  and n21 != ''">n21 = (select id from uf_bcb where bcid = #{n21}),</if>
+            <if test="n22 != null  and n22 != ''">n22 = (select id from uf_bcb where bcid = #{n22}),</if>
+            <if test="n23 != null  and n23 != ''">n23 = (select id from uf_bcb where bcid = #{n23}),</if>
+            <if test="n24 != null  and n24 != ''">n24 = (select id from uf_bcb where bcid = #{n24}),</if>
+            <if test="n25 != null  and n25 != ''">n25 = (select id from uf_bcb where bcid = #{n25}),</if>
+            <if test="n26 != null  and n26 != ''">n26 = (select id from uf_bcb where bcid = #{n26}),</if>
+            <if test="n27 != null  and n27 != ''">n27 = (select id from uf_bcb where bcid = #{n27}),</if>
+            <if test="n28 != null  and n28 != ''">n28 = (select id from uf_bcb where bcid = #{n28}),</if>
+            <if test="n29 != null  and n29 != ''">n29 = (select id from uf_bcb where bcid = #{n29}),</if>
+            <if test="n30 != null  and n30 != ''">n30 = (select id from uf_bcb where bcid = #{n30}),</if>
+            <if test="n31 != null  and n31 != ''">n31 = (select id from uf_bcb where bcid = #{n31}),</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAttendancePbbById" parameterType="Long">
+        delete from uf_pbb where id = #{id}
+    </delete>
+
+    <delete id="deleteAttendancePbbByIds" parameterType="String">
+        delete from uf_pbb where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

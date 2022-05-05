@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.crawler.otherproductinfo.mapper.ZtCrawlerOthercoProductInfoMapper">
+    
+    <resultMap type="ZtCrawlerOthercoProductInfo" id="ZtCrawlerOthercoProductInfoResult">
+        <result property="id"    column="id"    />
+        <result property="productUrl"    column="product_url"    />
+        <result property="size"    column="size"    />
+        <result property="color"    column="color"    />
+        <result property="price"    column="price"    />
+        <result property="crawlDate"    column="crawl_date"    />
+    </resultMap>
+
+    <sql id="selectZtCrawlerOthercoProductInfoVo">
+        select id, product_url, size, color, price, crawl_date from zt_crawler_otherco_product_info
+    </sql>
+
+    <select id="selectZtCrawlerOthercoProductInfoList" parameterType="ZtCrawlerOthercoProductInfo" resultMap="ZtCrawlerOthercoProductInfoResult">
+        <include refid="selectZtCrawlerOthercoProductInfoVo"/>
+        <where>  
+            <if test="productUrl != null  and productUrl != ''"> and product_url like concat('%', #{productUrl}, '%')</if>
+            <if test="size != null  and size != ''"> and size like concat('%', #{size}, '%')</if>
+            <if test="params.beginCrawlDate != null and params.beginCrawlDate != '' and params.endCrawlDate != null and params.endCrawlDate != ''"> and crawl_date between #{params.beginCrawlDate} and #{params.endCrawlDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectZtCrawlerOthercoProductInfoById" parameterType="Long" resultMap="ZtCrawlerOthercoProductInfoResult">
+        <include refid="selectZtCrawlerOthercoProductInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertZtCrawlerOthercoProductInfo" parameterType="ZtCrawlerOthercoProductInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into zt_crawler_otherco_product_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productUrl != null  and productUrl != ''">product_url,</if>
+            <if test="size != null  and size != ''">size,</if>
+            <if test="color != null  and color != ''">color,</if>
+            <if test="price != null  and price != ''">price,</if>
+            <if test="crawlDate != null ">crawl_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productUrl != null  and productUrl != ''">#{productUrl},</if>
+            <if test="size != null  and size != ''">#{size},</if>
+            <if test="color != null  and color != ''">#{color},</if>
+            <if test="price != null  and price != ''">#{price},</if>
+            <if test="crawlDate != null ">#{crawlDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateZtCrawlerOthercoProductInfo" parameterType="ZtCrawlerOthercoProductInfo">
+        update zt_crawler_otherco_product_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productUrl != null  and productUrl != ''">product_url = #{productUrl},</if>
+            <if test="size != null  and size != ''">size = #{size},</if>
+            <if test="color != null  and color != ''">color = #{color},</if>
+            <if test="price != null  and price != ''">price = #{price},</if>
+            <if test="crawlDate != null ">crawl_date = #{crawlDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteZtCrawlerOthercoProductInfoById" parameterType="Long">
+        delete from zt_crawler_otherco_product_info where id = #{id}
+    </delete>
+
+    <delete id="deleteZtCrawlerOthercoProductInfoByIds" parameterType="String">
+        delete from zt_crawler_otherco_product_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

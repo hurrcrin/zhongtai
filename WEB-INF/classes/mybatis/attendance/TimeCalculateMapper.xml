@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.attendance.verify.mapper.TimeCalculateMapper">
+    <resultMap type="com.tianyi.project.attendance.verify.domain.WorkShift" id="WorkShiftResult">
+        <result column="bcid" property="bcId"></result>
+        <result column="sbsj" property="workStartTime"></result>
+        <result column="xbsj" property="workEndTime"></result>
+        <result column="xxsjq" property="restStartTime"></result>
+        <result column="xxsjz" property="restEndTime"></result>
+        <result column="zsc" property="workHour"></result>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.attendance.verify.domain.PersonalRecord" id="PersonalRecordResult">
+        <result column="id" property="id"></result>
+        <result column="duration" property="duration"></result>
+        <result column="description" property="description"></result>
+        <result column="overtime" property="overtime"></result>
+    </resultMap>
+
+    <select id="selectWorkShift" parameterType="com.tianyi.project.attendance.verify.domain.WorkShift"
+            resultMap="WorkShiftResult">
+        select a.bcid
+        ,a.sbsj
+        ,a.xbsj
+        ,a.xxsjq
+        ,a.xxsjz
+        ,a.zsc
+        from uf_bcb a
+        ,uf_pbb b
+        where a.id=b.n${day}
+        and b.n=#{year}
+        and b.y=#{month}
+        and b.xm=#{xm}
+    </select>
+
+    <select id="selectPersonalRecord" parameterType="com.tianyi.project.attendance.verify.domain.PersonalRecord"
+            resultMap="PersonalRecordResult">
+        select id,
+        n${day} as description,
+        <if test="field!=null and field!=''">case when (${field} is null)then 0 else ${field} end as duration,</if>
+        case when (byjb is null)then 0 else byjb end as overtime
+        from uf_grjl
+        where xm = #{xm}
+        and year = #{year}
+        and month = #{month}
+    </select>
+
+    <select id="selectZccq" parameterType="com.tianyi.project.attendance.verify.domain.PersonalRecord"
+            resultType="java.lang.Double">
+        select
+        case when (zccq is null)then 0 else zccq end as zccq
+        from uf_grjl
+        where xm = #{xm}
+        and year = #{year}
+        and month = #{month}
+    </select>
+
+    <update id="updatePersonalRecord" parameterType="com.tianyi.project.attendance.verify.domain.PersonalRecord">
+        update uf_grjl
+        set
+        <if test="field!=null and field!=''">${field}=#{duration},</if>
+        <if test="overtime!=null">byjb=#{overtime},</if>
+        <if test="zccq!=null">zccq=#{zccq},</if>
+        n${day}=#{description}
+        where xm = #{xm}
+        and year = #{year}
+        and month = #{month}
+    </update>
+
+    <update id="updateCc" parameterType="com.tianyi.project.attendance.verify.domain.PersonalRecord">
+        update uf_grjl
+        set
+        <if test="field!=null and field!=''">${field}=#{duration}</if>
+        where xm = #{xm}
+        and year = #{year}
+        and month = #{month}
+    </update>
+
+    <update id="updateSyAndYsy" parameterType="com.tianyi.project.monitor.job.task.oa.attendance.domain.Qjts">
+        UPDATE uf_qjts SET ysy=#{ysy}, sy=#{sy} WHERE id = #{id}
+    </update>
+
+    <resultMap type="com.tianyi.project.attendance.verify.domain.OverTime" id="OberTimeResult">
+        <result column="xm" property="xm"></result>
+        <result column="date" property="date"></result>
+        <result column="duration" property="duration"></result>
+    </resultMap>
+
+    <select id="selectOverTimeByRequestid" parameterType="java.lang.String"
+            resultMap="OberTimeResult">
+        select a.xm,
+        b.jbrq as date,
+        b.jbsc as duration
+        from formtable_main_17 a,formtable_main_17_dt1 b
+        <where>
+            <if test="requestid!=null and requestid!=''">and a.requestid=#{requestid}</if>
+            and b.mainId=a.id
+        </where>
+    </select>
+
+    <select id="getQjlxAndQjscByRequestId" resultType="com.tianyi.project.attendance.data.domain.Leave">
+        SELECT
+            qjlx,qjsc
+        FROM
+            formtable_main_16
+        WHERE
+            requestId = #{requestId}
+    </select>
+
+    <select id="getQjtsByXm" resultType="com.tianyi.project.monitor.job.task.oa.attendance.domain.Qjts">
+        SELECT
+            *
+        FROM
+            uf_qjts
+        WHERE
+            yxjs = ( SELECT MAX ( yxjs ) FROM uf_qjts WHERE sjlx = 4 )
+            AND sjlx = 4
+            AND xm = #{userId}
+    </select>
+
+    <select id="selectAnnualTotalHours" resultType="java.math.BigDecimal">
+        SELECT
+            case when sum(qjsc) is null then 0 else sum(qjsc) end as sc
+        FROM
+            formtable_main_16 a
+            LEFT JOIN workflow_requestbase b ON a.requestid= b.requestid
+        WHERE
+            a.xm= #{xm}
+            AND a.qjlx= 14
+            AND b.currentnodeid NOT IN ( 3170, 3175 )
+            AND b.workflowid= 487
+    </select>
+</mapper>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改班次管理')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-bcb-edit" th:object="${attendanceBcb}">
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">班次编号：</label>
+                <div class="col-sm-8">
+                    <input name="bcid" th:field="*{bcid}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">班次名称：</label>
+                <div class="col-sm-8">
+                    <input name="bcmc" th:field="*{bcmc}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">上班时间：</label>
+                <div class="col-sm-8">
+                    <input name="sbsj" th:field="*{sbsj}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">下班时间：</label>
+                <div class="col-sm-8">
+                    <input name="xbsj" th:field="*{xbsj}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">休息时间起：</label>
+                <div class="col-sm-8">
+                    <input name="xxsjq" th:field="*{xxsjq}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">休息时间止：</label>
+                <div class="col-sm-8">
+                    <input name="xxsjz" th:field="*{xxsjz}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">总时长：</label>
+                <div class="col-sm-8">
+                    <input name="zsc" th:field="*{zsc}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">备注：</label>
+                <div class="col-sm-8">
+                    <input name="bz" th:field="*{bz}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "attendance/bcb";
+        $("#form-bcb-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-bcb-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

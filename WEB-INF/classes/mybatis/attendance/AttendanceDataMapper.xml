@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.attendance.data.mapper.AttendanceDataMapper">
+
+    <resultMap type="com.tianyi.project.attendance.data.domain.PersonalData" id="PersonalDataResult">
+        <result property="id"    column="id"    />
+        <result property="xm"    column="xm"    />
+        <result property="bm"    column="bm"    />
+        <result property="year"    column="year"    />
+        <result property="n1"    column="n1"    />
+        <result property="n2"    column="n2"    />
+        <result property="n3"    column="n3"    />
+        <result property="n4"    column="n4"    />
+        <result property="n5"    column="n5"    />
+        <result property="n6"    column="n6"    />
+        <result property="n7"    column="n7"    />
+        <result property="n8"    column="n8"    />
+        <result property="n9"    column="n9"    />
+        <result property="n10"    column="n10"    />
+        <result property="n11"    column="n11"    />
+        <result property="n12"    column="n12"    />
+        <result property="n13"    column="n13"    />
+        <result property="n14"    column="n14"    />
+        <result property="n15"    column="n15"    />
+        <result property="n16"    column="n16"    />
+        <result property="n17"    column="n17"    />
+        <result property="n18"    column="n18"    />
+        <result property="n19"    column="n19"    />
+        <result property="n20"    column="n20"    />
+        <result property="n21"    column="n21"    />
+        <result property="n22"    column="n22"    />
+        <result property="n23"    column="n23"    />
+        <result property="n24"    column="n24"    />
+        <result property="n25"    column="n25"    />
+        <result property="n26"    column="n26"    />
+        <result property="n27"    column="n27"    />
+        <result property="n28"    column="n28"    />
+        <result property="n29"    column="n29"    />
+        <result property="n30"    column="n30"    />
+        <result property="ycq"    column="ycq"    />
+        <result property="zccq"    column="zccq"    />
+        <result property="rzqq"    column="rzqq"    />
+        <result property="lzqq"    column="lzqq"    />
+        <result property="cc"    column="cc"    />
+        <result property="jbtx"    column="jbtx"    />
+        <result property="bmtx"    column="bmtx"    />
+        <result property="shj"    column="shj"    />
+        <result property="bj"    column="bj"    />
+        <result property="hj"    column="hj"    />
+        <result property="saj"    column="saj"    />
+        <result property="cjj"    column="cjj"    />
+        <result property="cj"    column="cj"    />
+        <result property="lcj"    column="lcj"    />
+        <result property="pcj"    column="pcj"    />
+        <result property="gsj"    column="gsj"    />
+        <result property="lsk"    column="lsk"    />
+        <result property="cd"    column="cd"    />
+        <result property="zt"    column="zt"    />
+        <result property="byjb"    column="byjb"    />
+        <result property="syjb"    column="syjb"    />
+        <result property="nj"    column="nj"    />
+        <result property="jd"    column="jd"    />
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.attendance.data.domain.DKData" id="DKDataResult">
+        <result property="id"    column="id"    />
+        <result property="gh"    column="gh"    />
+        <result property="dkrq"    column="dkrq"    />
+        <result property="rq"    column="rq"    />
+        <result property="dksj"    column="dksj"    />
+        <result property="sj"    column="sj"    />
+    </resultMap>
+
+
+    <resultMap type="com.tianyi.project.attendance.data.domain.PersonalInfo" id="PersonalInfoResult">
+        <result property="lastname"    column="lastname"    />
+        <result property="loginid"    column="loginid"    />
+        <result property="company"    column="company"    />
+        <result property="bcName"    column="bcName"    />
+        <result property="lastname"    column="lastname"    />
+        <result property="startTime"    column="startTime"    />
+        <result property="endTime"    column="endTime"    />
+        <result property="sy"    column="sy"    />
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.attendance.data.domain.Leave" id="LeaveResult">
+        <result property="id"    column="id"    />
+        <result property="xm"    column="xm"    />
+        <result property="bm"    column="bm"    />
+        <result property="gs"    column="gs"    />
+        <result property="rq"    column="rq"    />
+        <result property="qjlx"    column="qjlx"    />
+        <result property="hjts"    column="hjts"    />
+        <result property="qjsy"    column="qjsy"    />
+        <result property="gzjjr"    column="gzjjr"    />
+        <result property="ksrq"    column="ksrq"    />
+        <result property="kssj"    column="kssj"    />
+        <result property="jsrq"    column="jsrq"    />
+        <result property="jssj"    column="jssj"    />
+        <result property="qjsc"    column="qjsc"    />
+        <result property="bz"    column="bz"    />
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.attendance.data.domain.BusinessTrip" id="BusinessTripResult">
+        <result property="id"    column="id"    />
+        <result property="xm"    column="xm"    />
+        <result property="bm"    column="bm"    />
+        <result property="gs"    column="gs"    />
+        <result property="rq"    column="rq"    />
+        <result property="ccsy"    column="ccsy"    />
+        <result property="hjts"    column="hjts"    />
+        <result property="ccxc"    column="ccxc"    />
+        <result property="gzjjr"    column="gzjjr"    />
+        <result property="ksrq"    column="ksrq"    />
+        <result property="kssj"    column="kssj"    />
+        <result property="jsrq"    column="jsrq"    />
+        <result property="jssj"    column="jssj"    />
+        <result property="jtfs"    column="jtfs"    />
+        <result property="bz"    column="bz"    />
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.attendance.data.domain.OvertimeWork" id="OvertimeWorkResult">
+        <result property="id"    column="id"    />
+        <result property="xm"    column="xm"    />
+        <result property="bm"    column="bm"    />
+        <result property="gs"    column="gs"    />
+        <result property="rq"    column="rq"    />
+        <result property="jbsy"    column="jbsy"    />
+        <result property="zsc"    column="zsc"    />
+        <result property="bz"    column="bz"    />
+        <collection property="details" ofType="com.tianyi.project.attendance.data.domain.OvertimeWorkDetail">
+            <result property="id"    column="id"    />
+            <result property="mainId"    column="mainid"    />
+            <result property="jbrq"    column="jbrq"    />
+            <result property="kssj"    column="kssj"    />
+            <result property="jssj"    column="jssj"    />
+            <result property="jbsc"    column="jbsc"    />
+            <result property="jbsymx"    column="jbsymx"    />
+        </collection>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.attendance.data.domain.SupplementCheck" id="SupplementCheckResult">
+        <result property="id"    column="id"    />
+        <result property="xm"    column="xm"    />
+        <result property="bm"    column="bm"    />
+        <result property="gs"    column="gs"    />
+        <result property="rq"    column="rq"    />
+        <collection property="details" ofType="com.tianyi.project.attendance.data.domain.SupplementCheckDetail" column="mainId" select="selectSupplementCheckDetails"/>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.attendance.data.domain.AttendanceBIData" id="AttendanceBIDataResult">
+        <result property="id"    column="id"    />
+        <result property="year"    column="year"    />
+        <result property="month"    column="month"    />
+        <result property="day"    column="day"    />
+        <result property="peopleQty"    column="people_qty"    />
+        <result property="pbQty"    column="pb_qty"    />
+        <result property="mpbQty"    column="mpb_qty"    />
+        <result property="qjQty"    column="qj_qty"    />
+        <result property="ccQty"    column="cc_qty"    />
+        <result property="qjccQty"    column="qjcc_qty"    />
+        <result property="cdQty"    column="cd_qty"    />
+        <result property="dkWholeQty"    column="dk_whole_qty"    />
+        <result property="lessSbkQty"    column="less_sbk_qty"    />
+        <result property="lessXbkQty"    column="less_xbk_qty"    />
+        <result property="lessSXbkQty"    column="less_sxbk_qty"    />
+        <result property="bqQty"    column="bq_qty"    />
+        <result property="lzQty"    column="lz_qty"    />
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.attendance.verify.domain.PersonalRecord" id="PersonalRecordResult">
+        <result column="id" property="id"></result>
+        <result column="day" property="day"></result>
+        <result column="duration" property="duration"></result>
+        <result column="description" property="description"></result>
+        <result column="overtime" property="overtime"></result>
+        <result column="xm" property="xm"/>
+        <result column="year" property="year"/>
+        <result column="month" property="month"/>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.attendance.data.domain.Cdtj" id="CdtjRecordResult">
+        <result column="id" property="id"></result>
+        <result column="gh" property="gh"></result>
+        <result column="dksj" property="dksj"></result>
+        <result column="dkrq" property="dkrq"></result>
+        <result column="sc" property="sc"></result>
+        <result column="type" property="type"/>
+    </resultMap>
+
+    <resultMap type="com.tianyi.project.attendance.data.domain.ErrorDkData" id="ErrorDkDataResult">
+        <result column="id" property="id"></result>
+        <result column="year" property="year"></result>
+        <result column="month" property="month"></result>
+        <result column="day" property="day"></result>
+        <result column="error_time" property="errorTime"></result>
+        <result column="xm" property="xm"></result>
+        <result column="gh" property="gh"></result>
+    </resultMap>
+
+    <select id="selectErrorDkDataByGh" parameterType="ErrorDkData" resultType="String">
+        SELECT error_time
+        FROM uf_edk
+        where gh = #{gh}
+        and year = #{year}
+        and month = #{month}
+        and day = #{day}
+    </select>
+
+    <update id="clearDKData">
+    truncate table uf_edk
+    </update>
+
+    <insert id="insertErrorDkData" parameterType="ErrorDkData">
+        insert into uf_edk
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="gh != null ">gh,</if>
+            <if test="year != null ">year,</if>
+            <if test="month != null ">month,</if>
+            <if test="day != null ">day,</if>
+            <if test="xm != null ">xm,</if>
+            <if test="errorTime != null ">error_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="gh != null ">#{gh},</if>
+            <if test="year != null ">#{year},</if>
+            <if test="month != null ">#{month},</if>
+            <if test="day != null ">#{day},</if>
+            <if test="xm != null ">#{xm},</if>
+            <if test="errorTime != null ">#{errorTime},</if>
+        </trim>
+    </insert>
+
+    <insert id="insertCdtj" parameterType="Cdtj">
+        insert into uf_cdtj
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="gh != null ">gh,</if>
+            <if test="dksj != null ">dksj,</if>
+            <if test="dkrq != null ">dkrq,</if>
+            <if test="sc != null ">sc,</if>
+            <if test="type != null ">type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="gh != null ">#{gh},</if>
+            <if test="dksj != null ">#{dksj},</if>
+            <if test="dkrq != null ">#{dkrq},</if>
+            <if test="sc != null ">#{sc},</if>
+            <if test="type != null ">#{type},</if>
+        </trim>
+    </insert>
+
+
+    <insert id="insertAttendanceBIData" parameterType="AttendanceBIData">
+        insert into uf_bidata
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="year != null ">year,</if>
+            <if test="month != null ">month,</if>
+            <if test="day != null ">day,</if>
+            <if test="peopleQty != null ">people_qty,</if>
+            <if test="pbQty != null ">pb_qty,</if>
+            <if test="mpbQty != null ">mpb_qty,</if>
+            <if test="qjQty != null ">qj_qty,</if>
+            <if test="ccQty != null ">cc_qty,</if>
+            <if test="qjccQty != null ">qjcc_qty,</if>
+            <if test="cdQty != null ">cd_qty,</if>
+            <if test="bqQty != null ">bq_qty,</if>
+            <if test="lzQty != null ">lz_qty,</if>
+            <if test="rzQty != null ">rz_qty,</if>
+            <if test="dkWholeQty != null ">dk_whole_qty,</if>
+            <if test="lessSbkQty != null ">less_sbk_qty,</if>
+            <if test="lessXbkQty != null ">less_xbk_qty,</if>
+            <if test="lessSXbkQty != null ">less_sxbk_qty,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="year != null ">#{year},</if>
+            <if test="month != null ">#{month},</if>
+            <if test="day != null ">#{day},</if>
+            <if test="peopleQty != null ">#{peopleQty},</if>
+            <if test="pbQty != null ">#{pbQty},</if>
+            <if test="mpbQty != null ">#{mpbQty},</if>
+            <if test="qjQty != null ">#{qjQty},</if>
+            <if test="ccQty != null ">#{ccQty},</if>
+            <if test="qjccQty != null ">#{qjccQty},</if>
+            <if test="cdQty != null ">#{cdQty},</if>
+            <if test="bqQty != null ">#{bqQty},</if>
+            <if test="lzQty != null ">#{lzQty},</if>
+            <if test="rzQty != null ">#{rzQty},</if>
+            <if test="dkWholeQty != null ">#{dkWholeQty},</if>
+            <if test="lessSbkQty != null ">#{lessSbkQty},</if>
+            <if test="lessXbkQty != null ">#{lessXbkQty},</if>
+            <if test="lessSXbkQty != null ">#{lessSXbkQty},</if>
+        </trim>
+    </insert>
+
+    <select id="selectRestTime" parameterType="Leave" resultType="Double">
+        SELECT case when COUNT(*)=0 then '0' else max(t.剩余) end as sy FROM (select 剩余  from
+        v_jqgl_new
+        where 1=1
+        and 工号 = #{gh}
+        and 请假类型 = 2
+        and 有效开始 &lt; dateadd(month, datediff(month, 0, getdate()), 0)) as t
+    </select>
+
+    <select id="selectLzrq" parameterType="Long" resultType="String">
+        select lzrq from uf_gzxx
+        where xm = #{xm}
+    </select>
+
+    <select id="selectRzrq" parameterType="Long" resultType="String">
+        select rzrq from uf_gzxx
+        where xm = #{xm}
+    </select>
+
+    <select id="selectSBDKData" parameterType="DKData" resultMap="DKDataResult">
+        SELECT id,gh,dkrq,dksj
+        FROM uf_dksj
+        where gh = #{gh}
+        and dkrq = #{dkrq}
+        and dksj > '04:00:00'
+        and dksj &lt;= #{dksj}
+    </select>
+
+    <select id="selectXBDKData" parameterType="DKData" resultMap="DKDataResult">
+        SELECT id,gh,dkrq,dksj
+        FROM uf_dksj
+        where gh = #{gh}
+        and ((dkrq = #{dkrq} and dksj &lt; '04:00:00') or (dkrq = #{rq} and dksj &gt;= #{dksj}))
+    </select>
+
+    <select id="selectJDData" parameterType="DKData" resultType="Integer">
+        SELECT top 1 datediff(minute,#{rq}+' '+ #{sj},dkrq+' '+dksj)
+        FROM uf_dksj
+        where gh = #{gh}
+        and ((dkrq = #{dkrq} and dksj &lt; '04:00:00') or (dkrq = #{rq} and dksj &gt;= #{dksj}))
+        order by id desc
+    </select>
+
+    <select id="selectCDDKData" parameterType="DKData" resultMap="DKDataResult">
+        SELECT id,gh,dkrq,dksj
+        FROM uf_dksj
+        where gh = #{gh}
+        and dkrq = #{dkrq}
+        and dksj > #{sj}
+        and dksj &lt;= #{dksj}
+        order by dksj
+    </select>
+
+    <select id="selectZJDKData" parameterType="DKData" resultMap="DKDataResult">
+        SELECT id,gh,dkrq,dksj
+        FROM uf_dksj
+        where gh = #{gh}
+        and dkrq = #{dkrq}
+        and dksj > #{sj}
+        and dksj &lt; #{dksj}
+    </select>
+
+    <select id="selectSBKDKData" parameterType="DKData" resultType="String">
+         select top 1 dksj
+        FROM uf_dksj
+        where gh = #{gh}
+        and dkrq = #{dkrq}
+        and dksj > #{sj}
+        and dksj &lt; #{dksj}
+        order by dksj asc
+    </select>
+
+    <select id="selectXBKDKData" parameterType="DKData" resultType="String">
+        select top 1 dksj
+        FROM uf_dksj
+        where gh = #{gh}
+        and dkrq = #{dkrq}
+        and dksj > #{sj}
+        and dksj &lt; #{dksj}
+        order by dksj desc
+    </select>
+
+    <select id="selectXm" parameterType="String"  resultType="Long">
+        SELECT id
+        FROM HrmResource where loginid = #{loginid}
+    </select>
+
+    <select id="selectGh" parameterType="Integer"  resultType="String">
+        SELECT workcode
+        FROM HrmResource where id = #{id}
+    </select>
+
+    <select id="selectPersonalInfo" parameterType="PersonalRecord"  resultMap="PersonalInfoResult">
+    sELECT h.lastname,h.loginid,b.bcmc as bcName,d.departmentmark as department,b.sbsj as startTime,b.xbsj as endTime,
+    (select sum(case when sy is null then 0 else sy end) from uf_qjts where xm = p.xm  and sjlx=1 and yxjs > getdate()) as sy
+    ,c.subcompanyname as company FROM HrmResource h
+    left join HrmDepartment d on h.departmentid = d.id
+    left join HrmSubCompany c on h.subcompanyid1=c.id
+    left join uf_pbb p on h.id = p.xm
+    left join uf_bcb b on p.n${day} = b.id
+    where h.id=#{xm} and n=#{year} and y=#{month}
+    </select>
+
+
+    <select id="selectSupplementCheck" parameterType="Leave" resultType="Integer">
+        select b.bqsd from formtable_main_29 a,formtable_main_29_dt1 b,workflow_requestbase c
+        where a.id=b.mainid and b.bqrq = #{rq} and a.xm= #{xm} and a.requestId=c.requestid and c.currentnodetype!='0'
+    </select>
+
+
+    <select id="selectLeave" parameterType="Leave" resultMap="LeaveResult">
+        select m.qjlx,m.qjsy,m.gzjjr,m.ksrq,m.kssj,m.jsrq,m.jssj,m.qjsc from formtable_main_16 m,workflow_nownode n
+        <where>
+            m.requestid=n.requestid and n.nownodetype != 0
+            <if test="xm != null  and xm != ''"> and xm = #{xm}</if>
+            <if test="ksrq != null  and ksrq != ''"> and ksrq &lt;= #{ksrq}</if>
+            <if test="jssj != null  and jssj != ''"> and kssj &lt;= #{jssj}</if>
+            <if test="jsrq != null  and jsrq != ''"> and jsrq &gt;= #{jsrq}</if>
+            <if test="kssj != null  and kssj != ''"> and jssj &gt;= #{kssj}</if>
+        </where>
+    </select>
+
+    <select id="selectLeaveArchive" parameterType="Leave" resultMap="LeaveResult">
+        select m.qjlx,m.qjsy,m.gzjjr,m.ksrq,m.kssj,m.jsrq,m.jssj,m.qjsc from formtable_main_16 m,workflow_nownode n
+        <where>
+            m.requestid=n.requestid and n.nownodetype = 3
+            <if test="xm != null  and xm != ''"> and xm = #{xm}</if>
+            <if test="ksrq != null  and ksrq != ''"> and ksrq &lt;= #{ksrq}</if>
+            <if test="jssj != null  and jssj != ''"> and kssj &lt;= #{jssj}</if>
+            <if test="jsrq != null  and jsrq != ''"> and jsrq &gt;= #{jsrq}</if>
+            <if test="kssj != null  and kssj != ''"> and jssj &gt;= #{kssj}</if>
+        </where>
+    </select>
+
+    <select id="selectBusinessTrip" parameterType="BusinessTrip" resultMap="BusinessTripResult">
+        select m.ccsy,m.hjts,m.ccxc,m.gzjjr,m.ksrq,m.kssj,m.jsrq,m.jssj,m.jtfs from formtable_main_28 m,workflow_nownode n
+        <where>
+            m.requestid=n.requestid and n.nownodetype != 0
+            <if test="xm != null  and xm != ''"> and xm = #{xm}</if>
+            <if test="ksrq != null  and ksrq != ''"> and ksrq &lt;= #{ksrq}</if>
+            <if test="jssj != null  and jssj != ''"> and kssj &lt;= #{jssj}</if>
+            <if test="jsrq != null  and jsrq != ''"> and jsrq &gt;= #{jsrq}</if>
+            <if test="kssj != null  and kssj != ''"> and jssj &gt;= #{kssj}</if>
+        </where>
+    </select>
+
+    <select id="selectBusinessTripArchive" parameterType="BusinessTrip" resultMap="BusinessTripResult">
+        select m.ccsy,m.hjts,m.ccxc,m.gzjjr,m.ksrq,m.kssj,m.jsrq,m.jssj,m.jtfs from formtable_main_28 m,workflow_nownode n
+        <where>
+            m.requestid=n.requestid and n.nownodetype = 3
+            <if test="xm != null  and xm != ''"> and xm = #{xm}</if>
+            <if test="ksrq != null  and ksrq != ''"> and ksrq &lt;= #{ksrq}</if>
+            <if test="jssj != null  and jssj != ''"> and kssj &lt;= #{jssj}</if>
+            <if test="jsrq != null  and jsrq != ''"> and jsrq &gt;= #{jsrq}</if>
+            <if test="kssj != null  and kssj != ''"> and jssj &gt;= #{kssj}</if>
+        </where>
+    </select>
+
+    <select id="selectOvertimeWork" parameterType="Leave" resultMap="OvertimeWorkResult">
+        select * from formtable_main_17 m, formtable_main_17_dt1 d , workflow_nownode n
+        where m.id = d.mainid and d.jbrq = #{rq} and m.requestid=n.requestid and n.nownodetype != 0
+        and m.xm = #{xm}
+    </select>
+
+    <select id="selectOvertimeWorkArchive" parameterType="Leave" resultMap="OvertimeWorkResult">
+        select * from formtable_main_17 m, formtable_main_17_dt1 d , workflow_nownode n
+        where m.id = d.mainid and d.jbrq = #{rq} and m.requestid=n.requestid and n.nownodetype = 3
+        and m.xm = #{xm}
+    </select>
+
+    <update id="updatePersonalRecord" parameterType="com.tianyi.project.attendance.verify.domain.PersonalRecord">
+        update uf_grjl
+        set
+        <if test="field!=null and field!=''">${field}=#{duration},</if>
+        <if test="overtime!=null">byjb=#{overtime},</if>
+        n${day}=#{description}
+        where xm = #{xm}
+        and year = #{year}
+        and month = #{month}
+    </update>
+
+    <select id="selectPersonalData" parameterType="com.tianyi.project.attendance.data.domain.PersonalData" resultMap="PersonalDataResult">
+        select ycq,zccq,rzqq,lzqq,cc,jbtx,bmtx,shj,bj,hj,saj,cjj,cj,lcj,pcj,gsj,lsk,cd,zt,byjb,syjb,nj from uf_grjl
+        where xm = #{xm}
+        and year = #{year}
+        and month = #{month}
+    </select>
+
+
+
+    <update id="updatePersonalData" parameterType="com.tianyi.project.attendance.data.domain.PersonalData" >
+        update uf_grjl
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="n1 != null ">n1 = #{n1},</if>
+            <if test="n2 != null ">n2 = #{n2},</if>
+            <if test="n3 != null ">n3 = #{n3},</if>
+            <if test="n4 != null ">n4 = #{n4},</if>
+            <if test="n5 != null ">n5 = #{n5},</if>
+            <if test="n6 != null ">n6 = #{n6},</if>
+            <if test="n7 != null ">n7 = #{n7},</if>
+            <if test="n8 != null ">n8 = #{n8},</if>
+            <if test="n9 != null ">n9 = #{n9},</if>
+            <if test="n10 != null ">n10 = #{n10},</if>
+            <if test="n11 != null ">n11 = #{n11},</if>
+            <if test="n12 != null ">n12 = #{n12},</if>
+            <if test="n13 != null ">n13 = #{n13},</if>
+            <if test="n14 != null ">n14 = #{n14},</if>
+            <if test="n15 != null ">n15 = #{n15},</if>
+            <if test="n16 != null ">n16 = #{n16},</if>
+            <if test="n17 != null ">n17 = #{n17},</if>
+            <if test="n18 != null ">n18 = #{n18},</if>
+            <if test="n19 != null ">n19 = #{n19},</if>
+            <if test="n20 != null ">n20 = #{n20},</if>
+            <if test="n21 != null ">n21 = #{n21},</if>
+            <if test="n22 != null ">n22 = #{n22},</if>
+            <if test="n23 != null ">n23 = #{n23},</if>
+            <if test="n24 != null ">n24 = #{n24},</if>
+            <if test="n25 != null ">n25 = #{n25},</if>
+            <if test="n26 != null ">n26 = #{n26},</if>
+            <if test="n27 != null ">n27 = #{n27},</if>
+            <if test="n28 != null ">n28 = #{n28},</if>
+            <if test="n29 != null ">n29 = #{n29},</if>
+            <if test="n30 != null ">n30 = #{n30},</if>
+            <if test="n31 != null ">n31 = #{n31},</if>
+            <if test="ycq != null ">ycq = #{ycq},</if>
+            <if test="zccq != null ">zccq = #{zccq},</if>
+            <if test="rzqq != null ">rzqq = #{rzqq},</if>
+            <if test="lzqq != null ">lzqq = #{lzqq},</if>
+            <if test="cc != null ">cc = #{cc},</if>
+            <if test="jbtx != null ">jbtx = #{jbtx},</if>
+            <if test="bmtx != null ">bmtx = #{bmtx},</if>
+            <if test="shj != null ">shj = #{shj},</if>
+            <if test="bj != null ">bj = #{bj},</if>
+            <if test="hj != null ">hj = #{hj},</if>
+            <if test="saj != null ">saj = #{saj},</if>
+            <if test="cjj != null ">cjj = #{cjj},</if>
+            <if test="cj != null ">cj = #{cj},</if>
+            <if test="lcj != null ">lcj = #{lcj},</if>
+            <if test="pcj != null ">pcj = #{pcj},</if>
+            <if test="gsj != null ">gsj = #{gsj},</if>
+            <if test="lsk != null ">lsk = #{lsk},</if>
+            <if test="cd != null ">cd = #{cd},</if>
+            <if test="zt != null ">zt = #{zt},</if>
+            <if test="byjb != null ">byjb = #{byjb},</if>
+            <if test="syjb != null ">syjb = #{syjb},</if>
+            <if test="nj != null ">nj = #{nj},</if>
+            <if test="jd != null ">jd = #{jd},</if>
+        </trim>
+        where xm = #{xm}
+        and year = #{year}
+        and month = #{month}
+    </update>
+
+    <select id="selectPbbByDay" parameterType="com.tianyi.project.attendance.verify.domain.PersonalRecord" resultType="String">
+        select n${day}
+        from uf_pbb
+        where gh = #{description}
+        and n = #{year}
+        and y = #{month}
+    </select>
+
+    <select id="selectPersonalErrorInfoUrl" parameterType="Long" resultType="Integer">
+        select top 5 requestId
+         from uf_ycjs
+        where xm = #{xm} order by id desc
+    </select>
+
+    <select id="selectPersonalErrorInfoName" parameterType="Integer" resultType="String">
+        select requestname from workflow_requestbase where requestId = #{requestId}
+    </select>
+
+    <select id="selectPersonalNoKqqr" parameterType="com.tianyi.project.attendance.data.domain.PersonalData" resultType="String">
+        select gh
+        from uf_grjl g
+        inner join HrmResource h on g.gh = h.workcode
+        where year=#{year} and month=#{month} and kqqr=0 and h.loginid != ''
+    </select>
+
+    <select id="selectManageGh" parameterType="String" resultType="String">
+        select workcode from HrmResource where id = (select managerid from HrmResource where workcode=#{gh})
+    </select>
+
+    <select id="selectLastname" parameterType="String" resultType="String">
+        select lastname from HrmResource where workcode=#{gh}
+    </select>
+
+    <select id="selectYCQ" parameterType="com.tianyi.project.attendance.data.domain.PersonalData" resultType="Double">
+        select
+        (case when n1 >0 then 1 else 0 end +
+        case when n2 >0 then 1 else 0 end +
+        case when n3 >0 then 1 else 0 end +
+        case when n4 >0 then 1 else 0 end +
+        case when n5 >0 then 1 else 0 end +
+        case when n6 >0 then 1 else 0 end +
+        case when n7 >0 then 1 else 0 end +
+        case when n8 >0 then 1 else 0 end +
+        case when n9 >0 then 1 else 0 end +
+        case when n10 >0 then 1 else 0 end +
+        case when n11 >0 then 1 else 0 end +
+        case when n12 >0 then 1 else 0 end +
+        case when n13 >0 then 1 else 0 end +
+        case when n14 >0 then 1 else 0 end +
+        case when n15 >0 then 1 else 0 end +
+        case when n16 >0 then 1 else 0 end +
+        case when n17 >0 then 1 else 0 end +
+        case when n18 >0 then 1 else 0 end +
+        case when n19 >0 then 1 else 0 end +
+        case when n20 >0 then 1 else 0 end +
+        case when n21 >0 then 1 else 0 end +
+        case when n22 >0 then 1 else 0 end +
+        case when n23 >0 then 1 else 0 end +
+        case when n24 >0 then 1 else 0 end +
+        case when n25 >0 then 1 else 0 end +
+        case when n26 >0 then 1 else 0 end +
+        case when n27 >0 then 1 else 0 end +
+        case when n28 >0 then 1 else 0 end +
+        case when n29 >0 then 1 else 0 end +
+        case when n30 >0 then 1 else 0 end +
+        case when n31 >0 then 1 else 0 end)*1.0
+        from uf_pbb where n =#{year} and y=#{month} and xm=#{xm}
+    </select>
+
+</mapper>

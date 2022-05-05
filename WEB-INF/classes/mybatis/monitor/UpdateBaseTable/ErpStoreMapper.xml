@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.mapper.UpdateBaseTable.ErpStoreMapper">
+    <resultMap type="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpStore" id="ErpStoreResult">
+        <id property="id" column="id"/>
+        <result property="erpStoreId" column="erp_store_id"/>
+        <result property="erpStoreName" column="erp_store_name"/>
+        <result property="erpStoreCode" column="erp_store_code"/>
+        <result property="erpStoreType" column="erp_store_type"/>
+        <result property="erpStoreCountry" column="erp_store_country"/>
+        <result property="erpCompanyId" column="erp_company_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="erpStoreStatus" column="erp_store_status"/>
+    </resultMap>
+
+    <sql id="selectErpStoreVo">
+        select a.location_id as erp_store_id,
+        a.name as erp_store_name,
+        a.ID_0 as erp_store_code,
+        a.custrecord14_id as erp_store_type,
+        a.country as erp_store_country,
+        b.SUBSIDIARY_ID as erp_company_id,
+        a.custrecord13_id as user_id,
+        (case when a.isinactive='No' then 1 else 0 end) as erp_store_status
+        from Locations a
+        left join Subsidiary_location_map as b on a.location_id= b.location_id
+    </sql>
+
+    <sql id="selectBossStoreVo">
+        select id,
+        erp_store_id,
+        erp_store_name,
+        erp_store_code,
+        erp_store_type,
+        erp_store_country,
+        erp_company_id,
+        user_id,
+        erp_store_status
+        from erp_store
+    </sql>
+
+    <select id="selectErpStoreAll" resultMap="ErpStoreResult">
+        <include refid="selectErpStoreVo"/>
+    </select>
+
+    <select id="selectBossStoreByStoreId" resultMap="ErpStoreResult" parameterType="Integer">
+        <include refid="selectBossStoreVo"/>
+        <where>
+            <if test="erpStoreId!=null">
+                and erp_store_id=#{erpStoreId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBossStore" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpStore"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into erp_store
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="erpStoreId != null">erp_store_id,</if>
+            <if test="erpStoreName != null and erpStoreName != ''">erp_store_name,</if>
+            <if test="erpStoreCode != null and erpStoreCode != ''">erp_store_code,</if>
+            <if test="erpStoreType != null">erp_store_type,</if>
+            <if test="erpStoreCountry != null  and erpStoreCountry != ''">erp_store_country,</if>
+            <if test="erpCompanyId != null">erp_company_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="erpStoreStatus != null">erp_store_status,</if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="erpStoreId != null">#{erpStoreId},</if>
+            <if test="erpStoreName != null and erpStoreName != ''">#{erpStoreName},</if>
+            <if test="erpStoreCode != null and erpStoreCode != ''">#{erpStoreCode},</if>
+            <if test="erpStoreType != null">#{erpStoreType},</if>
+            <if test="erpStoreCountry != null  and erpStoreCountry != ''">#{erpStoreCountry},</if>
+            <if test="erpCompanyId != null">#{erpCompanyId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="erpStoreStatus != null">#{erpStoreStatus},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBossStore" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpStore">
+        update erp_store
+        <set>
+            <if test="erpStoreName != null and erpStoreName != ''">erp_store_name=#{erpStoreName},</if>
+            <if test="erpStoreCode != null and erpStoreCode != ''">erp_store_code=#{erpStoreCode},</if>
+            <if test="erpStoreType != null">erp_store_type=#{erpStoreType},</if>
+            <if test="erpStoreCountry != null  and erpStoreCountry != ''">erp_store_country=#{erpStoreCountry},</if>
+            <if test="erpCompanyId != null">erp_company_id=#{erpCompanyId},</if>
+            <if test="userId != null">user_id=#{userId},</if>
+            <if test="erpStoreStatus != null">erp_store_status=#{erpStoreStatus},</if>
+        </set>
+        where erp_store_id = #{erpStoreId}
+    </update>
+</mapper>

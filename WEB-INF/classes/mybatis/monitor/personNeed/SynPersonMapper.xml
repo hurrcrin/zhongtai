@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.task.moka.mapper.SynPersonMapper">
+
+    <resultMap type="com.tianyi.project.monitor.job.task.moka.domain.SynPerson"
+               id="SynPersonResult">
+        <result property="number"    column="workcode"    />
+    </resultMap>
+
+    <sql id="selectWorkCode">
+        SELECT
+            workcode as number
+        FROM
+            HrmResource
+    </sql>
+
+    <select id="selectGhById" resultType="com.tianyi.project.monitor.job.task.moka.domain.SynPerson">
+        <include refid="selectWorkCode"/>
+        <where>
+            <if test="Id != null and Id != ''">
+                AND id = #{id}
+            </if>
+        </where>
+    </select>
+
+</mapper>

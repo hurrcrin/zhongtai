@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.crawler.otherproduct.mapper.ZtCrawlerOthercoProductMapper">
+    
+    <resultMap type="ZtCrawlerOthercoProduct" id="ZtCrawlerOthercoProductResult">
+        <result property="id"    column="id"    />
+        <result property="productUrl"    column="product_url"    />
+        <result property="channel"    column="channel"    />
+    </resultMap>
+
+    <sql id="selectZtCrawlerOthercoProductVo">
+        select id, product_url, channel from zt_crawler_otherco_product
+    </sql>
+
+    <select id="selectZtCrawlerOthercoProductList" parameterType="ZtCrawlerOthercoProduct" resultMap="ZtCrawlerOthercoProductResult">
+        <include refid="selectZtCrawlerOthercoProductVo"/>
+        <where>  
+            <if test="productUrl != null  and productUrl != ''"> and product_url like concat('%', #{productUrl}, '%')</if>
+            <if test="channel != null  and channel != ''"> and channel = #{channel}</if>
+        </where>
+    </select>
+    
+    <select id="selectZtCrawlerOthercoProductById" parameterType="Long" resultMap="ZtCrawlerOthercoProductResult">
+        <include refid="selectZtCrawlerOthercoProductVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectZtCrawlerOthercoProductByUrl" parameterType="String" resultMap="ZtCrawlerOthercoProductResult">
+        <include refid="selectZtCrawlerOthercoProductVo"/>
+        where product_url = #{productUrl}
+    </select>
+        
+    <insert id="insertZtCrawlerOthercoProduct" parameterType="ZtCrawlerOthercoProduct" useGeneratedKeys="true" keyProperty="id">
+        insert into zt_crawler_otherco_product
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productUrl != null  and productUrl != ''">product_url,</if>
+            <if test="channel != null  and channel != ''">channel,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="productUrl != null  and productUrl != ''">#{productUrl},</if>
+            <if test="channel != null  and channel != ''">#{channel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateZtCrawlerOthercoProduct" parameterType="ZtCrawlerOthercoProduct">
+        update zt_crawler_otherco_product
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="productUrl != null  and productUrl != ''">product_url = #{productUrl},</if>
+            <if test="channel != null  and channel != ''">channel = #{channel},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteZtCrawlerOthercoProductById" parameterType="Long">
+        delete from zt_crawler_otherco_product where id = #{id}
+    </delete>
+
+    <delete id="deleteZtCrawlerOthercoProductByIds" parameterType="String">
+        delete from zt_crawler_otherco_product where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.crawler.ownerreview.mapper.ZhongtaiCrawlerDailyReviewMapper">
+
+    <resultMap type="ZhongtaiCrawlerDailyReview" id="ZhongtaiCrawlerDailyReviewResult">
+        <result property="id"    column="id"    />
+        <result property="user"    column="user"    />
+        <result property="rating"    column="rating"    />
+        <result property="reviewTitle"    column="review_title"    />
+        <result property="reviewDate"    column="review_date"    />
+        <result property="reviewContent"    column="review_content"    />
+        <result property="asinLink"    column="asin_link"    />
+        <result property="weburl"    column="weburl"    />
+        <result property="reviewInfos"    column="review_infos"    />
+        <result property="currentAsin"    column="current_asin"    />
+        <result property="asin"    column="asin"    />
+        <result property="reviewId"    column="review_id"    />
+        <result property="property"    column="property"    />
+        <result property="reviewImgFlag"    column="review_img_flag"    />
+        <result property="reviewHelpfulNum"    column="review_helpful_num"    />
+        <result property="crawlDate"    column="crawl_date"    />
+        <result property="listing"    column="listing"    />
+        <result property="totalAvgRating"    column="total_avg_rating"    />
+        <result property="reviewSequence"    column="review_sequence"    />
+    </resultMap>
+
+    <sql id="selectZhongtaiCrawlerDailyReviewVo">
+        select id, user, rating, review_title, review_date, review_content, asin_link, weburl, review_infos, current_asin, asin, review_sequence,review_id, property, review_img_flag, review_helpful_num, crawl_date, listing ,total_avg_rating from zt_crawler_daily_review
+    </sql>
+
+    <select id="selectZhongtaiCrawlerDailyReviewList" parameterType="ZhongtaiCrawlerDailyReview" resultMap="ZhongtaiCrawlerDailyReviewResult">
+        <include refid="selectZhongtaiCrawlerDailyReviewVo"/>
+        <where>  
+            <if test="user != null  and user != ''"> and user = #{user}</if>
+            <if test="rating != null  and rating != ''"> and rating = #{rating}</if>
+            <if test="reviewTitle != null  and reviewTitle != ''"> and review_title = #{reviewTitle}</if>
+            <if test="params.beginReviewDate != null and params.beginReviewDate != '' and params.endReviewDate != null and params.endReviewDate != ''"> and review_date between #{params.beginReviewDate} and #{params.endReviewDate}</if>
+            <if test="reviewContent != null  and reviewContent != ''"> and review_content = #{reviewContent}</if>
+            <if test="asinLink != null  and asinLink != ''"> and asin_link = #{asinLink}</if>
+            <if test="weburl != null  and weburl != ''"> and weburl = #{weburl}</if>
+            <if test="reviewInfos != null  and reviewInfos != ''"> and review_infos = #{reviewInfos}</if>
+            <if test="currentAsin != null  and currentAsin != ''"> and current_asin = #{currentAsin}</if>
+            <if test="asin != null  and asin != ''"> and asin like concat('%', #{asin}, '%')</if>
+            <if test="reviewId != null  and reviewId != ''"> and review_id = #{reviewId}</if>
+            <if test="property != null  and property != ''"> and property = #{property}</if>
+            <if test="reviewImgFlag != null  and reviewImgFlag != ''"> and review_img_flag = #{reviewImgFlag}</if>
+            <if test="reviewHelpfulNum != null "> and review_helpful_num = #{reviewHelpfulNum}</if>
+            <if test="params.beginCrawlDate != null and params.beginCrawlDate != '' and params.endCrawlDate != null and params.endCrawlDate != ''"> and crawl_date between #{params.beginCrawlDate} and #{params.endCrawlDate}</if>
+            <if test="listing != null  and listing != ''"> and listing like concat('%', #{listing}, '%')</if>
+            <if test="totalAvgRating != null  and totalAvgRating != ''"> and total_avg_rating = #{totalAvgRating}</if>
+            <if test="reviewSequence != null  and reviewSequence != ''"> and review_sequence = #{reviewSequence}</if>
+        </where>
+        order by crawl_date desc
+    </select>
+    
+    <select id="selectZhongtaiCrawlerDailyReviewById" parameterType="Long" resultMap="ZhongtaiCrawlerDailyReviewResult">
+        <include refid="selectZhongtaiCrawlerDailyReviewVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertZhongtaiCrawlerDailyReview" parameterType="ZhongtaiCrawlerDailyReview" useGeneratedKeys="true" keyProperty="id">
+        insert into zt_crawler_daily_review
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="user != null  and user != ''">user,</if>
+            <if test="rating != null  and rating != ''">rating,</if>
+            <if test="reviewTitle != null  and reviewTitle != ''">review_title,</if>
+            <if test="reviewDate != null ">review_date,</if>
+            <if test="reviewContent != null  and reviewContent != ''">review_content,</if>
+            <if test="asinLink != null  and asinLink != ''">asin_link,</if>
+            <if test="weburl != null  and weburl != ''">weburl,</if>
+            <if test="reviewInfos != null  and reviewInfos != ''">review_infos,</if>
+            <if test="currentAsin != null  and currentAsin != ''">current_asin,</if>
+            <if test="asin != null  and asin != ''">asin,</if>
+            <if test="reviewId != null  and reviewId != ''">review_id,</if>
+            <if test="property != null  and property != ''">property,</if>
+            <if test="reviewImgFlag != null  and reviewImgFlag != ''">review_img_flag,</if>
+            <if test="reviewHelpfulNum != null ">review_helpful_num,</if>
+            <if test="crawlDate != null ">crawl_date,</if>
+            <if test="listing != null  and listing != ''">listing,</if>
+            <if test="totalAvgRating != null  and totalAvgRating != ''">total_avg_rating,</if>
+            <if test="reviewSequence != null  and reviewSequence != ''">review_sequence,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="user != null  and user != ''">#{user},</if>
+            <if test="rating != null  and rating != ''">#{rating},</if>
+            <if test="reviewTitle != null  and reviewTitle != ''">#{reviewTitle},</if>
+            <if test="reviewDate != null ">#{reviewDate},</if>
+            <if test="reviewContent != null  and reviewContent != ''">#{reviewContent},</if>
+            <if test="asinLink != null  and asinLink != ''">#{asinLink},</if>
+            <if test="weburl != null  and weburl != ''">#{weburl},</if>
+            <if test="reviewInfos != null  and reviewInfos != ''">#{reviewInfos},</if>
+            <if test="currentAsin != null  and currentAsin != ''">#{currentAsin},</if>
+            <if test="asin != null  and asin != ''">#{asin},</if>
+            <if test="reviewId != null  and reviewId != ''">#{reviewId},</if>
+            <if test="property != null  and property != ''">#{property},</if>
+            <if test="reviewImgFlag != null  and reviewImgFlag != ''">#{reviewImgFlag},</if>
+            <if test="reviewHelpfulNum != null ">#{reviewHelpfulNum},</if>
+            <if test="crawlDate != null ">#{crawlDate},</if>
+            <if test="listing != null  and listing != ''">#{listing},</if>
+            <if test="totalAvgRating != null  and totalAvgRating != ''">#{totalAvgRating},</if>
+            <if test="reviewSequence != null  and reviewSequence != ''">#{reviewSequence},</if>
+         </trim>
+    </insert>
+
+    <update id="updateZhongtaiCrawlerDailyReview" parameterType="ZhongtaiCrawlerDailyReview">
+        update zt_crawler_daily_review
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="user != null  and user != ''">user = #{user},</if>
+            <if test="rating != null  and rating != ''">rating = #{rating},</if>
+            <if test="reviewTitle != null  and reviewTitle != ''">review_title = #{reviewTitle},</if>
+            <if test="reviewDate != null ">review_date = #{reviewDate},</if>
+            <if test="reviewContent != null  and reviewContent != ''">review_content = #{reviewContent},</if>
+            <if test="asinLink != null  and asinLink != ''">asin_link = #{asinLink},</if>
+            <if test="weburl != null  and weburl != ''">weburl = #{weburl},</if>
+            <if test="reviewInfos != null  and reviewInfos != ''">review_infos = #{reviewInfos},</if>
+            <if test="currentAsin != null  and currentAsin != ''">current_asin = #{currentAsin},</if>
+            <if test="asin != null  and asin != ''">asin = #{asin},</if>
+            <if test="reviewId != null  and reviewId != ''">review_id = #{reviewId},</if>
+            <if test="property != null  and property != ''">property = #{property},</if>
+            <if test="reviewImgFlag != null  and reviewImgFlag != ''">review_img_flag = #{reviewImgFlag},</if>
+            <if test="reviewHelpfulNum != null ">review_helpful_num = #{reviewHelpfulNum},</if>
+            <if test="crawlDate != null ">crawl_date = #{crawlDate},</if>
+            <if test="listing != null  and listing != ''">listing = #{listing},</if>
+            <if test="totalAvgRating != null  and totalAvgRating != ''">total_avg_rating = #{totalAvgRating},</if>
+            <if test="reviewSequence != null  and reviewSequence != ''">review_sequence = #{reviewSequence},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteZhongtaiCrawlerDailyReviewById" parameterType="Long">
+        delete from zt_crawler_daily_review where id = #{id}
+    </delete>
+
+    <delete id="deleteZhongtaiCrawlerDailyReviewByIds" parameterType="String">
+        delete from zt_crawler_daily_review where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

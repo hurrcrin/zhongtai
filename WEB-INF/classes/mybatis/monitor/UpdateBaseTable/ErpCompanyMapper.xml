@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.mapper.UpdateBaseTable.ErpCompanyMapper">
+    <!-- 通用字段映射-->
+    <resultMap type="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpCompany" id="erpCompanyResult">
+        <result property="id" column="id"/>
+        <result property="erpCompanyId" column="erp_company_id"/>
+        <result property="erpCompanyName" column="erp_company_name"/>
+        <result property="erpCompanyStatus" column="erp_company_status"/>
+        <result property="erpCurrencyId" column="erp_currency_id"/>
+        <result property="erpCompanyParentId" column="erp_company_parent_id"/>
+    </resultMap>
+    <!--  查询erp系统公司信息-->
+    <select id="selectErpCompanyList" resultMap="erpCompanyResult" >
+        SELECT
+            subsidiary_id AS erp_company_id
+            ,parent_id AS erp_company_parent_id
+            ,name AS erp_company_name
+            ,CASE ISINACTIVE
+                WHEN 'No' THEN 1
+                ELSE 0
+            END
+                AS erp_company_status
+            ,base_currency_id AS erp_currency_id
+         from
+            subsidiaries
+         where
+            name not like '%停用%'
+    </select>
+    <!--  根据erpCompanyId查询boss系统公司信息-->
+    <select id="selectByErpCompanyId" resultMap="erpCompanyResult">
+        SELECT
+        *
+        FROM
+        erp_company
+        <where>
+            erp_company_id = #{erpCompanyId}
+        </where>
+
+    </select>
+    <!-- 插入boss系统 公司信息-->
+    <insert id="insertErpCompany" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpCompany" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO erp_company
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="erpCompanyId != null and erpCompanyId != ''">
+                erp_company_id,
+            </if>
+            <if test="erpCompanyName != null and erpCompanyName != ''">
+                erp_company_name,
+            </if>
+            <if test="erpCompanyStatus != null and erpCompanyStatus != '' or erpCompanyStatus == 0 ">
+                erp_company_status,
+            </if>
+            <if test="erpCurrencyId != null and erpCurrencyId != ''">
+                erp_currency_id,
+            </if>
+            <if test="erpCompanyParentId != null and erpCompanyParentId != ''">
+                erp_company_parent_id,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="erpCompanyId != null and erpCompanyId != ''">
+                #{erpCompanyId},
+            </if>
+            <if test="erpCompanyName != null and erpCompanyName != ''">
+                #{erpCompanyName},
+            </if>
+            <if test="erpCompanyStatus != null and erpCompanyStatus != ''  or erpCompanyStatus == 0 ">
+                #{erpCompanyStatus},
+            </if>
+            <if test="erpCurrencyId != null and erpCurrencyId != ''">
+                #{erpCurrencyId},
+            </if>
+            <if test="erpCompanyParentId != null and erpCompanyParentId != ''">
+                #{erpCompanyParentId},
+            </if>
+        </trim>
+    </insert>
+    <!-- 更新boss系统中公司信息-->
+    <update id="updateErpCompany" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpCompany">
+        update erp_company
+        <set>
+            <if test="erpCompanyName != null and erpCompanyName != ''">
+                erp_company_name = #{erpCompanyName},
+            </if>
+            <if test="erpCompanyStatus != null and erpCompanyStatus != ''  or erpCompanyStatus == 0 ">
+                erp_company_status = #{erpCompanyStatus},
+            </if>
+            <if test="erpCurrencyId != null and erpCurrencyId != ''">
+                erp_currency_id = #{erpCurrencyId},
+            </if>
+            <if test="erpCompanyParentId != null and erpCompanyParentId != ''">
+                erp_company_parent_id = #{erpCompanyParentId}
+            </if>
+        </set>
+        where erp_company_id = #{erpCompanyId}
+    </update>
+</mapper>

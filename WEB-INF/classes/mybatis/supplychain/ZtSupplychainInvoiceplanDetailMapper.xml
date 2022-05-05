@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.supplychain.invoiceplandetail.mapper.ZtSupplychainInvoiceplanDetailMapper">
+
+    <resultMap type="ZtSupplychainInvoiceplanDetail" id="ZtSupplychainInvoiceplanDetailResult">
+        <result property="id" column="id"/>
+        <result property="vendor" column="vendor"/>
+        <result property="receiptnum" column="receiptNum"/>
+        <result property="receiptdate" column="receiptDate"/>
+        <result property="accountdate" column="accountDate"/>
+        <result property="tranid" column="tranId"/>
+        <result property="sku" column="sku"/>
+        <result property="receiptname" column="receiptName"/>
+        <result property="hscode" column="HSCODE"/>
+        <result property="unit" column="unit"/>
+        <result property="orderquantity" column="orderQuantity"/>
+        <result property="billedquantity" column="billedQuantity"/>
+        <result property="margin" column="margin"/>
+        <result property="billquantity" column="billQuantity"/>
+        <result property="rate" column="rate"/>
+        <result property="price" column="price"/>
+        <result property="crossamount" column="crossAmount"/>
+        <result property="amount" column="amount"/>
+        <result property="hcid" column="hcid"/>
+        <result property="mainid" column="mainid"/>
+        <result property="lineid" column="lineid"/>
+        <result property="po" column="PO"/>
+    </resultMap>
+
+    <sql id="selectZtSupplychainInvoiceplanDetailVo">
+        select id, vendor, receiptNum, receiptDate, accountDate, tranId, sku, receiptName,HSCODE, unit, orderQuantity, billedQuantity, billQuantity, rate, price, crossAmount, amount, hcid, mainid, lineid, PO,(orderquantity-billedquantity) as margin from zt_supplychain_invoiceplan_detail
+    </sql>
+
+    <select id="selectZtSupplychainInvoiceplanDetailList" parameterType="ZtSupplychainInvoiceplanDetail"
+            resultMap="ZtSupplychainInvoiceplanDetailResult">
+        <include refid="selectZtSupplychainInvoiceplanDetailVo"/>
+        <where>
+            <if test="mainid != null  and mainid != ''">and mainid = #{mainid}</if>
+        </where>
+    </select>
+
+    <select id="selectZtSupplychainInvoiceplanDetailById" parameterType="Long"
+            resultMap="ZtSupplychainInvoiceplanDetailResult">
+        <include refid="selectZtSupplychainInvoiceplanDetailVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertZtSupplychainInvoiceplanDetail" parameterType="ZtSupplychainInvoiceplanDetail"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into zt_supplychain_invoiceplan_detail
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vendor != null  and vendor != ''">vendor,</if>
+            <if test="receiptnum != null  and receiptnum != ''">receiptNum,</if>
+            <if test="receiptdate != null  and receiptdate != ''">receiptDate,</if>
+            <if test="accountdate != null  and accountdate != ''">accountDate,</if>
+            <if test="tranid != null  and tranid != ''">tranId,</if>
+            <if test="sku != null  and sku != ''">sku,</if>
+            <if test="receiptname != null  and receiptname != ''">receiptName,</if>
+            <if test="hscode != null  and hscode != ''">HSCODE,</if>
+            <if test="unit != null  and unit != ''">unit,</if>
+            <if test="orderquantity != null ">orderQuantity,</if>
+            <if test="billedquantity != null ">billedQuantity,</if>
+            <if test="billquantity != null ">billQuantity,</if>
+            <if test="rate != null ">rate,</if>
+            <if test="price != null ">price,</if>
+            <if test="crossamount != null ">crossAmount,</if>
+            <if test="amount != null ">amount,</if>
+            <if test="hcid != null  and hcid != ''">hcid,</if>
+            <if test="mainid != null ">mainid,</if>
+            <if test="lineid != null ">lineid,</if>
+            <if test="po != null  and po != ''">PO,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vendor != null  and vendor != ''">#{vendor},</if>
+            <if test="receiptnum != null  and receiptnum != ''">#{receiptnum},</if>
+            <if test="receiptdate != null  and receiptdate != ''">#{receiptdate},</if>
+            <if test="accountdate != null  and accountdate != ''">#{accountdate},</if>
+            <if test="tranid != null  and tranid != ''">#{tranid},</if>
+            <if test="sku != null  and sku != ''">#{sku},</if>
+            <if test="receiptname != null  and receiptname != ''">#{receiptname},</if>
+            <if test="hscode != null  and hscode != ''">#{hscode},</if>
+            <if test="unit != null  and unit != ''">#{unit},</if>
+            <if test="orderquantity != null ">#{orderquantity},</if>
+            <if test="billedquantity != null ">#{billedquantity},</if>
+            <if test="billquantity != null ">#{billquantity},</if>
+            <if test="rate != null ">#{rate},</if>
+            <if test="price != null ">#{price},</if>
+            <if test="crossamount != null ">#{crossamount},</if>
+            <if test="amount != null ">#{amount},</if>
+            <if test="hcid != null  and hcid != ''">#{hcid},</if>
+            <if test="mainid != null ">#{mainid},</if>
+            <if test="lineid != null ">#{lineid},</if>
+            <if test="po != null  and po != ''">#{po},</if>
+        </trim>
+    </insert>
+
+    <update id="updateZtSupplychainInvoiceplanDetail" parameterType="ZtSupplychainInvoiceplanDetail">
+        update zt_supplychain_invoiceplan_detail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vendor != null  and vendor != ''">vendor = #{vendor},</if>
+            <if test="receiptnum != null  and receiptnum != ''">receiptNum = #{receiptnum},</if>
+            <if test="receiptdate != null  and receiptdate != ''">receiptDate = #{receiptdate},</if>
+            <if test="accountdate != null  and accountdate != ''">accountDate = #{accountdate},</if>
+            <if test="tranid != null  and tranid != ''">tranId = #{tranid},</if>
+            <if test="sku != null  and sku != ''">sku = #{sku},</if>
+            <if test="receiptname != null  and receiptname != ''">receiptName = #{receiptname},</if>
+            <if test="hscode != null  and hscode != ''">HSCODE=#{hscode},</if>
+            <if test="unit != null  and unit != ''">unit = #{unit},</if>
+            <if test="orderquantity != null ">orderQuantity = #{orderquantity},</if>
+            <if test="billedquantity != null ">billedQuantity = #{billedquantity},</if>
+            <if test="billquantity != null ">billQuantity = #{billquantity},</if>
+            <if test="rate != null ">rate = #{rate},</if>
+            <if test="price != null ">price = #{price},</if>
+            <if test="crossamount != null ">crossAmount = #{crossamount},</if>
+            <if test="amount != null ">amount = #{amount},</if>
+            <if test="hcid != null  and hcid != ''">hcid = #{hcid},</if>
+            <if test="mainid != null ">mainid = #{mainid},</if>
+            <if test="lineid != null ">lineid = #{lineid},</if>
+            <if test="po != null  and po != ''">PO = #{po},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteZtSupplychainInvoiceplanDetailById" parameterType="Long">
+        delete from zt_supplychain_invoiceplan_detail where id = #{id}
+    </delete>
+
+    <delete id="deleteZtSupplychainInvoiceplanDetailByIds" parameterType="String">
+        delete from zt_supplychain_invoiceplan_detail where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

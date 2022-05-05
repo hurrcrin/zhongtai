@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('手工单合单列表')"/>
+    <th:block th:include="include :: bootstrap-editable-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>渠道平台：</p>
+                            <select name="channel" id="channel">
+                                <option value=""></option>
+                                <option th:each="dict : ${channel_platform}" th:text="${dict.channelPlatform}"
+                                        th:value="${dict.id}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <!--<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="finance:manualSingle:add">
+                <i class="fa fa-plus"></i> 添加
+            </a>-->
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()"
+               shiro:hasPermission="finance:manualSingle:edit">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <!--<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()"
+               shiro:hasPermission="finance:manualSingle:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>-->
+            <a class="btn btn-warning" onclick="$.table.exportExcel()"
+               shiro:hasPermission="finance:manualSingle:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-table-editable-js"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('finance:manualSingle:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('finance:manualSingle:remove')}]];
+    var prefix = ctx + "finance/manualSingle";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            onEditableSave: onEditableSave,
+            modalName: "手工单合单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'interid',
+                    title: '内部标识',
+                    visible: false
+                },
+                {
+                    field: 'amzOrderId1',
+                    title: 'amz_order_id1'
+                },
+                {
+                    field: 'merchantOrderId',
+                    title: '原始merchant_order_id'
+                },
+                {
+                    field: 'updateMerchantOrderId',
+                    title: '变更后merchant_order_id',
+                    editable: true
+                },
+                {
+                    field: 'seller1',
+                    title: 'seller1'
+                },
+                {
+                    field: 'purchaseDate1',
+                    title: 'purchase_date1'
+                },
+                {
+                    field: 'marketplace3',
+                    title: 'marketplace3'
+                },
+                {
+                    field: 'fulfillmentchannel',
+                    title: 'fulfillmentchannel'
+                },
+                {
+                    field: 'saleschannel',
+                    title: 'saleschannel'
+                },
+                {
+                    field: 'sellerSku1',
+                    title: 'seller_sku1'
+                },
+                {
+                    field: 'itemName',
+                    title: 'item_name'
+                },
+                {
+                    field: 'quantity1',
+                    title: 'quantity1'
+                },
+                {
+                    field: 'Amount1',
+                    title: '_amount1'
+                },
+                {
+                    field: 'description1',
+                    title: 'description1'
+                },
+                {
+                    field: 'postDate',
+                    title: 'post_date'
+                }/*,
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.interid + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.interid + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }*/]
+        };
+        $.table.init(options);
+    });
+
+    function onEditableSave(field, row, oldValue, $el) {
+        var interid = row.interid;
+        var updateMerchantOrderId = row.updateMerchantOrderId;
+        console.log("interid:" + interid + ",updateMerchantOrderId:" + updateMerchantOrderId);
+        $.ajax({
+            type: "post",
+            url: prefix + "/editMerchantOrderId",
+            dataType: 'json',
+            traditional: true,
+            data: {
+                interid: interid,
+                updateMerchantOrderId: updateMerchantOrderId
+            },
+            success: function (res) {
+                var code = res.code;
+                console.log("code:" + code);
+                if (code == 0) {
+                    alert("修改成功！");
+                } else {
+                    alert("修改失败，请联系管理员！");
+                }
+            },
+            error: function () {
+                alert("修改失败，请联系管理员！");
+            }
+        });
+    }
+</script>
+</body>
+</html>

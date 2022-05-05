@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.monitor.job.mapper.UpdateBaseTable.ErpTaxrateMapper">
+    <resultMap type="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpTaxrate" id="ErpTaxrateResult">
+        <id property="id" column="id"/>
+        <result property="erpTaxrateId" column="erp_taxrate_id"/>
+        <result property="erpTaxrateName" column="erp_taxrate_name"/>
+        <result property="erpTaxrateRate" column="erp_taxrate_rate"/>
+        <result property="flag" column="flag"/>
+    </resultMap>
+
+    <sql id="selectErpTaxrateVo">
+        select item_id as erp_taxrate_id,
+            full_name as erp_taxrate_name,
+            to_number(regexp_replace(rate,'[^0-9]',''))/100.0 as erp_taxrate_rate,
+            case ISINACTIVE
+                when 'No' then 1
+                else 2 end
+                as flag
+        from Tax_items
+    </sql>
+
+    <sql id="selectBossTaxrateVo">
+        select erp_taxrate_id,
+            erp_taxrate_name,
+            erp_taxrate_rate,
+            flag
+        from erp_taxrate
+    </sql>
+
+    <select id="selectErpTaxrateAll" resultMap="ErpTaxrateResult">
+        <include refid="selectErpTaxrateVo"/>
+    </select>
+
+    <select id="selectBossTaxrateByTaxrateId" resultMap="ErpTaxrateResult" parameterType="Integer">
+        <include refid="selectBossTaxrateVo"/>
+        <where>
+            <if test="erpTaxrateId != null">
+                and erp_taxrate_id = #{erpTaxrateId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertBossTaxrate" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpTaxrate"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into erp_taxrate
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="erpTaxrateId != null">erp_taxrate_id,</if>
+            <if test="erpTaxrateName != null and erpTaxrateName != ''">erp_taxrate_name,</if>
+            <if test="erpTaxrateRate != null">erp_taxrate_rate,</if>
+            <if test="flag != null">flag,</if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="erpTaxrateId != null">#{erpTaxrateId},</if>
+            <if test="erpTaxrateName != null and erpTaxrateName != ''">#{erpTaxrateName},</if>
+            <if test="erpTaxrateRate != null">#{erpTaxrateRate},</if>
+            <if test="flag != null">#{flag},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBossTaxrate" parameterType="com.tianyi.project.monitor.job.domain.UpdateBaseTable.ErpTaxrate">
+        update erp_taxrate
+        <set>
+            <if test="erpTaxrateName != null and erpTaxrateName != ''">erp_taxrate_name = #{erpTaxrateName},</if>
+            <if test="erpTaxrateRate != null">erp_taxrate_rate = #{erpTaxrateRate},</if>
+            <if test="flag != null">flag = #{flag},</if>
+        </set>
+        where erp_taxrate_id = #{erpTaxrateId}
+    </update>
+</mapper>

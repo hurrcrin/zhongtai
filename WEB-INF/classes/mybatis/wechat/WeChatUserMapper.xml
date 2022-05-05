@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tianyi.project.wechat.mapper.WeChatUserMapper">
+
+    <resultMap type="com.tianyi.project.wechat.domain.WeChatUser" id="weChatUserResult">
+        <result property="userId" column="userid"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <insert id="insertBossWeChatMapping" parameterType="java.util.List">
+        insert into
+        wechat_mapping
+        (
+        userid,
+        name
+        )
+        values
+        <foreach collection="list" item="weChatUser" separator=",">
+            (
+            #{weChatUser.userId},
+            #{weChatUser.name}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectBossWeChatMappingByName" parameterType="java.lang.String" resultMap="weChatUserResult">
+        select
+        userid,
+        name
+        from wechat_mapping
+        <where>
+            <if test="name!=null and name!=''">name=#{name}</if>
+        </where>
+    </select>
+
+    <insert id="insertZTWeChatMapping" parameterType="java.util.List">
+        insert into
+        wechat_mapping
+        (
+        userid,
+        name
+        )
+        values
+        <foreach collection="list" item="weChatUser" separator=",">
+            (
+            #{weChatUser.userId},
+            #{weChatUser.name}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectZTWeChatMappingByName" parameterType="java.lang.String" resultMap="weChatUserResult">
+        select
+        userid,
+        name
+        from wechat_mapping
+        <where>
+            <if test="name!=null and name!=''">name=#{name}</if>
+        </where>
+    </select>
+</mapper>

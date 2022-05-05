@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('开票计划列表')"/>
+    <th:block th:include="include :: bootstrap-editable-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>供应商：</p>
+                            <input type="text" name="vendor"/>
+                        </li>
+                        <li>
+                            <p>柜号：</p>
+                            <input type="text" name="receiptnum"/>
+                        </li>
+                        <li class="select-time">
+                            <p>接收日期：</p>
+                            <input type="text" class="time-input" id="startTime" placeholder="开始时间"
+                                   name="params[beginReceiptdate]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="结束时间"
+                                   name="params[endReceiptdate]"/>
+                        </li>
+                        <li>
+                            <p>状态：</p>
+                            <select name="status" th:with="type=${@dict.getType('sys_invoice_status')}" id="status">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 search-collapse">
+            <div class="select-list">
+                <ul>
+                    <li class="select-time">
+                        <p>会计期间：</p>
+                        <input type="text" class="time-input" id="fiscalPeriod" placeholder="会计期间"/>
+                    </li>
+                    <li>
+                        <a class="btn btn-danger btn-sm" onclick="send()" id="send"
+                           shiro:hasPermission="supplychain:billingplan:send">
+                            <i class="fa fa-exchange"></i> 发送ERP
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-warning" onclick="$.table.exportExcel()"
+               shiro:hasPermission="supplychain:billingplan:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+            <a class="btn btn-warning" onclick="$.table.exportDetailExcel()"
+               shiro:hasPermission="supplychain:billingplan:export">
+                <i class="fa fa-download"></i> 导出明细
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-table-editable-js"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('supplychain:billingplan:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('supplychain:billingplan:remove')}]];
+    var sys_invoice_status = [[${@dict.getType('sys_invoice_status')}]];
+    var prefix = ctx + "supplychain/billingplan";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            exportDetailUrl: prefix + "/exportdetail",
+            modalName: "开票计划",
+            rememberSelected: true,
+            /*showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,*/
+            detailView: true,
+            onEditableSave: onEditableSave,
+            onExpandRow: function (index, row, $detail) {
+                initChildTable(index, row, $detail);
+            },
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'transactionids',
+                    visible: false
+                },
+                {
+                    field: 'vendor',
+                    title: '供应商'
+                },
+                {
+                    field: 'receiptnum',
+                    title: '柜号'
+                },
+                {
+                    field: 'receiptdate',
+                    title: '接收日期'
+                },
+                {
+                    field: 'accountdate',
+                    title: '到账日期'
+                },
+                {
+                    field: 'receiptname',
+                    title: '报关名称'
+                },
+                {
+                    field: 'unit',
+                    title: '单位'
+                },
+                {
+                    field: 'orderquantity',
+                    title: '订单数量'
+                },
+                {
+                    field: 'crossamount',
+                    title: '含税总额'
+                },
+                {
+                    field: 'amount',
+                    title: '无税总额'
+                },
+                {
+                    field: 'invoicenum',
+                    title: '发票号',
+                    editable: true
+                },
+                {
+                    field: 'status',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(sys_invoice_status, value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    initChildTable = function (index, row, $detail) {
+        var childTable = $detail.html('<table style="table-layout:fixed"></table>').find('table');
+        $(childTable).bootstrapTable({
+            url: prefix + "/detail?transactionids=" + row.transactionids,
+            method: 'post',
+            sidePagination: "server",
+            contentType: "application/x-www-form-urlencoded",
+            columns: [{
+                field: 'id',
+                visible: false
+            },
+                {
+                    field: 'vendor',
+                    title: '供应商'
+                },
+                {
+                    field: 'receiptnum',
+                    title: '柜号'
+                },
+                {
+                    field: 'receiptdate',
+                    title: '接收日期'
+                },
+                {
+                    field: 'accountdate',
+                    title: '到账日期'
+                },
+                {
+                    field: 'sku',
+                    title: 'SKU'
+                },
+                {
+                    field: 'receiptname',
+                    title: '报关名称'
+                },
+                {
+                    field: 'unit',
+                    title: '单位'
+                },
+                {
+                    field: 'orderquantity',
+                    title: '订单数量'
+                },
+                {
+                    field: 'rate',
+                    title: '含税单价'
+                },
+                {
+                    field: 'price',
+                    title: '无税单价'
+                },
+                {
+                    field: 'crossamount',
+                    title: '含税总额'
+                },
+                {
+                    field: 'amount',
+                    title: '无税总额'
+                },
+                {
+                    field: 'status',
+                    title: '状态'
+                }]
+        });
+    };
+
+    function onEditableSave(field, row, oldValue, $el) {
+        var transactionidsArr = row.transactionids.split(",");
+        console.log("transactionids:" + row.transactionids);
+        console.log("transactionidsArr:" + transactionidsArr);
+        console.log("invoicenum:" + row.invoicenum);
+        $.ajax({
+            type: "post",
+            url: prefix + "/editable",
+            dataType: 'json',
+            traditional: true,
+            data: {
+                transactionidsArr: transactionidsArr,
+                invoicenum: row.invoicenum
+            },
+            success: function (msg) {
+                var json = eval('(' + JSON.stringify(msg) + ')');
+                var code = json.code;
+                console.log("msg:" + msg);
+                console.log("json:" + json);
+                console.log("code:" + code);
+                if (code == 200) {
+                    alert("修改成功!");
+                    $.table.refresh();
+                } else {
+                    alert("修改失败，请联系管理员!");
+                }
+            },
+            error: function () {
+                alert('修改失败，请联系管理员!');
+            }
+        });
+    }
+
+    function send() {
+        var fiscalPeriod = $("#fiscalPeriod").val();
+        console.log("会计期间:" + fiscalPeriod);
+        var transactionidsArr = $.table.selectColumns("transactionids");
+        var newtransactionidsArr = [];
+        for (var i = 0; i < transactionidsArr.length; i++) {
+            var tem = transactionidsArr[i].split(",");
+            for (var j = 0; j < tem.length; j++) {
+                newtransactionidsArr.push(tem[j]);
+            }
+        }
+        console.log("newtransactionidsArr:" + newtransactionidsArr);
+        if (fiscalPeriod == null || fiscalPeriod == "") {
+            alert("会计期间必填!");
+        } else if (newtransactionidsArr.length == 0) {
+            alert("请勾选需要发送的数据!");
+        } else {
+            $("#send").removeAttr('onclick');
+            $("#send").removeClass('btn btn-danger');
+            $("#send").addClass('btn btn-default');
+            $.ajax({
+                type: "post",
+                url: prefix + "/send",
+                dataType: 'json',
+                traditional: true,
+                data: {
+                    transactionidsArr: newtransactionidsArr,
+                    fiscalPeriod: fiscalPeriod
+                },
+                success: function (msg) {
+                    var json = eval('(' + JSON.stringify(msg) + ')');
+                    var code = json.code;
+                    console.log("msg:" + msg);
+                    console.log("json:" + json);
+                    console.log("code:" + code);
+                    if (code == 200) {
+                        alert("发送成功!");
+                        $.table.refresh();
+                    } else {
+                        alert("发送失败，请联系管理员!");
+                    }
+                },
+                error: function () {
+                    alert('发送失败，请联系管理员!');
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>
